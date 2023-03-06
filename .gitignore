@@ -106,6 +106,3 @@ dist
 # package-lock.json
 package-lock.json
 api/package-lock.json
-
-# config.json
-config.json
