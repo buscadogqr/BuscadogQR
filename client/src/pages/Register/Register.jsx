@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { db } from "../../firebase-config.js";
 import { collection, addDoc } from "firebase/firestore";
@@ -7,7 +6,6 @@ import "./Register.css";
 import axios from "axios";
 
 export const Register = () => {
-    const dispatch = useDispatch();
     const [input, setInput] = useState({name: '', surname: "", direction: "", cellphone: "", mail: "", password: ""});
     const [confirmPass, setConfirmPass] = useState({confirmPass: ""});
     const navigate = useNavigate();
