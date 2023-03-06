@@ -1,0 +1,70 @@
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    align-self: center;
+    left: 0;
+    top: 0;
+    width: 50%;
+    margin: 0.5rem 0rem 0rem 9.5rem;
+    overflow: auto;
+    background-color: rgb(41, 39, 39);
+    border-radius: 20px;
+    font-weight: bolder;
+}
+
+.modal div {
+    display: flex;
+    flex-direction: column;
+    margin: 15%;
+    border-radius: 8px;
+    border: none;
+    text-align: center;
+    align-content: center;
+}
+
+.modal button {
+    align-self: center;
+    border: 2px solid white;
+    border-radius: 5px;
+    padding: 5px;
+    color: white;
+    border-radius: 45px;
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease 0s;
+    cursor: pointer;
+    letter-spacing: 2.5px;
+    font-size: 12px;
+    margin-top: 15px;
+}
+
+.modal button:hover {
+    background-color: rgb(21, 61, 12);
+    color: white;
+}
+
+.btn {
+    align-self: center;
+    border: 2px solid white;
+    border-radius: 5px;
+    padding: 5px;
+    color: white;
+    border-radius: 45px;
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease 0s;
+    cursor: pointer;
+    letter-spacing: 2.5px;
+    font-size: 12px;
+    margin-top: 20px;
+}
+    
+.btn:hover {
+    background-color: rgb(127 29 29);
+    box-shadow: 0px 10px 15px #bebebe;
+    color: white;
+    transform: translateY(-7px);
+}
+
+.btn:active {
+    transform: translateY(-1px);
+}

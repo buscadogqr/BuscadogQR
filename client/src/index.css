@@ -1,0 +1,24 @@
+@import url('https://fonts.googleapis.com/css?family=Poppins');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+}
+
+#root{
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  /* background-image: url("https://static.vecteezy.com/system/resources/previews/002/282/910/original/elegant-white-background-free-vector.jpg");
+  background-repeat: no-repeat;
+  background-size: contain; */
+  font-family: 'Poppins'
+}
+
+* {
+  box-sizing: border-box;
+}
