@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { db } from "../../firebase-config.js";
-import { collection, addDoc, updateDoc, doc } from "firebase/firestore";
+import { collection, addDoc, updateDoc, doc, getDoc } from "firebase/firestore";
 
 export const AddPet = () => {
     const [input, setInput] = useState({name: '', animal: "", breed: "", age: "", notes: ""});
@@ -25,6 +25,10 @@ export const AddPet = () => {
             const formData = new FormData();
             formData.append("file", imageSelected);
             formData.append("upload_preset", "yhp17atl");
+            
+            const userCr = doc(db, "users", userLogged);
+            const userInfo = await getDoc(userCr);
+            const user = userInfo.data();
     
             await axios.post("https://api.cloudinary.com/v1_1/dtm9ibgrj/image/upload", formData)
             .then(response => {
@@ -32,20 +36,23 @@ export const AddPet = () => {
     
                 const breedAnimal = `${input.animal} - ${input.breed}`
             
-                addDoc(petsCollectionRef, { userOwner: userLogged, name: input.name, age: input.age, breed: breedAnimal, photo, notes: input.notes })
+                addDoc(petsCollectionRef, { userOwner: userLogged, name: input.name, age: input.age, breed: breedAnimal, photo, notes: input.notes, numberOfMembership: `pet${user.memberships.length}` })
                 .then(async data => {
-                    const user = doc(db, "users", userLogged);
-                    await updateDoc(user, { type: "Usuario con membresías" });
+                    
+                    await updateDoc(userCr, { type: "Usuario con membresías"  });
                     navigate('/pets');
                 })
             });
         } else {
             const breedAnimal = `${input.animal} - ${input.breed}`
 
-            addDoc(petsCollectionRef, { userOwner: userLogged, name: input.name, age: input.age, breed: breedAnimal, photo: "https://www.educima.com/dibujo-para-colorear-perro-dl19661.jpg", notes: input.notes })
+            const userCr = doc(db, "users", userLogged);
+            const userInfo = await getDoc(userCr);
+            const user = userInfo.data();
+
+            addDoc(petsCollectionRef, { userOwner: userLogged, name: input.name, age: input.age, breed: breedAnimal, photo: "https://www.educima.com/dibujo-para-colorear-perro-dl19661.jpg", notes: input.notes, numberOfMembership: `pet${user.memberships.length}` })
             .then(async data => {
-                const user = doc(db, "users", userLogged);
-                await updateDoc(user, { type: "Usuario con membresías" });
+                await updateDoc(userCr, { type: "Usuario con membresías" });
                 navigate('/pets');
             })
         }
@@ -61,14 +68,14 @@ export const AddPet = () => {
             {!userLogged && goToLogin()}
 
             <div class="flex flex-col">
-                <h1 class="text-third text-2xl font-bold">Añade una mascota</h1>
+                <h1 class="text-titles text-2xl font-bold">Añade una mascota</h1>
                 <label for="photo" class="block mb-2 text-sm font-medium text-buscabrown mt-5">Imagen</label>
                 <input
                     name="photo"
                     onChange={(e) => setImageSelected(e.target.files[0])}
                     type="file"
                     id="photo"
-                    class="bg-third border border-third text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    class="bg-form border border-form text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 />
                
                 <div class="flex flex-row flex-wrap gap-4 mt-5">
@@ -79,7 +86,7 @@ export const AddPet = () => {
                             onChange={(e) => handleInputChange(e)}
                             type="text"
                             id="first_name"
-                            class="bg-third border border-third text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            class="bg-form border border-form text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             placeholder="Zeus"
                         />
                     </div>
@@ -90,7 +97,7 @@ export const AddPet = () => {
                             onChange={(e) => handleInputChange(e)}
                             type="text"
                             id="age"
-                            class="bg-third border border-third text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            class="bg-form border border-form text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             placeholder="1 año"
                         />
                     </div>
@@ -104,7 +111,7 @@ export const AddPet = () => {
                             onChange={(e) => handleInputChange(e)}
                             type="text"
                             id="animal"
-                            class="bg-third border border-third text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            class="bg-form border border-form text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             placeholder="Perro"
                         />                          
                     </div>
@@ -115,7 +122,7 @@ export const AddPet = () => {
                             onChange={(e) => handleInputChange(e)}
                             type="text"
                             id="breed"
-                            class="bg-third border border-third text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            class="bg-form border border-form text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             placeholder="Golden Retriever"
                         />                          
                     </div>
@@ -128,7 +135,7 @@ export const AddPet = () => {
                         onChange={(e) => handleInputChange(e)}
                         type="text"
                         id="notes"
-                        class="bg-third border border-third text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        class="bg-form border border-form text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         placeholder="Bebe mucha agua, es asustadizo..."
                     />                          
                 </div>

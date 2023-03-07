@@ -18,10 +18,10 @@ export const Home = () => {
             <div class="container px-3 mx-auto flex flex-wrap flex-col md:flex-row items-center">
                 <div class="flex flex-col w-full md:w-2/5 justify-center items-start text-center md:text-left">
                 <h1 class="mb-4 text-5xl text-titles font-bold leading-tight">
-                    ¿Cansado de perder a tus mascotas?
+                    ¿Tenés miedo de perder a tus mascotas?
                 </h1>
                 <p class="leading-normal text-2xl mb-8">
-                    ¡Te ayudamos a facilitar tu busqueda!
+                    ¡Te ayudamos a facilitar tu búsqueda!
                 </p>
                 <button class="mx-auto lg:mx-0 hover:underline bg-third text-white font-bold rounded-full mb-6 py-4 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out hover:bg-orange-700" onClick={(e) => goToRegister(e)}>
                     Unite a la comunidad de BuscadogQR

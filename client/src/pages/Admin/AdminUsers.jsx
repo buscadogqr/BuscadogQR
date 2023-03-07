@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { db } from "../../firebase-config.js";
-import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
+import { collection, getDocs, doc, updateDoc, getDoc } from "firebase/firestore";
 
 export const AdminUsers = () => {
     const navigate = useNavigate();
@@ -9,6 +9,7 @@ export const AdminUsers = () => {
     const [users, setUsers] = useState([]);
     const [filterUsers, setFilterUsers] = useState([]);
     const [input, setInput] = useState("");
+    const [months, setMonths] = useState(0);
 
     useEffect(() => {
         const getUsers = async () => {
@@ -42,11 +43,55 @@ export const AdminUsers = () => {
         setInput("");
     };
 
-    // const expiredMembersh = (e) => {
-    //     e.preventDefault();
+    const expiredMembersh = (e) => {
+        e.preventDefault();
 
-    //     dispatch(checkExpiredMemberships());
-    // };
+        //acá guardaremos los nombres de las mascotas cuyas membresías expiraron
+        const expired = [];
+
+        //fecha en la que chequee las expiraciones
+        const todayDate = new Date();
+        const today = todayDate.getDate() + "-" + (todayDate.getMonth() + 1) + "-" + todayDate.getFullYear();
+        let [todayDay, todayMonth, todayYear] = today.split("-");
+        todayMonth = 3
+
+        users.forEach(user => {
+            //por cada una de las membresías, chequeamos cuáles caducaron
+            user.memberships.forEach(pet => {
+            
+                //fecha en la que expira la membresía de la mascota
+                const [day, month, year] = pet.expiration.split("-");
+    
+                function checkMembership () {
+                    if(year === todayYear) {
+                        if(Number(month) === Number(todayMonth) && Number(day) === Number(todayDay)) {
+                            pet.status = "Expired"
+                            expired.push({user: user.name, userId: user.id, pet: pet.pet});
+                        }
+    
+                        else if(Number(todayMonth) > Number(month)) {
+                            pet.status = "Expired"
+                            expired.push({user: user.name, userId: user.id, pet: pet.pet});
+                        }
+    
+                        else if(Number(todayMonth) === Number(month) && Number(todayDay) > Number(day)) {
+                            pet.status = "Expired"
+                            expired.push({user: user.name, userId: user.id, pet: pet.pet});
+                        }
+                    }
+    
+                    else if(Number(year) < Number(todayYear)) { //ex.: 2022 - 2023
+                        pet.status = "Expired"
+                        expired.push({user: user.name, userId: user.id, pet: pet.pet});
+                    };
+                };
+    
+                checkMembership();
+            });
+        });
+
+        if(expired.length) return expired;
+    };
 
     const changeType = async (e, userId, type) => {
         e.preventDefault();
@@ -62,6 +107,50 @@ export const AdminUsers = () => {
         const user = users.length && users.find(user => user.name.toLowerCase() === input.toLowerCase());
         setFilterUsers([user]);
     };
+
+    const changeToInput = (e) => {
+        e.preventDefault();
+
+        setMonths(0);
+        document.getElementById("ponerMembresía").style.display = "none";
+        document.getElementById("membMonths").style.display = "block";
+    };
+
+    const cancelChange = (e) => {
+        e.preventDefault();
+
+        document.getElementById("ponerMembresía").style.display = "block";
+        document.getElementById("membMonths").style.display = "none";
+    };
+
+    const addMembership = async (e, id) => {
+        e.preventDefault();
+
+        const userCr = doc(db, "users", id);
+
+        //setting the dates
+        const todayDate = new Date();
+        const newDate = new Date();
+        newDate.setMonth(newDate.getMonth() + Number(months));
+        const acquired = todayDate.getDate() + "-" + (todayDate.getMonth() + 1) + "-" + todayDate.getFullYear();
+        const expiration = newDate.getDate() + "-" + (newDate.getMonth() + 1) + "-" + newDate.getFullYear();
+
+        const userInfo = await getDoc(userCr);
+        const user = userInfo.data();
+
+        if(!user.memberships) {
+            await updateDoc(userCr, { type: "Usuario con membresías", memberships: [ { acquired, expiration, months, status: "Up to date", pet: "pet1" }] });
+        } else {
+            await updateDoc(userCr, { type: "Usuario con membresías", memberships: [ ...user.memberships, { acquired, expiration, months, status: "Up to date", pet: `pet${user.memberships.length}` }] });
+        }
+
+        document.getElementById("ponerMembresía").style.display = "block";
+        document.getElementById("membMonths").style.display = "none";
+    };
+
+    // const deleteMembership = async (e, id) => {
+
+    // };
 
     return (
         <div class="m-10">
@@ -106,10 +195,19 @@ export const AdminUsers = () => {
                             )}
 
                             {user.type === "Usuario sin membresías" && (
-                                <div class="self-end text-green-800 hover:text-green-600 cursor-pointer" onClick={(e) => changeType(e, user.id, "Usuario con membresías")}>
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                <div class="self-end text-green-800 hover:text-green-600 cursor-pointer">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6" id="ponerMembresía" onClick={(e) => changeToInput(e)}>
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M19 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM4 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 0110.374 21c-2.331 0-4.512-.645-6.374-1.766z" />
                                     </svg>
+                                    <div id="membMonths" class="hidden flex flex-row">
+                                        <input type="number" placeholder="1" class="bg-gray-700 rounded-2xl w-fit p-2 pl-5 text-white" onChange={(e) => setMonths(e.target.value)}/>
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6" onClick={(e) => addMembership(e, user.id)}>
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                        </svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" class="w-6 h-6 stroke-red-700" onClick={(e) => cancelChange(e)}>
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </div>
                                 </div>
                             )}
                         </div>

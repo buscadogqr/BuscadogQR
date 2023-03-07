@@ -32,8 +32,8 @@ export const NavBar = () => {
 
     return (
         <div>
-            <nav class="bg-buscabrown border-gray-200 w-full z-30 top-0 md:h-20 sm:h-fit">
-                <div class="flex flex-wrap justify-between items-center mx-auto px-4 md:px-6 py-2.5 max-w-screen-xl">
+            <nav class="bg-buscabrown border-gray-200 w-full z-30 top-0 h-fit">
+                <div class="flex flex-wrap gap-y-6 justify-between items-center mx-auto px-4 md:px-6 py-2.5 max-w-screen-xl">
                     <div class="flex items-center">
                         <img src={logo} class="h-14 min-h-0 md:min-h-full sm:mr-0 sm:mb-10 md:mb-0 md:mr-10" alt="BuscadogQR"/>
                         <div class="flex flex-wrap items-center">
@@ -70,13 +70,6 @@ export const NavBar = () => {
                                         </svg>
                                     </Link>
                                 </li>
-                                {checkLocalStorage() && (
-                                    <li>
-                                        <Link to="/subscribe">
-                                            <h class="m-10 md:mt-0 m-5 md:m-0 text-white hover:underline">¡Suscribite!</h>
-                                        </Link>
-                                    </li>
-                                )}
                                 {!!user.length && user.type === "Admin" && (
                                     <li>
                                         <Link to="/admin">

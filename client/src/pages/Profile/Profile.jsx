@@ -66,15 +66,15 @@ export const Profile = () => {
     };
 
     return (
-        <div class="flex justify-center m-20 mt-16 items-center border-4 border-buscabrown rounded-3xl p-10 w-fit self-center bg-gray-100 drop-shadow-2xl">
+        <div class="flex justify-center items-center  m-20 mt-16 w-fit self-center bg-gray-100 border-4 border-titles rounded-3xl p-10">
 
             {!userLogged && goToLogin()}
 
             <div class="flex flex-col">
                 <h1 class="text-titles text-2xl font-bold">Mi perfil</h1>
-                <div class="flex flex-row gap-x-16">
+                <div class="flex flex-col md:flex-row gap-x-16">
                     <div>
-                        <img src={user && user.profilePic} class="h-40 rounded-full mt-5"/>
+                        <img src={user && user.profilePic} class="h-40 md:h-40 justify-self-center rounded-full mt-5"/>
                     </div>
                     <div class="flex flex-col">
                         <div class="flex flex-row gap-x-5 mt-10">
