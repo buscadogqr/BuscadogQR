@@ -11,7 +11,7 @@ export const About = () => {
     };
 
     return (
-        <div class="ml-10">
+        <div class="mx-10">
             <h1 class="mt-8 mb-10 text-titles text-3xl font-extrabold underline underline-offset-4">NOSOTROS</h1>
             <div class="flex flex-row gap-x-5 m-4">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mt-1">
@@ -41,7 +41,7 @@ export const About = () => {
 
             <h class="m-4 md:text-justify sm:text-left">El servicio de activación e instalación del código en el collar tiene un costo de $700, además de un costo mensual de $300 ($10 pesos por día). </h>
             <br/>
-            <h class="underline underline-offset-4 text-third font-semibold m-4"> OFERTA LANZAMIENTO</h>
+            <h class="underline underline-offset-4 text-third font-semibold mt-4"> OFERTA LANZAMIENTO</h>
             
 
             <h3 class="text-third text-xl font-bold mt-16 m-4 mb-0">¿Qué esperas para suscribirte?</h3>

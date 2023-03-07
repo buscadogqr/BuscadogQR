@@ -13,7 +13,8 @@ module.exports = {
           form: "#57534e",
           buscabrown: "#292727",
           third: "#7c2d12",
-          titles: "#132906"
+          titles: "#132906",
+          gradientGreen: "#415735"
         },
         fontFamily:{
           sans: ['Poppins'],

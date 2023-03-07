@@ -137,7 +137,7 @@ export const Register = () => {
                         type="text"
                         id="phone"
                         class="bg-form border border-form text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        placeholder="+54 9 11 3250-0357"
+                        placeholder="+54 9 11 3333-3333"
                         required
                         />
                     </div>

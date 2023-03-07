@@ -13,7 +13,7 @@ export const Home = () => {
     };
 
     return (
-        <div class="ml-10">
+        <div class="mx-10">
         <div class="pt-24 mb-10">
             <div class="container px-3 mx-auto flex flex-wrap flex-col md:flex-row items-center">
                 <div class="flex flex-col w-full md:w-2/5 justify-center items-start text-center md:text-left">
