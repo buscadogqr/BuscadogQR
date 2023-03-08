@@ -5,12 +5,11 @@ import { collection, getDocs } from "firebase/firestore";
 
 export const Admin = () => {
     const navigate = useNavigate();
-    const userLogged = localStorage.getItem("userId");
+    const userLogged = localStorage.getItem("email");
     const usersCollectionRef = collection(db, "users");
     const petsCollectionRef = collection(db, "pets");
     const [users, setUsers] = useState([]);
     const [pets, setPets] = useState([]);
-    // const [ currentUser, setCurrentUser ] = useState([]);
 
     useEffect(() => {
         const getUsers = async () => {
@@ -19,39 +18,18 @@ export const Admin = () => {
             setUsers(usersInfo);
         };
 
-        // const getCurrentUser = async () => {
-        //     const users = await getDocs(usersCollectionRef);
-        //     const usersInfo = users && users.docs.map(user => ({...user.data(), id: user.id}));
-        //     const user = usersInfo && usersInfo.find(user => user.id === userLogged);
-        //     setCurrentUser(user);
-        // };
-
         const getPets = async () => {
             const allPets = await getDocs(petsCollectionRef);
             const petsInfo = allPets && allPets.docs.map(user => ({...user.data(), id: user.id}));
             setPets(petsInfo);
         };
 
-        // getCurrentUser();
         getUsers();
         getPets();
     }, []);
 
-    let profits = 0;
-
-    // users && users.forEach(user => {
-
-    //     user.memberships.forEach(membership => {
-    //         const [acqDay, acqMonth, acqYear] = membership.acquired.split("-");
-    //         const [expDay, expMonth, expYear] = membership.expiration.split("-");
-
-    //         const petProfits = (expMonth - acqMonth) * 300 + 700;
-    //         profits += petProfits;
-    //     });
-    // });
-
     const goTo = (e, whereTo) => {
-        e.preventDefault();
+        e && e.preventDefault();
 
         navigate(`/${whereTo}`);
     };
@@ -60,21 +38,19 @@ export const Admin = () => {
         navigate("/login");
     };
 
-    // const checkIfAdmin = () => {
-    //     if(currentUser && currentUser.type !== "Admin" || !currentUser.type) navigate("/profile");
-    // };
-
-    // console.log(currentUser)
+    const checkIfAdmin = () => {
+        if(userLogged && userLogged !== "buscadogqr@gmail.com") navigate("/profile");
+    };
 
     return (
         <div>
 
-            { !userLogged && goToLogin() }
-            {/* { currentUser.length && checkIfAdmin() } */}
+            { !userLogged && goTo("/login") }
+            { userLogged && checkIfAdmin() }
 
             <div class="m-16">
                 <h1 class="pb-5 text-titles text-4xl font-bold">Información de administrador</h1>
-                <div class="grid grid-cols-3 gap-x-5 m-5">
+                <div class="flex flex-col gap-y-5 md:grid md:grid-cols-2 md:gap-x-5 m-5 justify-self-center">
                     <div class="bg-third text-white p-5">
                         <h2 class="font-semibold mb-2">Usuarios</h2>
                         <h class="m-5 text-3xl">{users && users.length}</h>
@@ -82,10 +58,6 @@ export const Admin = () => {
                     <div class="bg-third text-white p-5">
                         <h2 class="font-semibold mb-2">Mascotas</h2>
                         <h class="m-5 text-3xl">{pets && pets.length}</h>
-                    </div>
-                    <div class="bg-third text-white p-5">
-                        <h2 class="font-semibold mb-2">Ganancias totales</h2>
-                        <h class="m-5 text-3xl">{profits}</h>
                     </div>
                 </div>
 

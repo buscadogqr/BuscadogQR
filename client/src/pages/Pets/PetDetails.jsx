@@ -13,6 +13,15 @@ export const PetDetails = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
+        const getPets = async () => {
+            const allPets = await getDocs(petsCollectionRef);
+            const petsInfo = allPets && allPets.docs.map(user => ({...user.data(), id: user.id}));
+            const pet = petsInfo && petsInfo.find(pet => pet.id === id);
+            setPet(pet);
+        };
+        
+        getPets();
+
         const getUser = async () => {
             const users = await getDocs(usersCollectionRef);
             const usersInfo = users && users.docs.map(user => ({...user.data(), id: user.id}));
@@ -20,15 +29,7 @@ export const PetDetails = () => {
             setUser(user);
         };
 
-        const getPets = async () => {
-            const allPets = await getDocs(petsCollectionRef);
-            const petsInfo = allPets && allPets.docs.map(user => ({...user.data(), id: user.id}));
-            const pet = petsInfo && petsInfo.find(pet => pet.id === id);
-            setPet(pet);
-        };
-
         getUser();
-        getPets();
     }, []);
 
     const goBack = (e) => {

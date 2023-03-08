@@ -269,7 +269,7 @@ export const Home = () => {
                     </div>
                     <div class="flex-none mt-auto bg-white rounded-b rounded-t-none overflow-hidden shadow p-6">
                     <div class="w-full pt-6 text-3xl text-gray-600 font-bold text-center">
-                        $700
+                        $1200
                     </div>
                     </div>
                 </div>

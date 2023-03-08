@@ -12,6 +12,7 @@ export const NavBar = () => {
     };
     const usersCollectionRef = collection(db, "users");
     const [user, setUser] = useState([]);
+    const userLogged = localStorage.getItem("userId");
 
     useEffect(() => {
         const getUser = async () => {
@@ -70,7 +71,7 @@ export const NavBar = () => {
                                         </svg>
                                     </Link>
                                 </li>
-                                {!!user.length && user.type === "Admin" && (
+                                {user && !!user.length && user.type === "Admin" && (
                                     <li>
                                         <Link to="/admin">
                                             <h class="m-5 md:m-0 text-white hover:underline">Admin</h>

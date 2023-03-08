@@ -31,7 +31,7 @@ export const Subscribe = () => {
         document.getElementById("amount").style.display = "block";
 
         if(months > 0) {
-            const equation = 700 + (Number(months) * 300);
+            const equation = 1200 + (Number(months) * 300);
             setAmount(equation);
         }
 
@@ -63,7 +63,7 @@ export const Subscribe = () => {
                     </div>
                     <div class="flex-none mt-auto bg-white rounded-b rounded-t-none overflow-hidden shadow p-6">
                     <div class="w-full pt-6 text-3xl text-gray-600 font-bold text-center">
-                        $700
+                        $1200
                     </div>
                     </div>
                 </div>
@@ -97,7 +97,7 @@ export const Subscribe = () => {
 
                 <div id="amount" class="hidden">
                     <p class="self-center mb-10 mt-5">${amount}</p>
-                    <a href="https://link.mercadopago.com.ar/buscadogqrejemplo" target="_blank" class="self-center text-white bg-third border-2 border-third rounded-3xl font-medium text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:bg-orange-700 hover:border-orange-700 cursor-pointer mt-10">Avanzar con la suscripción</a>
+                    <a href="https://mpago.la/1FCDhWB" target="_blank" class="self-center text-white bg-third border-2 border-third rounded-3xl font-medium text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:bg-orange-700 hover:border-orange-700 cursor-pointer mt-10">Avanzar con la suscripción</a>
                 </div>
             </div>
         </div>

@@ -17,8 +17,8 @@ export const Contact = () => {
                 </h2>
                 <div class="mb-8 flex w-full max-w-[370px]">
                 </div>
-                <div class="mb-8 flex w-full max-w-[370px]">
-                    <div
+                {/* <div class="mb-8 flex w-full max-w-[370px]"> */}
+                    {/* <div
                     class="bg-primary text-primary mr-6 flex h-[60px] w-full max-w-[60px] items-center justify-center overflow-hidden rounded bg-opacity-5 sm:h-[70px] sm:max-w-[70px]"
                     >
                     <svg
@@ -41,8 +41,8 @@ export const Contact = () => {
                     <div class="w-full">
                     <h4 class="text-dark mb-1 text-xl font-bold">Celular</h4>
                     <p class="text-body-color text-base">+54 9 11 5647-3033</p>
-                    </div>
-                </div>
+                    </div> */}
+                {/* </div> */}
                 <div class="mb-8 flex w-full max-w-[370px]">
                     <div
                     class="bg-primary text-primary mr-6 flex h-[60px] w-full max-w-[60px] items-center justify-center overflow-hidden rounded bg-opacity-5 sm:h-[70px] sm:max-w-[70px]"

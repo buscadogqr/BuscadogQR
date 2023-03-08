@@ -36,9 +36,8 @@ export const AddPet = () => {
     
                 const breedAnimal = `${input.animal} - ${input.breed}`
             
-                addDoc(petsCollectionRef, { userOwner: userLogged, name: input.name, age: input.age, breed: breedAnimal, photo, notes: input.notes, numberOfMembership: `pet${user.memberships.length}` })
+                addDoc(petsCollectionRef, { userOwner: user.mail, name: input.name, age: input.age, breed: breedAnimal, photo, notes: input.notes, numberOfMembership: `pet${user.memberships.length}` })
                 .then(async data => {
-                    
                     await updateDoc(userCr, { type: "Usuario con membresías"  });
                     navigate('/pets');
                 })
@@ -50,7 +49,7 @@ export const AddPet = () => {
             const userInfo = await getDoc(userCr);
             const user = userInfo.data();
 
-            addDoc(petsCollectionRef, { userOwner: userLogged, name: input.name, age: input.age, breed: breedAnimal, photo: "https://www.educima.com/dibujo-para-colorear-perro-dl19661.jpg", notes: input.notes, numberOfMembership: `pet${user.memberships.length}` })
+            addDoc(petsCollectionRef, { userOwner: user.mail, name: input.name, age: input.age, breed: breedAnimal, photo: "https://www.educima.com/dibujo-para-colorear-perro-dl19661.jpg", notes: input.notes, numberOfMembership: `pet${user.memberships.length}` })
             .then(async data => {
                 await updateDoc(userCr, { type: "Usuario con membresías" });
                 navigate('/pets');
