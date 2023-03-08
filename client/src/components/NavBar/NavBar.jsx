@@ -13,6 +13,7 @@ export const NavBar = () => {
     const usersCollectionRef = collection(db, "users");
     const [user, setUser] = useState([]);
     const userLogged = localStorage.getItem("userId");
+    const userMail = localStorage.getItem("email");
 
     useEffect(() => {
         const getUser = async () => {
@@ -29,6 +30,10 @@ export const NavBar = () => {
         e.preventDefault();
 
         navigate(`/${whereTo}`);
+    };
+
+    const checkIfAdmin = () => {
+        if(userLogged && userLogged !== "buscadogqr@gmail.com") navigate("/profile");
     };
 
     return (
@@ -71,13 +76,6 @@ export const NavBar = () => {
                                         </svg>
                                     </Link>
                                 </li>
-                                {user && !!user.length && user.type === "Admin" && (
-                                    <li>
-                                        <Link to="/admin">
-                                            <h class="m-5 md:m-0 text-white hover:underline">Admin</h>
-                                        </Link>
-                                    </li>
-                                )}
                             </ul>
                         </div>
                     </div>
@@ -91,10 +89,24 @@ export const NavBar = () => {
 
                     {checkLocalStorage() && (
                         <div class="flex items-center gap-x-4 text-white sm:ml-32 justify-self-end">
-                            <div class="flex flex-row gap-x-2 cursor-pointer p-2 bg-third border-2 border-third rounded-xl text-white hover:bg-orange-700 hover:border-orange-700 px-3 py-2" onClick={(e) => goTo(e, "pets")}>
-                                <h3>Mis mascotas</h3>
-                                <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" fill="none" class="w-6 h-6 fill-current"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <rect x="0" fill="none" width="20" height="20"></rect> <g> <path d="M11.9 8.4c1.3 0 2.1-1.9 2.1-3.1 0-1-.5-2.2-1.5-2.2-1.3 0-2.1 1.9-2.1 3.1 0 1 .5 2.2 1.5 2.2zm-3.8 0c1 0 1.5-1.2 1.5-2.2C9.6 4.9 8.8 3 7.5 3 6.5 3 6 4.2 6 5.2c-.1 1.3.7 3.2 2.1 3.2zm7.4-1c-1.3 0-2.2 1.8-2.2 3.1 0 .9.4 1.8 1.3 1.8 1.3 0 2.2-1.8 2.2-3.1 0-.9-.5-1.8-1.3-1.8zm-8.7 3.1c0-1.3-1-3.1-2.2-3.1-.9 0-1.3.9-1.3 1.8 0 1.3 1 3.1 2.2 3.1.9 0 1.3-.9 1.3-1.8zm3.2-.2c-2 0-4.7 3.2-4.7 5.4 0 1 .7 1.3 1.5 1.3 1.2 0 2.1-.8 3.2-.8 1 0 1.9.8 3 .8.8 0 1.7-.2 1.7-1.3 0-2.2-2.7-5.4-4.7-5.4z"></path> </g> </g></svg>
+
+                            {userMail === "buscadogqr@gmail.com" && (
+                                <div class="flex flex-row gap-x-2 cursor-pointer p-2 bg-third border-2 border-third rounded-xl text-white hover:bg-orange-700 hover:border-orange-700 px-3 py-2">
+                                    <Link to="/admin">
+                                        <h class="hidden md:block m-5 md:m-0 text-white hover:underline">Información de admin</h>
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 block md:hidden">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z" />
+                                        </svg>
+                                    </Link>
                                 </div>
+                            )}
+
+                            {userMail !== "buscadogqr@gmail.com" && (
+                                <div class="flex flex-row gap-x-2 cursor-pointer p-2 bg-third border-2 border-third rounded-xl text-white hover:bg-orange-700 hover:border-orange-700 px-3 py-2" onClick={(e) => goTo(e, "pets")}>
+                                    <h3>Mis mascotas</h3>
+                                    <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" fill="none" class="w-6 h-6 fill-current"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <rect x="0" fill="none" width="20" height="20"></rect> <g> <path d="M11.9 8.4c1.3 0 2.1-1.9 2.1-3.1 0-1-.5-2.2-1.5-2.2-1.3 0-2.1 1.9-2.1 3.1 0 1 .5 2.2 1.5 2.2zm-3.8 0c1 0 1.5-1.2 1.5-2.2C9.6 4.9 8.8 3 7.5 3 6.5 3 6 4.2 6 5.2c-.1 1.3.7 3.2 2.1 3.2zm7.4-1c-1.3 0-2.2 1.8-2.2 3.1 0 .9.4 1.8 1.3 1.8 1.3 0 2.2-1.8 2.2-3.1 0-.9-.5-1.8-1.3-1.8zm-8.7 3.1c0-1.3-1-3.1-2.2-3.1-.9 0-1.3.9-1.3 1.8 0 1.3 1 3.1 2.2 3.1.9 0 1.3-.9 1.3-1.8zm3.2-.2c-2 0-4.7 3.2-4.7 5.4 0 1 .7 1.3 1.5 1.3 1.2 0 2.1-.8 3.2-.8 1 0 1.9.8 3 .8.8 0 1.7-.2 1.7-1.3 0-2.2-2.7-5.4-4.7-5.4z"></path> </g> </g></svg>
+                                </div>
+                            )}
 
                             <div class="flex flex-row gap-x-1 cursor-pointer bg-third border-2 border-third rounded-xl text-white hover:bg-orange-700 hover:border-orange-700 px-3 py-2" onClick={(e) => goTo(e, "profile")}>
                                 <h3>Mi perfil</h3>

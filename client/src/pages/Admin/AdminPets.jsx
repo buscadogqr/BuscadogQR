@@ -10,6 +10,7 @@ export const AdminPets = () => {
     const [pets, setPets] = useState([]);
     const [filterPets, setFilterPets] = useState([]);
     const [input, setInput] = useState("");
+    const userLogged = localStorage.getItem("email");
 
     useEffect(() => {
         const getPets = async () => {
@@ -88,8 +89,16 @@ export const AdminPets = () => {
         location.reload();
     };
 
+    const checkIfAdmin = () => {
+        if(userLogged && userLogged !== "buscadogqr@gmail.com") navigate("/profile");
+    };
+
     return (
         <div class="m-10">
+
+            { !userLogged && goTo("/login") }
+            { userLogged && checkIfAdmin() }
+
             <div class="flex flex-row gap-x-2">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 hover:stroke-amber-400 cursor-pointer" onClick={(e) => goToAdmin(e)}>
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
