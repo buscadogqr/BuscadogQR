@@ -37,6 +37,8 @@ export const EditProfile = () => {
     };
 
     const submitChanges = async (e) => {
+        document.getElementById("confirmMsg").style.display = "block";
+
         if(imageSelected) {
             e.preventDefault();
         
@@ -45,8 +47,8 @@ export const EditProfile = () => {
             formData.append("upload_preset", "yhp17atl");
         
             await axios.post("https://api.cloudinary.com/v1_1/dtm9ibgrj/image/upload", formData)
-            .then(response => {
-                const profilePic = `https://res.cloudinary.com/dtm9ibgrj/image/upload/${response.data.public_id}.png`;
+            .then(async response => {
+                const profilePic = response.data.secure_url;
                 const user = doc(db, "users", userLogged);
         
                 let updatedUser1 = {}
@@ -57,12 +59,10 @@ export const EditProfile = () => {
                     }
                 };
         
-                updateDoc(user, {...updatedUser1, profilePic})
+                await updateDoc(user, {...updatedUser1, profilePic})
                 .then(data => {
-                    setTimeout( () => {
-                        inputs.mail && localStorage.setItem("email", inputs.mail)
-                        navigate('/profile');
-                    }, 1500)
+                    inputs.mail && localStorage.setItem("email", inputs.mail);
+                    navigate('/profile');
                 })
             });
         } else {
@@ -185,6 +185,7 @@ export const EditProfile = () => {
                 </div>
 
                 <button class="p-3 bg-third border-2 border-third rounded-3xl hover:bg-orange-700 hover:border-orange-700 text-white mt-10 cursor-pointer" onClick={(e) => submitChanges(e)}>Confirmar cambios</button>
+                <h class="p-3 mt-2 text-green-700 hidden" id="confirmMsg">Confirmando cambios...</h>
 
             </div>
         </div>

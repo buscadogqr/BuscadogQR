@@ -1,42 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 
 export const Subscribe = () => {
     const userLogged = localStorage.getItem("email");
     const navigate = useNavigate();
-    const [amount, setAmount] = useState(0);
-    const [months, setMonths] = useState(0);
 
     const goToLogin = () => {
         navigate("/login");
-    };
-
-    const count = (numbMonths) => {
-        setMonths(numbMonths);
-
-        document.getElementById("amount").style.display = "none";
-    };
-
-    const goOn = (e) => {
-        e.preventDefault();
-
-        if(document.getElementById("months").style.display === "block") document.getElementById("months").style.display = "none";
-        else document.getElementById("months").style.display = "block";
-         
-    };
-
-    const goOnMonths = (e) => {
-        e.preventDefault();
-        
-        document.getElementById("amount").style.display = "block";
-
-        if(months > 0) {
-            const equation = 1200 + (Number(months) * 300);
-            setAmount(equation);
-        }
-
-        else setAmount(0);
-         
     };
 
     return (
@@ -85,21 +55,7 @@ export const Subscribe = () => {
                 </div>
             </div>
 
-            <button class="self-center text-white bg-third border-2 border-third rounded-3xl font-medium text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:bg-orange-700 hover:border-orange-700 cursor-pointer" onClick={(e) => goOn(e)}>Suscribirme</button>
-
-
-            <div class="self-center mt-20 mb-10 w-fit hidden" id="months">
-                <p>¿Por cuántos meses querés suscribirte?</p>
-                <div class="flex flex-row gap-x-5 content-center">
-                    <input type="number" class="bg-form border border-form text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mt-5" placeholder="1" onChange={(e) => count(e.target.value)}/>
-                    <button class="text-white bg-third border-2 border-third rounded-3xl font-medium text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:bg-orange-700 hover:border-orange-700 h-fit mt-5" onClick={(e) => goOnMonths(e)}>Continuar</button>
-                </div>
-
-                <div id="amount" class="hidden">
-                    <p class="self-center mb-10 mt-5">${amount}</p>
-                    <a href="https://mpago.la/1FCDhWB" target="_blank" class="self-center text-white bg-third border-2 border-third rounded-3xl font-medium text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:bg-orange-700 hover:border-orange-700 cursor-pointer mt-10">Avanzar con la suscripción</a>
-                </div>
-            </div>
+            <a href="https://mpago.la/1FCDhWB" target="_blank" class="self-center text-white bg-third border-2 border-third rounded-3xl font-medium text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:bg-orange-700 hover:border-orange-700 cursor-pointer mt-10">Suscribirme</a>
         </div>
     )
 };

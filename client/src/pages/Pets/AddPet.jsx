@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { db } from "../../firebase-config.js";
 import { collection, addDoc, updateDoc, doc, getDoc } from "firebase/firestore";
@@ -10,6 +10,7 @@ export const AddPet = () => {
     const userLogged = localStorage.getItem("userId");
     const [imageSelected, setImageSelected] = useState("");
     const petsCollectionRef = collection(db, "pets");
+    const { months } = useParams();
 
     const handleInputChange = (e) => {
         setInput({
@@ -32,14 +33,25 @@ export const AddPet = () => {
     
             await axios.post("https://api.cloudinary.com/v1_1/dtm9ibgrj/image/upload", formData)
             .then(response => {
-                const photo = `https://res.cloudinary.com/dtm9ibgrj/image/upload/${response.data.public_id}.png`;
+                const photo = response.data.secure_url;
     
                 const breedAnimal = `${input.animal} - ${input.breed}`
+
+                const todayDate = new Date();
+                const newDate = new Date();
+                newDate.setMonth(newDate.getMonth() + Number(months));
+                const acquired = todayDate.getDate() + "-" + (todayDate.getMonth() + 1) + "-" + todayDate.getFullYear();
+                const expiration = newDate.getDate() + "-" + (newDate.getMonth() + 1) + "-" + newDate.getFullYear();
             
-                addDoc(petsCollectionRef, { userOwner: user.mail, name: input.name, age: input.age, breed: breedAnimal, photo, notes: input.notes, numberOfMembership: `pet${user.memberships.length}` })
+                addDoc(petsCollectionRef, { userOwner: user.mail, name: input.name, age: input.age, breed: breedAnimal, photo, notes: input.notes })
                 .then(async data => {
-                    await updateDoc(userCr, { type: "Usuario con membresías"  });
-                    navigate('/pets');
+                    if(user.memberships && user.memberships.length) {
+                        await updateDoc(userCr,  { type: "Usuario con membresías", memberships: [...user.memberships, { acquired, expiration, months: months, status: "Up to date", pet: input.name }] });
+                        navigate('/pets');
+                    } else {
+                        await updateDoc(userCr,  { type: "Usuario con membresías", memberships: [{ acquired, expiration, months: months, status: "Up to date", pet: input.name }] });
+                        navigate('/pets');
+                    }
                 })
             });
         } else {
@@ -49,10 +61,21 @@ export const AddPet = () => {
             const userInfo = await getDoc(userCr);
             const user = userInfo.data();
 
-            addDoc(petsCollectionRef, { userOwner: user.mail, name: input.name, age: input.age, breed: breedAnimal, photo: "https://www.educima.com/dibujo-para-colorear-perro-dl19661.jpg", notes: input.notes, numberOfMembership: `pet${user.memberships.length}` })
+            const todayDate = new Date();
+            const newDate = new Date();
+            newDate.setMonth(newDate.getMonth() + Number(months));
+            const acquired = todayDate.getDate() + "-" + (todayDate.getMonth() + 1) + "-" + todayDate.getFullYear();
+            const expiration = newDate.getDate() + "-" + (newDate.getMonth() + 1) + "-" + newDate.getFullYear();
+
+            addDoc(petsCollectionRef, { userOwner: user.mail, name: input.name, age: input.age, breed: breedAnimal, photo: "https://www.educima.com/dibujo-para-colorear-perro-dl19661.jpg", notes: input.notes })
             .then(async data => {
-                await updateDoc(userCr, { type: "Usuario con membresías" });
-                navigate('/pets');
+                if(user.memberships && user.memberships.length) {
+                    await updateDoc(userCr,  { type: "Usuario con membresías", memberships: [...user.memberships, { acquired, expiration, months: months, status: "Up to date", pet: input.name }] });
+                    navigate('/pets');
+                } else {
+                    await updateDoc(userCr,  { type: "Usuario con membresías", memberships: [{ acquired, expiration, months: months, status: "Up to date", pet: input.name }] });
+                    navigate('/pets');
+                }
             })
         }
     };

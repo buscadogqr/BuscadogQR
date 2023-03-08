@@ -45,7 +45,7 @@ export const EditPetDetails = () => {
         
             await axios.post("https://api.cloudinary.com/v1_1/dtm9ibgrj/image/upload", formData)
             .then(async response => {
-                const photo = `https://res.cloudinary.com/dtm9ibgrj/image/upload/${response.data.public_id}.png`;
+                const photo = response.data.secure_url;
                 const pet = doc(db, "pets", id);
         
                 let updatedPet1 = {}

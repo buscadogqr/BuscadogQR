@@ -38,18 +38,18 @@ export const Admin = () => {
         navigate("/login");
     };
 
-    const checkIfAdmin = () => {
-        if(userLogged && userLogged !== "buscadogqr@gmail.com") navigate("/profile");
-        if(!userLogged) navigate("/login");
-    };
-
     return (
         <div>
 
-            { !userLogged && goToLogin }
-            { userLogged && checkIfAdmin() }
+            { !userLogged && goToLogin() }
+            { userLogged !== "buscadogqr@gmail.com" && (
+                <div class="flex flex-col gap-y-5 m-16">
+                    <h class="pb-5 text-titles text-4xl font-bold">Oops! Parece que no tienes los permisos para acceder a esta ruta</h>
+                    <button class="self-start p-3 bg-third hover:bg-orange-700 text-white rounded-3xl" onClick={(e) => goTo(e, "profile")}>Volver a mi perfil</button>
+                </div>
+            )}
 
-            <div class="m-16">
+            {userLogged === "buscadogqr@gmail.com" && (<div class="m-16">
                 <h1 class="pb-5 text-titles text-4xl font-bold">Información de administrador</h1>
                 <div class="flex flex-col gap-y-5 md:grid md:grid-cols-2 md:gap-x-5 m-5 justify-self-center">
                     <div class="bg-third text-white p-5">
@@ -76,7 +76,7 @@ export const Admin = () => {
                         <h1 class="font-semibold">Lista de mascotas</h1>
                     </div>
                 </div>
-            </div>
+            </div>)}
         </div>
     )
 };

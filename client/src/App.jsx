@@ -24,6 +24,7 @@ import { AdminPets } from "./pages/Admin/AdminPets.jsx";
 import { OurStories } from "./pages/OurStories/OurStories.jsx";
 import { ForgotPassword } from "./pages/ForgotPassword/ForgotPassword.jsx";
 import { ResetPassword } from "./pages/ForgotPassword/ResetPassword.jsx";
+import { AddMore } from "./pages/Subscribe/AddMore.jsx";
 
 const AppRouter = () => {
   return (
@@ -93,7 +94,7 @@ const AppRouter = () => {
           />
 
           <Route
-          path="/addPet"
+          path="/addPet/:months"
           element={<AddPet/>}
           />
 
@@ -125,6 +126,11 @@ const AppRouter = () => {
           <Route
           path="resetPass"
           element={<ResetPassword/>}
+          />
+
+          <Route
+          path="addMore"
+          element={<AddMore/>}
           />
 
         </Routes>
