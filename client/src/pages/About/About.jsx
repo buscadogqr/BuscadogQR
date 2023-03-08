@@ -39,7 +39,7 @@ export const About = () => {
                 <h3 class="text-titles text-2xl font-bold m-4 mb-1">Costos</h3>
             </div>
 
-            <h class="m-4 md:text-justify sm:text-left">El servicio de activación e instalación del código en el collar tiene un costo de $700, además de un costo mensual de $300 ($10 pesos por día). </h>
+            <h class="m-4 md:text-justify sm:text-left">El servicio de activación e instalación del código en el collar tiene un costo de $1200, además de un costo mensual de $300 ($10 pesos por día). </h>
             <br/>
             <h class="underline underline-offset-4 text-third font-semibold mt-4"> OFERTA LANZAMIENTO</h>
             
