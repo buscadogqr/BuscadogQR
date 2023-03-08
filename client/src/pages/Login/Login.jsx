@@ -55,7 +55,11 @@ export const Login = () => {
         navigate("/register");
     };
 
+    const forgotPass = (e) => {
+        e.preventDefault();
 
+        navigate("/forgotPass");
+    };
 
     return (
         <form class="bg-white p-10">
@@ -102,7 +106,8 @@ export const Login = () => {
                 </div>
                 <h id="contra" class="text-red-700 hidden">Contraseña incorrecta</h>
 
-                <h class="mt-5 text-sm">Todavía no te registraste? <button onClick={(e) => goToRegister(e)} class="underline underline-offset-4 text-third">Sumate</button> a la comunidad de BuscadogQR!</h>
+                <h class="mt-5 text-sm">¿Todavía no te registraste? <button onClick={(e) => goToRegister(e)} class="underline underline-offset-4 text-third">Sumate</button> a la comunidad de BuscadogQR!</h>
+                <h class="mt-2 text-sm">¿Olvidaste tu contraseña? <button onClick={(e) => forgotPass(e)} class="underline underline-offset-4 text-third">Recuperala</button></h>
             </div>
             
             <button

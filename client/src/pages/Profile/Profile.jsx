@@ -65,8 +65,16 @@ export const Profile = () => {
         navigate("/login");
     };
 
+    const settingLS = (e) => {
+        e.preventDefault();
+    
+        localStorage.setItem("userResetName", user && user.name);
+        localStorage.setItem("userResetId", user && user.id);
+        navigate("/resetPass");
+    };
+
     return (
-        <div class="flex justify-center items-center  m-20 mt-16 w-fit self-center bg-gray-100 border-4 border-titles rounded-3xl p-10">
+        <div class="flex justify-center items-center m-20 mt-16 w-fit self-center bg-gray-100 border-4 border-titles rounded-3xl p-10">
 
             {!userLogged && goToLogin()}
 
@@ -138,6 +146,8 @@ export const Profile = () => {
                     </div>
 
                 </div>
+
+                <h class="mt-7 text-sm">¿<h class="hover:underline hover:underline-offset-4 text-third cursor-pointer" onClick={(e) => settingLS(e)}>Olvidaste</h> tu contraseña?</h>
             </div>
         </div>
     )

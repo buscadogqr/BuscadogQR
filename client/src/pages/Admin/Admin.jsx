@@ -29,7 +29,7 @@ export const Admin = () => {
     }, []);
 
     const goTo = (e, whereTo) => {
-        e && e.preventDefault();
+        e.preventDefault();
 
         navigate(`/${whereTo}`);
     };
@@ -40,12 +40,13 @@ export const Admin = () => {
 
     const checkIfAdmin = () => {
         if(userLogged && userLogged !== "buscadogqr@gmail.com") navigate("/profile");
+        if(!userLogged) navigate("/login");
     };
 
     return (
         <div>
 
-            { !userLogged && goTo("/login") }
+            { !userLogged && goToLogin }
             { userLogged && checkIfAdmin() }
 
             <div class="m-16">

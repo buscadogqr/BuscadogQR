@@ -171,7 +171,7 @@ export const AdminPets = () => {
                 })}
 
                 {!pets.length && (
-                    <h>Aún no hay mascotas agregadas</h>
+                    <h class="text-white font-semibold">Aún no hay mascotas agregadas</h>
                 )}
             </div>
         </div>
