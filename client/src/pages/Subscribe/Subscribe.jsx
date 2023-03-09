@@ -55,7 +55,7 @@ export const Subscribe = () => {
                 </div>
             </div>
 
-            <a href="https://mpago.la/1FCDhWB" target="_blank" class="self-center text-white bg-third border-2 border-third rounded-3xl font-medium text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:bg-orange-700 hover:border-orange-700 cursor-pointer mt-10">Suscribirme</a>
+            <a href="https://mpago.la/1FCDhWB" target="_blank" class="self-center text-white bg-third border-2 border-third rounded-3xl font-medium text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:bg-orange-700 outline-none hover:border-orange-700 cursor-pointer mt-10">Suscribirme</a>
         </div>
     )
 };

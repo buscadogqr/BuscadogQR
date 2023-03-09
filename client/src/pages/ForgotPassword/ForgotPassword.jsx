@@ -43,7 +43,7 @@ export const ForgotPassword = () => {
                 onChange={(e) => setMail(e.target.value)}
                 type="email"
                 id="email"
-                class="bg-form border border-form text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                class="bg-form border border-form text-white outline-none text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="juan.perez@gmail.com"
                 required
                 />

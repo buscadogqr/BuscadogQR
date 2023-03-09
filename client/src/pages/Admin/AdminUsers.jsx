@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { db } from "../../firebase-config.js";
-import { collection, getDocs, doc, updateDoc, getDoc } from "firebase/firestore";
+import { collection, getDocs, doc, updateDoc, getDoc, deleteDoc } from "firebase/firestore";
 
 export const AdminUsers = () => {
     const navigate = useNavigate();
     const usersCollectionRef = collection(db, "users");
+    const petsCollectionRef = collection(db, "pets");
     const [users, setUsers] = useState([]);
     const [filterUsers, setFilterUsers] = useState([]);
     const [input, setInput] = useState("");
-    const [months, setMonths] = useState(0);
     const userLogged = localStorage.getItem("email");
 
     useEffect(() => {
@@ -44,24 +44,18 @@ export const AdminUsers = () => {
         setInput("");
     };
 
-    const expiredMemberships = (e) => {
-        e.preventDefault();
-        
-        //acá guardaremos los nombres de las mascotas cuyas membresías expiraron
-        const expired = [];
-        
+    const updateUsersExpMemb = () => {
         //fecha en la que chequee las expiraciones
         const todayDate = new Date();
         const today = todayDate.getDate() + "-" + (todayDate.getMonth() + 1) + "-" + todayDate.getFullYear();
         let [todayDay, todayMonth, todayYear] = today.split("-");
-        todayMonth = 3
         
-        users.length && users.forEach(user => {
+        users.length && users.forEach(async user => {
             //info con la que actualizaremos el estado de la membresía
             const userDoc = doc(db, "users", user.id);
 
             //por cada una de las membresías, chequeamos cuáles caducaron
-            user.memberships && user.memberships.forEach(membership => {
+            await user.memberships && user.memberships.forEach(async membership => {
             
                 //fecha en la que expira la membresía de la mascota
                 const [day, month, year] = membership.expiration.split("-");
@@ -78,7 +72,6 @@ export const AdminUsers = () => {
                             }
                             
                             await updateDoc(userDoc, { memberships: [...user.memberships.filter(m => m.pet !== membership.pet), membership] });
-                            expired.push(user.id);
                         }
     
                         else if(Number(todayMonth) > Number(month)) {
@@ -91,7 +84,6 @@ export const AdminUsers = () => {
                             }
                             
                             await updateDoc(userDoc, { memberships: [...user.memberships.filter(m => m.pet !== membership.pet), membership] });
-                            expired.push(user.id);
                         }
     
                         else if(Number(todayMonth) === Number(month) && Number(todayDay) > Number(day)) {
@@ -104,7 +96,6 @@ export const AdminUsers = () => {
                             }
                             
                             await updateDoc(userDoc, { memberships: [...user.memberships.filter(m => m.pet !== membership.pet), membership] });
-                            expired.push(user.id);
                         }
                     }
     
@@ -118,43 +109,27 @@ export const AdminUsers = () => {
                         }
                         
                         await updateDoc(userDoc, { memberships: [...user.memberships.filter(m => m.pet !== membership.pet), membership] });
-                        expired.push(user.id);
                     };
                 };
     
-                checkMembership();
+                await checkMembership();
             });
         });
-        console.log(expired)
 
-        // if(expired.length) {
-        //     const expiredUsers = ¨[]; 
-        //     users.map(user => {
-        //         user
-        //     })
-        // }
+        location.reload();
     };
+
+    const expiredMemberships = (e) => {
+        e.preventDefault();
+
+        updateUsersExpMemb();
+    }; 
 
     const search = (e) => {
         e.preventDefault();
 
         const user = users.length && users.find(user => user.name.toLowerCase() === input.toLowerCase());
         setFilterUsers([user]);
-    };
-
-    const changeToInput = (e, id) => {
-        e.preventDefault();
-
-        setMonths(0);
-        document.getElementById(`ponerMembresía${id}`).style.display = "none";
-        document.getElementById(`membMonths${id}`).style.display = "block";
-    };
-
-    const cancelChange = (e, id) => {
-        e.preventDefault();
-
-        document.getElementById(`ponerMembresía${id}`).style.display = "block";
-        document.getElementById(`membMonths${id}`).style.display = "none";
     };
 
     const showUserInfo = (e, id) => {
@@ -172,6 +147,45 @@ export const AdminUsers = () => {
 
     const goToLogin = () => {
         navigate("/login");
+    };
+
+    const deleteMembership = async (e, userId, petName) => {
+        e.preventDefault();
+
+        //actualizando la información del usuario
+        const userCr = doc(db, "users", userId);
+        const userInfo = await getDoc(userCr);
+        const userData = userInfo.data();
+        const updateData = userData.memberships.filter(m => m.pet !== petName);
+
+        await updateDoc(userCr, { memberships: updateData });
+        !updateData.length && await updateDoc(userCr, { type: "Usuario sin membresías" });
+
+        //encontrando el id del perro
+        const allPets = await getDocs(petsCollectionRef);
+        const petsInfo = allPets && allPets.docs.map(user => ({...user.data(), id: user.id}));
+        const petData = petsInfo && petsInfo.find(pet => pet.name === petName && pet.userOwner === userData.mail);
+        //eliminando al perro
+        const pet = doc(db, "pets", petData.id);
+        await deleteDoc(pet);
+
+        document.getElementById(`sacarMembresía${petName}`).style.display = "block";
+        document.getElementById(`confirm${petName}`).style.display = "none";
+        location.reload();
+    };
+
+    const cancelDelete = (e, id) => {
+        e.preventDefault();
+
+        document.getElementById(`sacarMembresía${id}`).style.display = "block";
+        document.getElementById(`confirm${id}`).style.display = "none";
+    };
+
+    const changeToInput = (e, id) => {
+        e.preventDefault();
+
+        document.getElementById(`sacarMembresía${id}`).style.display = "none";
+        document.getElementById(`confirm${id}`).style.display = "block";
     };
 
     return (
@@ -198,7 +212,7 @@ export const AdminUsers = () => {
                     <button onClick={(e) => allUsers(e)} class="bg-third text-white p-1 md:p-3 border-2 border-third rounded-3xl hover:border-orange-700 hover:bg-orange-700">Mostrar todos los usuarios</button>
                     <button onClick={(e) => filterOwners(e, "Usuario con membresías")} class="bg-third text-white p-1 md:p-3 border-2 border-third rounded-3xl hover:border-orange-700 hover:bg-orange-700">Usuarios con membresías</button>
                     <button onClick={(e) => filterOwners(e, "Usuario sin membresías")} class="bg-third text-white p-1 md:p-3 border-2 border-third rounded-3xl hover:border-orange-700 hover:bg-orange-700">Usuarios sin membresías</button>
-                    <button onClick={(e) => expiredMemberships(e)} class="bg-third text-white p-1 md:p-3 border-2 border-third rounded-3xl hover:border-orange-700 hover:bg-orange-700">Membresías caducadas</button>
+                    {/* <button onClick={(e) => expiredMemberships(e)} class="bg-third text-white p-1 md:p-3 border-2 border-third rounded-3xl hover:border-orange-700 hover:bg-orange-700">Membresías caducadas</button> */}
                 </div>
                 <div class="flex flex-col gap-2 ml-2 md:ml-10 m-10 mt-5 p-3 pt-5 bg-gray-700 w-fit md:w-auto justify-self-center">
                     <div class="flex flex-row justify-between gap-x-4 mb-3">
@@ -248,10 +262,36 @@ export const AdminUsers = () => {
                                                         <h>Estado: {memb.status === "Up to date" && "Al día" || "Expirada"}</h>
                                                     </div>
 
+                                                <div class="flex flex-row gap-x-3 text-red-800 hover:text-red-600 cursor-pointer mt-5" id={`sacarMembresía${memb.pet}`} onClick={(e) => changeToInput(e, memb.pet)}>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M22 10.5h-6m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM4 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 0110.374 21c-2.331 0-4.512-.645-6.374-1.766z" />
+                                                    </svg>
+                                                    <h>Sacar membresía a {memb.pet}</h>
+                                                </div>
+
+                                                <div id={`confirm${memb.pet}`} class="hidden flex flex-row text-red-600 mt-5">
+                                                    <h>¿Deseas eliminar la membresía de {memb.pet}?</h>
+
+                                                    <div class="flex flex-row gap-x-3 mt-3">
+                                                        <div  onClick={(e) => deleteMembership(e, user.id, memb.pet)}>
+                                                            <h class="text-white">Si</h>
+                                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 stroke-green-700 cursor-pointer hover:stroke-green-500">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                                            </svg>
+                                                        </div>
+                                                        <div onClick={(e) => cancelDelete(e, memb.pet)}>
+                                                            <h class="text-white">No</h>
+                                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" class="w-6 h-6 stroke-red-800 hover:stroke-red-600 cursor-pointer">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                                            </svg>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                                 </div>
                                             )
                                         })}
                                     </div>)}
+
                                 </div>
                             </div>
                         )

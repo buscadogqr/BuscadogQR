@@ -97,7 +97,7 @@ export const Register = () => {
                         onChange={(e) => handleInputChange(e)}
                         type="text"
                         id="first_name"
-                        class="bg-form border border-form text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        class="bg-form border border-form outline-none text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         placeholder="Juan"
                         required
                         />
@@ -110,7 +110,7 @@ export const Register = () => {
                         onChange={(e) => handleInputChange(e)} 
                         type="text"
                         id="last_name"
-                        class="bg-form border border-form text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        class="bg-form border border-form text-white outline-none text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         placeholder="Pérez"
                         required
                         />
@@ -123,7 +123,7 @@ export const Register = () => {
                         onChange={(e) => handleInputChange(e)}
                         type="text"
                         id="direction"
-                        class="bg-form border border-form text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        class="bg-form border border-form text-white text-sm outline-none rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         placeholder="Av. Santa Fe 2569"
                         required
                         />
@@ -136,7 +136,7 @@ export const Register = () => {
                         onChange={(e) => handleInputChange(e)}
                         type="text"
                         id="phone"
-                        class="bg-form border border-form text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        class="bg-form border border-form text-white text-sm outline-none rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         placeholder="+54 9 11 3333-3333"
                         required
                         />
@@ -149,7 +149,7 @@ export const Register = () => {
                         onChange={(e) => setImageSelected(e.target.files[0])}
                         type="file"
                         id="photo"
-                        class="bg-form border border-form text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        class="bg-form border border-form text-white text-sm outline-none rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     />
                 </div>
                 <div class="mb-6">
@@ -160,7 +160,7 @@ export const Register = () => {
                     onChange={(e) => handleInputChange(e)}
                     type="email"
                     id="email"
-                    class="bg-form border border-form text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    class="bg-form border border-form text-white text-sm outline-none rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="juan.perez@gmail.com"
                     required
                     />
@@ -174,7 +174,7 @@ export const Register = () => {
                         onChange={(e) => handleInputChange(e)}
                         type="password" 
                         id="password"
-                        class="bg-form border border-form text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-2"
+                        class="bg-form border border-form text-white text-sm outline-none rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-2"
                         placeholder="•••••••••"
                         required
                         />
@@ -192,7 +192,7 @@ export const Register = () => {
                         onChange={(e) => setConfirmPass(e.target.value)}
                         type="password" 
                         id="confirmPass"
-                        class="bg-form border border-form text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-2"
+                        class="bg-form border border-form text-white outline-none text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-2"
                         placeholder="•••••••••"
                         required
                         />
@@ -209,7 +209,7 @@ export const Register = () => {
                 </div>
                 <button
                 type="submit"
-                class="bg-third border-2 border-third text-white hover:bg-orange-700 hover:border-orange-700 rounded-3xl font-medium text-sm w-full sm:w-auto px-5 py-2.5 text-center" 
+                class="bg-third border-2 border-third text-white outline-none hover:bg-orange-700 hover:border-orange-700 rounded-3xl font-medium text-sm w-full sm:w-auto px-5 py-2.5 text-center" 
                 >Registrarse</button>
             </form>
 

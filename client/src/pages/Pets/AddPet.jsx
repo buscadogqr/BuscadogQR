@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { db } from "../../firebase-config.js";
 import { collection, addDoc, updateDoc, doc, getDoc } from "firebase/firestore";
@@ -10,7 +10,6 @@ export const AddPet = () => {
     const userLogged = localStorage.getItem("userId");
     const [imageSelected, setImageSelected] = useState("");
     const petsCollectionRef = collection(db, "pets");
-    const { months } = useParams();
 
     const handleInputChange = (e) => {
         setInput({
@@ -39,17 +38,17 @@ export const AddPet = () => {
 
                 const todayDate = new Date();
                 const newDate = new Date();
-                newDate.setMonth(newDate.getMonth() + Number(months));
+                newDate.setMonth(newDate.getMonth() + 1);
                 const acquired = todayDate.getDate() + "-" + (todayDate.getMonth() + 1) + "-" + todayDate.getFullYear();
                 const expiration = newDate.getDate() + "-" + (newDate.getMonth() + 1) + "-" + newDate.getFullYear();
             
                 addDoc(petsCollectionRef, { userOwner: user.mail, name: input.name, age: input.age, breed: breedAnimal, photo, notes: input.notes })
                 .then(async data => {
                     if(user.memberships && user.memberships.length) {
-                        await updateDoc(userCr,  { type: "Usuario con membresías", memberships: [...user.memberships, { acquired, expiration, months: months, status: "Up to date", pet: input.name }] });
+                        await updateDoc(userCr,  { type: "Usuario con membresías", memberships: [...user.memberships, { acquired, expiration, months: 1, status: "Up to date", pet: input.name }] });
                         navigate('/pets');
                     } else {
-                        await updateDoc(userCr,  { type: "Usuario con membresías", memberships: [{ acquired, expiration, months: months, status: "Up to date", pet: input.name }] });
+                        await updateDoc(userCr,  { type: "Usuario con membresías", memberships: [{ acquired, expiration, months: 1, status: "Up to date", pet: input.name }] });
                         navigate('/pets');
                     }
                 })
@@ -63,17 +62,17 @@ export const AddPet = () => {
 
             const todayDate = new Date();
             const newDate = new Date();
-            newDate.setMonth(newDate.getMonth() + Number(months));
+            newDate.setMonth(newDate.getMonth() + Number(1));
             const acquired = todayDate.getDate() + "-" + (todayDate.getMonth() + 1) + "-" + todayDate.getFullYear();
             const expiration = newDate.getDate() + "-" + (newDate.getMonth() + 1) + "-" + newDate.getFullYear();
 
             addDoc(petsCollectionRef, { userOwner: user.mail, name: input.name, age: input.age, breed: breedAnimal, photo: "https://www.educima.com/dibujo-para-colorear-perro-dl19661.jpg", notes: input.notes })
             .then(async data => {
                 if(user.memberships && user.memberships.length) {
-                    await updateDoc(userCr,  { type: "Usuario con membresías", memberships: [...user.memberships, { acquired, expiration, months: months, status: "Up to date", pet: input.name }] });
+                    await updateDoc(userCr,  { type: "Usuario con membresías", memberships: [...user.memberships, { acquired, expiration, months: 1, status: "Up to date", pet: input.name }] });
                     navigate('/pets');
                 } else {
-                    await updateDoc(userCr,  { type: "Usuario con membresías", memberships: [{ acquired, expiration, months: months, status: "Up to date", pet: input.name }] });
+                    await updateDoc(userCr,  { type: "Usuario con membresías", memberships: [{ acquired, expiration, months: 1, status: "Up to date", pet: input.name }] });
                     navigate('/pets');
                 }
             })
@@ -97,7 +96,7 @@ export const AddPet = () => {
                     onChange={(e) => setImageSelected(e.target.files[0])}
                     type="file"
                     id="photo"
-                    class="bg-form border border-form text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    class="bg-form border border-form outline-none text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 />
                
                 <div class="flex flex-row flex-wrap gap-4 mt-5">
@@ -108,7 +107,7 @@ export const AddPet = () => {
                             onChange={(e) => handleInputChange(e)}
                             type="text"
                             id="first_name"
-                            class="bg-form border border-form text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            class="bg-form border border-form outline-none text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             placeholder="Zeus"
                         />
                     </div>
@@ -119,7 +118,7 @@ export const AddPet = () => {
                             onChange={(e) => handleInputChange(e)}
                             type="text"
                             id="age"
-                            class="bg-form border border-form text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            class="bg-form border border-form text-white outline-none text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             placeholder="1 año"
                         />
                     </div>
@@ -133,7 +132,7 @@ export const AddPet = () => {
                             onChange={(e) => handleInputChange(e)}
                             type="text"
                             id="animal"
-                            class="bg-form border border-form text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            class="bg-form border border-form text-white outline-none text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             placeholder="Perro"
                         />                          
                     </div>
@@ -144,7 +143,7 @@ export const AddPet = () => {
                             onChange={(e) => handleInputChange(e)}
                             type="text"
                             id="breed"
-                            class="bg-form border border-form text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            class="bg-form border border-form text-white outline-none text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             placeholder="Golden Retriever"
                         />                          
                     </div>
@@ -157,12 +156,12 @@ export const AddPet = () => {
                         onChange={(e) => handleInputChange(e)}
                         type="text"
                         id="notes"
-                        class="bg-form border border-form text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        class="bg-form border border-form text-white text-sm outline-none rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         placeholder="Bebe mucha agua, es asustadizo..."
                     />                          
                 </div>
 
-                <button class="bg-third text-white border border-2 border-third rounded-3xl p-2 mt-10 hover:text-third hover:bg-white cursor-pointe" onClick={(e) => handleSubmit(e)}>¡Agregar mascota!</button>
+                <button class="bg-third text-white border border-2 border-third outline-none rounded-3xl p-2 mt-10 hover:text-third hover:bg-white cursor-pointe" onClick={(e) => handleSubmit(e)}>¡Agregar mascota!</button>
 
             </div>
         </div>

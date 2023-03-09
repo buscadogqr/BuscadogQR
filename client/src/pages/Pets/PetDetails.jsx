@@ -6,6 +6,7 @@ import { collection, getDocs } from "firebase/firestore";
 export const PetDetails = () => {
     const { id } = useParams();
     const userLogged = localStorage.getItem("userId");
+    const userMail = localStorage.getItem("email");
     const usersCollectionRef = collection(db, "users");
     const petsCollectionRef = collection(db, "pets");
     const [user, setUser] = useState([]);
@@ -40,7 +41,7 @@ export const PetDetails = () => {
 
     return (
         <div class="flex flex-col text-white mt-10">
-            {userLogged === pet.userOwner && (
+            {userMail === pet.userOwner && (
                 <div class="flex flex-row gap-x-2 text-black m-5 mx-10 self-start">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 hover:stroke-amber-400 cursor-pointer" onClick={(e) => goBack(e)}>
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
@@ -71,7 +72,7 @@ export const PetDetails = () => {
                     </div>
                     {userLogged === pet.userOwner && (
                         <Link to={`/editPetInfo/${id}`}>
-                            <button class="flex flex-row gap-x-5 bg-third text-white border border-2 border-third rounded-xl p-2 hover:bg-orange-700 hover:border-orange-700 cursor-pointer mb-5">Editar información de mascota</button>
+                            <button class="flex flex-row gap-x-5 bg-third outline-none text-white border border-2 border-third rounded-xl p-2 hover:bg-orange-700 hover:border-orange-700 cursor-pointer mb-5">Editar información de mascota</button>
                         </Link>
                     )}
                 </div>

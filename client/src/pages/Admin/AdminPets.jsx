@@ -52,43 +52,6 @@ export const AdminPets = () => {
         setFilterPets(pets);
     };
 
-    const changeToInput = (e, id) => {
-        e.preventDefault();
-
-        document.getElementById(`sacarMembresía${id}`).style.display = "none";
-        document.getElementById(`confirm${id}`).style.display = "block";
-    };
-
-    const cancelDelete = (e, id) => {
-        e.preventDefault();
-
-        document.getElementById(`sacarMembresía${id}`).style.display = "block";
-        document.getElementById(`confirm${id}`).style.display = "none";
-    };
-
-    const deleteMembership = async (e, userId, petNum, id) => {
-        e.preventDefault();
-
-        const allUsers = await getDocs(usersCollectionRef);
-        const usersInfo = allUsers && allUsers.docs.map(user => ({...user.data(), id: user.id}));
-        const userData = usersInfo && usersInfo.find(user => user.mail === userId);
-
-        const userCr = doc(db, "users", userData && userData.id);
-        const userInfo2 = await getDoc(userCr);
-        const user1 = userInfo2.data();
-        const updateData = user1.memberships.filter(m => m.pet !== petNum);
-
-        await updateDoc(userCr, { memberships: updateData });
-        !updateData.length && await updateDoc(userCr, { type: "Usuario sin membresías" });
-
-        const pet = doc(db, "pets", id);
-        await deleteDoc(pet);
-
-        document.getElementById(`sacarMembresía${id}`).style.display = "block";
-        document.getElementById(`confirm${id}`).style.display = "none";
-        location.reload();
-    };
-
     const goTo = (e, whereTo) => {
         e.preventDefault();
 
@@ -156,26 +119,6 @@ export const AdminPets = () => {
                                     <div class="flex flex-row gap-x-2 mb-2">
                                         <h3 class="text-amber-600">Dueño:</h3>
                                         <a href={`mailto:${pet.userOwner}`} target="_blank"><h3 class="hover:underline hover:underline-offset-4">{pet.userOwner}</h3></a>
-                                    </div>
-                                    
-                                    <div class="flex flex-row gap-x-3 text-red-800 hover:text-red-600 cursor-pointer mt-5" id={`sacarMembresía${pet.id}`} onClick={(e) => changeToInput(e, pet.id)}>
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M22 10.5h-6m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM4 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 0110.374 21c-2.331 0-4.512-.645-6.374-1.766z" />
-                                        </svg>
-                                        <h>Sacar membresía</h>
-                                    </div>
-
-                                    <div id={`confirm${pet.id}`} class="hidden flex flex-row text-red-600">
-                                        <h>¿Deseas eliminarle la membresía?</h>
-
-                                        <div class="flex flex-row gap-x-3 mt-3">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 stroke-green-700 cursor-pointer hover:stroke-green-500" onClick={(e) => deleteMembership(e, pet.userOwner, pet.numberOfMembership, pet.id)}>
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                                            </svg>
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" class="w-6 h-6 stroke-red-800 hover:stroke-red-600 cursor-pointer" onClick={(e) => cancelDelete(e, pet.id)}>
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                            </svg>
-                                        </div>
                                     </div>
                                 </div>
                             </div>

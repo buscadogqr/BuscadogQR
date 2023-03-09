@@ -93,7 +93,7 @@ export const EditPetDetails = () => {
                             onChange={(e) => setImageSelected(e.target.files[0])}
                             type="file"
                             id="photo"
-                            class="bg-form border border-form text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            class="bg-form border border-form text-white outline-none text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         />
                     </div>
 
@@ -104,7 +104,7 @@ export const EditPetDetails = () => {
                             onChange={(e) => handleInputChange(e)}
                             type="text"
                             id="first_name"
-                            class="bg-third border border-third text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            class="bg-third border border-third text-white outline-none text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             placeholder={pet && pet.name}
                         />
                     </div>
@@ -116,7 +116,7 @@ export const EditPetDetails = () => {
                             onChange={(e) => handleInputChange(e)}
                             type="text"
                             id="age"
-                            class="bg-third border border-third text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            class="bg-third border border-third text-white outline-none text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             placeholder={pet && pet.age}
                         />
                     </div>
@@ -128,7 +128,7 @@ export const EditPetDetails = () => {
                             onChange={(e) => handleInputChange(e)}
                             type="text"
                             id="breed"
-                            class="bg-third border border-third text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            class="bg-third border border-third text-white text-sm outline-none rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             placeholder={pet && pet.breed}
                         />
                     </div>
@@ -140,13 +140,13 @@ export const EditPetDetails = () => {
                             onChange={(e) => handleInputChange(e)}
                             type="text"
                             id="notes"
-                            class="bg-third border border-third text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            class="bg-third border border-third text-white text-sm outline-none rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             placeholder={pet && pet.notes}
                         />
                     </div>
                 </div>
 
-                <button class="text-white border border-2 border-third rounded-xl p-2 hover:text-third hover:bg-white cursor-pointer bg-third ml-6" onClick={(e) => submitChanges(e)}>Confirmar cambios</button>
+                <button class="text-white border border-2 border-third outline-none rounded-xl p-2 hover:text-third hover:bg-white cursor-pointer bg-third ml-6" onClick={(e) => submitChanges(e)}>Confirmar cambios</button>
             </div>
         </div>
     )

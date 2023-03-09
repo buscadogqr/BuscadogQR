@@ -70,25 +70,25 @@ export const AddMore = () => {
                 </div>
             </div>
 
-            <button class="self-center text-white bg-third border-2 border-third rounded-3xl font-medium text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:bg-orange-700 hover:border-orange-700 cursor-pointer" onClick={(e) => goOn(e)}>Extender suscripción</button>
+            <button class="self-center text-white bg-third border-2 outline-none border-third rounded-3xl font-medium text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:bg-orange-700 hover:border-orange-700 cursor-pointer" onClick={(e) => goOn(e)}>Extender suscripción</button>
 
             <div class="self-center mt-20 mb-10 w-fit hidden" id="months">
                 <p>¿Por cuántos meses querés extender tu suscripción?</p>
                 <div class="flex flex-row gap-x-5 content-center mt-5">
-                    <select name="cars" id="cars" class="rounded-3xl" onChange={(e) => count(e.target.value)}>
+                    <select name="cars" id="cars" class="rounded-3xl outline-none" onChange={(e) => count(e.target.value)}>
                         <option value="1">1 mes</option>
                         <option value="3">3 meses</option>
                     </select>
-                    <button class="text-white bg-third border-2 border-third rounded-3xl font-medium text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:bg-orange-700 hover:border-orange-700 h-fit mt-5" onClick={(e) => goOnMonths(e)}>Continuar</button>
+                    <button class="text-white bg-third border-2 border-third rounded-3xl font-medium text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:bg-orange-700 hover:border-orange-700 h-fit mt-5 outline-none" onClick={(e) => goOnMonths(e)}>Continuar</button>
                 </div>
 
                 <div id="amount" class="hidden">
                     <p class="self-center mb-10 mt-5">${amount}</p>
                     {amount == 300 && (
-                        <a href="https://mpago.la/21E8pq2" target="_blank" class="self-center text-white bg-third border-2 border-third rounded-3xl font-medium text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:bg-orange-700 hover:border-orange-700 cursor-pointer mt-10">Avanzar con la extensión</a>
+                        <a href="https://mpago.la/21E8pq2" target="_blank" class="self-center text-white bg-third border-2 border-third rounded-3xl font-medium text-sm w-full sm:w-auto px-5 outline-none py-2.5 text-center hover:bg-orange-700 hover:border-orange-700 cursor-pointer mt-10">Avanzar con la extensión</a>
                     )}
                     {amount == 900 && (
-                        <a href="https://mpago.la/1vHkhGJ" target="_blank" class="self-center text-white bg-third border-2 border-third rounded-3xl font-medium text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:bg-orange-700 hover:border-orange-700 cursor-pointer mt-10">Avanzar con la extensión</a>
+                        <a href="https://mpago.la/1vHkhGJ" target="_blank" class="self-center text-white bg-third border-2 border-third rounded-3xl font-medium text-sm w-full sm:w-auto px-5 py-2.5 outline-none text-center hover:bg-orange-700 hover:border-orange-700 cursor-pointer mt-10">Avanzar con la extensión</a>
                     )}
                 </div>
             </div>

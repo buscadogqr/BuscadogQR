@@ -57,7 +57,7 @@ export const ResetPassword = () => {
                         onChange={(e) => SetPass(e.target.value)}
                         type="password" 
                         id="password"
-                        class="bg-form border border-form text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-2"
+                        class="bg-form outline-none border border-form text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-2"
                         placeholder="•••••••••"
                         required
                         />
@@ -75,7 +75,7 @@ export const ResetPassword = () => {
                         onChange={(e) => setConfirmPass(e.target.value)}
                         type="password" 
                         id="confirmPass"
-                        class="bg-form border border-form text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-2"
+                        class="bg-form border border-form outline-none text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-2"
                         placeholder="•••••••••"
                         required
                         />
@@ -91,7 +91,7 @@ export const ResetPassword = () => {
                     )}
                 </div>
 
-                <button class="text-left text-third underline underline-offset-4 md:text-black md:decoration-transparent hover:text-third hover:decoration-third hover:underline hover:underline-offset-4" onClick={(e) => resetPass(e)}>Cofirmar cambio de contraseña</button>
+                <button class="text-left text-third outline-none underline underline-offset-4 md:text-black md:decoration-transparent hover:text-third hover:decoration-third hover:underline hover:underline-offset-4" onClick={(e) => resetPass(e)}>Cofirmar cambio de contraseña</button>
             </div>
         </div>
     )

@@ -67,7 +67,7 @@ export const Login = () => {
             <label for="input-group-1" class="block mb-2 text-sm font-medium text-buscabrown">Email</label>
             <div class="flex flex-col">
                 <div class="flex content-center">
-                    <span class="inline-flex items-center px-3 text-sm text-gray-300 bg-form border border-r-0 border-gray-300 rounded-l-md dark:text-gray-300 dark:border-gray-600">
+                    <span class="inline-flex items-center px-3 text-sm outline-none text-gray-300 bg-form border border-r-0 border-gray-300 rounded-l-md dark:text-gray-300 dark:border-gray-600">
                         ✉
                     </span>
                     <input
@@ -76,7 +76,7 @@ export const Login = () => {
                     name="email"
                     value={input.email}
                     onChange={(e) => handleInputChange(e)}
-                    class="rounded-none rounded-r-lg bg-form border text-white focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    class="rounded-none rounded-r-lg bg-form outline-none border text-white focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="nombre@gmail.com"
                     required
                     />
@@ -86,7 +86,7 @@ export const Login = () => {
             <label for="website-admin" class="block mb-2 text-sm font-medium text-buscabrown mt-6">Contraseña</label>
             <div class="flex flex-col">
                 <div class="flex content-center">
-                    <span class="inline-flex items-center px-3 text-sm text-gray-300 bg-form border border-r-0 border-gray-300 rounded-l-md dark:text-gray-300 dark:border-gray-600">
+                    <span class="inline-flex items-center px-3 text-sm text-gray-300 outline-none bg-form border border-r-0 border-gray-300 rounded-l-md dark:text-gray-300 dark:border-gray-600">
                         🔒︎
                     </span>
                     <input
@@ -95,7 +95,7 @@ export const Login = () => {
                     name="password"
                     value={input.password}
                     onChange={(e) => handleInputChange(e)}
-                    class="rounded-none rounded-r-lg bg-form border text-white focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    class="rounded-none rounded-r-lg bg-form border outline-none text-white focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="•••••••••"
                     required
                     />
@@ -111,7 +111,7 @@ export const Login = () => {
             </div>
             
             <button
-                class="mt-6 bg-third border-2 border-third text-white hover:bg-orange-700 hover:border-orange-700 rounded-3xl font-medium text-sm w-full sm:w-auto px-5 py-2.5 text-center cursor-pointer"
+                class="mt-6 bg-third border-2 border-third outline-none text-white hover:bg-orange-700 hover:border-orange-700 rounded-3xl font-medium text-sm w-full sm:w-auto px-5 py-2.5 text-center cursor-pointer"
                 onClick={e => goToProfile(e)}
                 disabled={!input.email && !input.password}
                 >Inicia sesión</button>

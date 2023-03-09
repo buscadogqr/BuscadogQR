@@ -89,8 +89,8 @@ export const NavBar = () => {
                         <div class="hidden text-white md:flex items-center space-x-3 ">
                             {!checkLocalStorage() && (
                                 <div class="flex flex-row space-x-3">
-                                    <button onClick={(e) => goTo(e, "login")} class="py-2 px-2 font-medium rounded hover:bg-orange-700 hover:text-white transition duration-300">Iniciar sesión</button>
-                                    <button onClick={(e) => goTo(e, "register")} class="py-2 px-2 font-medium bg-third rounded hover:bg-orange-700 transition duration-300">Registrarme</button>
+                                    <button onClick={(e) => goTo(e, "login")} class="py-2 px-2 outline-none font-medium rounded hover:bg-orange-700 hover:text-white transition duration-300">Iniciar sesión</button>
+                                    <button onClick={(e) => goTo(e, "register")} class="py-2 px-2 outline-none font-medium bg-third rounded hover:bg-orange-700 transition duration-300">Registrarme</button>
                                 </div>
                             )}
                             {checkLocalStorage() && (
@@ -98,18 +98,18 @@ export const NavBar = () => {
 
                                     {userMail === "buscadogqr@gmail.com" && (
                                         <div class="flex flex-row space-x-3" onClick={(e) => goTo(e, "admin")}>
-                                            <button class="py-2 px-2 font-medium rounded hover:bg-orange-700 hover:text-white transition duration-300">Información de admin</button>
+                                            <button class="py-2 px-2 outline-none font-medium rounded hover:bg-orange-700 hover:text-white transition duration-300">Información de admin</button>
                                         </div>
                                     )}
 
                                     {userMail !== "buscadogqr@gmail.com" && (
                                         <div class="flex flex-row space-x-3" onClick={(e) => goTo(e, "pets")}>
-                                            <button class="py-2 px-2 font-medium rounded hover:bg-orange-700 hover:text-white transition duration-300">Mis Mascotas</button>
+                                            <button class="py-2 px-2 outline-none font-medium rounded hover:bg-orange-700 hover:text-white transition duration-300">Mis Mascotas</button>
                                         </div>
                                     )}
 
                                     <div class="flex flex-row space-x-3" onClick={(e) => goTo(e, "profile")}>
-                                        <button class="py-2 px-2 font-medium bg-third rounded hover:bg-orange-700 transition duration-300">Mi Perfil</button>
+                                        <button class="py-2 px-2 outline-none font-medium bg-third rounded hover:bg-orange-700 transition duration-300">Mi Perfil</button>
                                     </div>
                                 </div>
                             )}
@@ -135,8 +135,8 @@ export const NavBar = () => {
                     <ul class="">
                         {!checkLocalStorage() && (
                             <div>
-                                <li><h onClick={(e) => goTo(e, "login")} class="block text-sm text-white px-2 py-4 hover:bg-orange-700 transition duration-300 font-semibold">Iniciar sesión</h></li>
-                                <li><h onClick={(e) => goTo(e, "register")} class="block text-sm bg-third text-white px-2 py-4 hover:bg-orange-700 transition duration-300 font-semibold">Registrarme</h></li>
+                                <li><h onClick={(e) => goTo(e, "login")} class="block text-sm text-white px-2 py-4 hover:bg-orange-700 transition duration-300 font-semibold outline-none">Iniciar sesión</h></li>
+                                <li><h onClick={(e) => goTo(e, "register")} class="block text-sm bg-third text-white px-2 py-4 hover:bg-orange-700 transition duration-300 font-semibold outline-none">Registrarme</h></li>
                             </div>
                         )}
                         {checkLocalStorage() && (
@@ -144,18 +144,18 @@ export const NavBar = () => {
 
                                 {userMail === "buscadogqr@gmail.com" && (
                                     <div onClick={(e) => goTo(e, "admin")}>
-                                        <li><h class="block text-sm text-white px-2 py-4 hover:bg-orange-700 transition duration-300 font-semibold">Información de admin</h></li>
+                                        <li><h class="block outline-none text-sm text-white px-2 py-4 hover:bg-orange-700 transition duration-300 font-semibold">Información de admin</h></li>
                                     </div>
                                 )}
 
                                 {userMail !== "buscadogqr@gmail.com" && (
                                     <div onClick={(e) => goTo(e, "pets")}>
-                                        <li><h class="block text-sm text-white px-2 py-4 hover:bg-orange-700 transition duration-300 font-semibold">Mis Mascotas</h></li>
+                                        <li><h class="block outline-none text-sm text-white px-2 py-4 hover:bg-orange-700 transition duration-300 font-semibold">Mis Mascotas</h></li>
                                     </div>
                                 )}
 
                                 <div onClick={(e) => goTo(e, "profile")}>
-                                    <li><h class="block bg-third text-sm text-white px-2 py-4 hover:bg-orange-700 transition duration-300 font-semibold">Mi Perfil</h></li>
+                                    <li><h class="block outline-none bg-third text-sm text-white px-2 py-4 hover:bg-orange-700 transition duration-300 font-semibold">Mi Perfil</h></li>
                                 </div>
                             </div>
                         )}
