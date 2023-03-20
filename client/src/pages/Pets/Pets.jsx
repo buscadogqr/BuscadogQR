@@ -89,7 +89,7 @@ export const Pets = () => {
                                     </div>
                                     {/* <h>Quiero <h class="cursor-pointer text-red-600" onClick={(e) => delPet(e, pet.id)}>cancelar</h> la suscripción de esta mascota</h>
                                     <h>Quiero <h class="cursor-pointer text-red-600" onClick={(e) => delPet(e, pet.id)}>cancelar</h> la suscripción de esta mascota</h> */}
-                                    <h>La membresía de esta mascota vence el {user && user.memberships.find(memb => memb.pet === pet.name)?.expiration}, ¿querés <h class="cursor-pointer text-third underline underline-offset-4" onClick={(e) => extendMemb(e)}>extenderla</h>?</h>
+                                    {/* <h>La membresía de esta mascota vence el {user && user.memberships.find(memb => memb.pet === pet.name)?.expiration}, ¿querés <h class="cursor-pointer text-third underline underline-offset-4" onClick={(e) => extendMemb(e)}>extenderla</h>?</h> */}
                                 </div>
                             )})}   
                     </div>
