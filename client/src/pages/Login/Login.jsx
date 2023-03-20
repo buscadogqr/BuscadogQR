@@ -61,6 +61,18 @@ export const Login = () => {
         navigate("/forgotPass");
     };
 
+    document.getElementById("input-group-1") && document.getElementById("input-group-1").addEventListener("keydown", function(event) {
+        if(event.keyCode == 13) {
+            goToProfile(event);
+        }
+    });
+
+    document.getElementById("password") && document.getElementById("password").addEventListener("keydown", function(event) {
+        if(event.keyCode == 13) {
+            goToProfile(event);
+        }
+    });
+
     return (
         <form class="bg-white p-10">
             <h1 class="pb-5 text-buscabrown text-2xl font-bold">Iniciar sesión</h1>
