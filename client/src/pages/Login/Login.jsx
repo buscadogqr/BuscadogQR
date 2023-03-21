@@ -61,11 +61,18 @@ export const Login = () => {
         navigate("/forgotPass");
     };
 
+    document.getElementById('password') && document.getElementById('password').addEventListener('keypress', function(event) {
+        if (event.keyCode == 13) {
+            event.preventDefault();
+            goToProfile(event);
+        }
+    });
+
     return (
         <form class="bg-white p-10">
             <h1 class="pb-5 text-buscabrown text-2xl font-bold">Iniciar sesión</h1>
             <label for="input-group-1" class="block mb-2 text-sm font-medium text-buscabrown">Email</label>
-            <div class="flex flex-col">
+            <div class="flex flex-col md:p-2 md:pr-10">
                 <div class="flex content-center">
                     <span class="inline-flex items-center px-3 text-sm outline-none text-gray-300 bg-form border border-r-0 border-gray-300 rounded-l-md dark:text-gray-300 dark:border-gray-600">
                         ✉
@@ -84,7 +91,7 @@ export const Login = () => {
                 <h id="nombre" class="text-red-700 hidden">Mail incorrecto</h>
             </div>
             <label for="website-admin" class="block mb-2 text-sm font-medium text-buscabrown mt-6">Contraseña</label>
-            <div class="flex flex-col">
+            <div class="flex flex-col md:p-2">
                 <div class="flex content-center">
                     <span class="inline-flex items-center px-3 text-sm text-gray-300 outline-none bg-form border border-r-0 border-gray-300 rounded-l-md dark:text-gray-300 dark:border-gray-600">
                         🔒︎
@@ -100,6 +107,7 @@ export const Login = () => {
                     required
                     />
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mt-2 w-6 h-6 cursor-pointer ml-2 hover:stroke-red-700" onClick={showPassword}>
+                        <title>Mostrar contraseña</title>
                         <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
@@ -109,7 +117,7 @@ export const Login = () => {
                 <h class="mt-5 text-sm">¿Todavía no te registraste? <button onClick={(e) => goToRegister(e)} class="underline underline-offset-4 text-third">Sumate</button> a la comunidad de BuscadogQR!</h>
                 <h class="mt-2 text-sm">¿Olvidaste tu contraseña? <button onClick={(e) => forgotPass(e)} class="underline underline-offset-4 text-third">Recuperala</button></h>
             </div>
-            
+
             <button
                 class="mt-6 bg-third border-2 border-third outline-none text-white hover:bg-orange-700 hover:border-orange-700 rounded-3xl font-medium text-sm w-full sm:w-auto px-5 py-2.5 text-center cursor-pointer"
                 onClick={e => goToProfile(e)}

@@ -13,6 +13,7 @@ export const EditPetDetails = () => {
         notes: ""
     });
     const userLogged = localStorage.getItem("userId");
+    const userMail = localStorage.getItem("email");
     const petsCollectionRef = collection(db, "pets");
     const [pet, setPet] = useState([]);
     const [imageSelected, setImageSelected] = useState("");
@@ -36,6 +37,8 @@ export const EditPetDetails = () => {
     };
 
     const submitChanges = async (e) => {
+        document.getElementById("confirmMsg").style.display = "block";
+
         if(imageSelected) {
             e.preventDefault();
         
@@ -57,7 +60,7 @@ export const EditPetDetails = () => {
                 };
         
                 await updateDoc(pet, {...updatedPet1, photo})
-                navigate('/profile');
+                navigate(`/pet/${id}`);
             });
         } else {
             const pet = doc(db, "pets", id);
@@ -71,22 +74,33 @@ export const EditPetDetails = () => {
             };
 
             await updateDoc(pet, updatedPet2)
-            navigate('/profile');
+            navigate(`/pet/${id}`);
         }
     };
 
+    const goBack = (e, id) => {
+        e.preventDefault();
+
+        navigate(`/pet/${id}`);
+    };
+
     return (
-        <div class="flex self-center gap-x-16 text-third flex-col md:flex-row mt-10">
+        <div class="flex flex-col gap-y-5 justify-center m-20 mt-10 items-center">
 
             {!userLogged && goToLogin()}
 
-            <div class="max-w-sm bg-white shadow-lg rounded-lg overflow-hidden my-4">
-                <img class="w-full h-56 object-cover object-center" src="https://www.educima.com/dibujo-para-colorear-perro-dl19661.jpg" alt="avatar"/>
-                <div class="flex items-center px-6 py-3 bg-third">
-                    <h1 class="mx-3 text-white font-semibold text-lg">Mascota</h1>
+            {userMail === pet.userOwner && (
+                <div class="flex flex-row gap-x-2 text-black m-5 mx-10 self-start">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 hover:stroke-amber-400 cursor-pointer" onClick={(e) => goBack(e, pet && pet.id)}>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                    </svg>
+                    <h>Volver a mis mascotas</h>
                 </div>
-                <div class="py-4 px-6">
-                    <div class="flex flex-row flex-wrap gap-4 mt-5">
+            )}
+
+            <div class="flex flex-col self-center">
+                <h1 class="text-titles text-2xl font-bold">Editar información de {pet && pet.name}</h1>
+                    <div class="mt-5">
                         <label for="photo">Foto</label>
                         <input
                             name="photo"
@@ -97,57 +111,56 @@ export const EditPetDetails = () => {
                         />
                     </div>
 
-                    <div class="flex flex-row flex-wrap gap-4 mt-5">
+                    <div class="mt-5">
                         <label>Nombre: </label>
                         <input
                             name="name"
                             onChange={(e) => handleInputChange(e)}
                             type="text"
                             id="first_name"
-                            class="bg-third border border-third text-white outline-none text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            class="bg-form border border-form text-white outline-none text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             placeholder={pet && pet.name}
                         />
                     </div>
 
-                    <div class="flex flex-row flex-wrap gap-4 mt-5">
+                    <div class="mt-5">
                         <label>Edad: </label>
                         <input
                             name="age"
                             onChange={(e) => handleInputChange(e)}
                             type="text"
                             id="age"
-                            class="bg-third border border-third text-white outline-none text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            class="bg-form border border-form text-white outline-none text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             placeholder={pet && pet.age}
                         />
                     </div>
 
-                    <div class="flex flex-row flex-wrap gap-4 mt-5">
+                    <div class="mt-5">
                         <label>Raza: </label>
                         <input
                             name="breed"
                             onChange={(e) => handleInputChange(e)}
                             type="text"
                             id="breed"
-                            class="bg-third border border-third text-white text-sm outline-none rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            class="bg-form border border-form text-white outline-none text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             placeholder={pet && pet.breed}
                         />
                     </div>
 
-                    <div class="flex flex-row flex-wrap gap-4 mt-5">
+                    <div class="mt-5">
                         <label>Notas adicionales: </label>
                         <input
                             name="notes"
                             onChange={(e) => handleInputChange(e)}
                             type="text"
                             id="notes"
-                            class="bg-third border border-third text-white text-sm outline-none rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            placeholder={pet && pet.notes}
+                            class="bg-form border border-form text-white outline-none text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            placeholder={pet && pet.notes || "-"}
                         />
                     </div>
+                    <button class="p-3 bg-third border-2 border-third rounded-3xl outline-none hover:bg-orange-700 hover:border-orange-700 text-white mt-10 cursor-pointer" onClick={(e) => submitChanges(e)}>Confirmar cambios</button>
+                    <h class="p-3 mt-2 text-green-700 hidden" id="confirmMsg">Confirmando cambios...</h>
                 </div>
-
-                <button class="text-white border border-2 border-third outline-none rounded-xl p-2 hover:text-third hover:bg-white cursor-pointer bg-third ml-6" onClick={(e) => submitChanges(e)}>Confirmar cambios</button>
-            </div>
         </div>
     )
 };

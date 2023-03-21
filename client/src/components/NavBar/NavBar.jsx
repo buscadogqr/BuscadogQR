@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../../assets/BuscadogIcon.png";
 import { db } from "../../firebase-config.js";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs } from "firebase/firestore";
 import "./NavBar.css";
 
 export const NavBar = () => {
@@ -23,7 +23,16 @@ export const NavBar = () => {
             setUser(user);
         };
 
+        const checkIfAdmin = async () => {
+            const userDoc = doc(db, "users", userLogged);
+            const userData = await getDoc(userDoc);
+            const userInfo = userData.data();
+    
+            setUser(userInfo);
+        };
+
         getUser();
+        checkIfAdmin();
     }, []);
 
     const goTo = (e, whereTo) => {
@@ -31,10 +40,6 @@ export const NavBar = () => {
 
         navigate(`/${whereTo}`);
         document.getElementById(".mobile-menu").style.display = "none";
-    };
-
-    const checkIfAdmin = () => {
-        if(userLogged && userLogged !== "buscadogqr@gmail.com") navigate("/profile");
     };
 
     const openMenu = (e) => {
@@ -51,8 +56,8 @@ export const NavBar = () => {
                     <div class="flex justify-between">
                         <div class="flex space-x-7">
                             <div>
-                                <a href="#" class="flex items-center py-4 px-2">
-                                    <img src={logo} alt="Logo" class="h-14 w-14 mr-2"/>
+                                <a href="/home" class="flex items-center py-4 px-2">
+                                    <img src={logo} alt="BuscadogQR" class="h-14 w-14 mr-2"/>
                                 </a>
                             </div>
                             <div class="text-white flex items-center space-x-1 gap-x-5">

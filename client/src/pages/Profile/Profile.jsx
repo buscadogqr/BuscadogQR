@@ -1,14 +1,17 @@
-import React,  {useEffect, useState } from "react";
+import React,  { useEffect, useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { db } from "../../firebase-config.js";
 import { collection, getDocs, doc, deleteDoc } from "firebase/firestore";
 import "./Profile.css";
+import { CToast,  CToastBody, CButton, CToastClose, CToaster } from '@coreui/react';
 
 export const Profile = () => {
     const userLogged = localStorage.getItem("userId");
     const navigate = useNavigate();
     const usersCollectionRef = collection(db, "users");
     const [user, setUser] = useState([]);
+    const [toast, addToast] = useState(0)
+    const toaster = useRef()
     
     useEffect(() => {
         const getUser = async () => {
@@ -38,9 +41,23 @@ export const Profile = () => {
         navigate(`/${whereTo}`);
     };
 
-    const confirmDeletion = () => {
-        document.getElementById('myModal').style.display = 'block';
-    };
+    const confirmDeletion = (
+        // document.getElementById('myModal').style.display = 'block';
+
+        <CToast closebutton>
+            <CToastBody>
+                Hello, world! This is a toast message.
+                <div className="mt-2 pt-2 border-top">
+                <CButton type="button" color="primary" size="sm">
+                    Take action
+                </CButton>
+                <CToastClose component={CButton} color="secondary" size="sm" className="ms-1">
+                    Close
+                </CToastClose>
+                </div>
+            </CToastBody>
+        </CToast>
+    );
 
     const cancelDeletion = () => {
         document.getElementById('myModal').style.display = 'none';
@@ -114,14 +131,22 @@ export const Profile = () => {
                 </div>
 
                 <div class="flex flex-col md:flex-row mt-14 gap-y-5 gap-x-5">
-                    <div class="flex flex-row gap-x-5 bg-titles outline-none text-white border border-2 border-titles rounded-xl p-2 hover:border-green-900 hover:bg-green-900 cursor-pointer" onClick={(e) => goTo(e, "editProfile")}>
+                    <div class="flex flex-row gap-x-5 bg-orange-800 outline-none text-white border border-2 border-orange-800 rounded-xl p-2 hover:border-orange-700 hover:bg-orange-700 cursor-pointer" onClick={(e) => goTo(e, "editProfile")}>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="white" class="w-6 h-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
                         </svg>
                         <button>Editar perfil</button>
                     </div>
 
-                    <div class="flex flex-row gap-x-5 bg-titles outline-none text-white border border-2 border-titles rounded-xl p-2 hover:border-green-900 hover:bg-green-900 cursor-pointer" onClick={(e) => handleLogout(e)}>
+                    {/* <div class="flex flex-row gap-x-5 bg-orange-800 outline-none text-white border border-2 border-orange-800 rounded-xl p-2 hover:border-orange-700 hover:bg-orange-700 cursor-pointer" onClick={() => addToast(confirmDeletion)}>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="white" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5.636 5.636a9 9 0 1012.728 0M12 3v9" />
+                        </svg>
+                        <h3>Cerrar sesión</h3>
+                    </div> */}
+                    {/* <CToaster ref={toaster} push={toast} placement="top-end" /> */}
+                    
+                    <div class="flex flex-row gap-x-5 bg-orange-800 outline-none text-white border border-2 border-orange-800 rounded-xl p-2 hover:border-orange-700 hover:bg-orange-700 cursor-pointer" onClick={(e) => handleLogout(e)}>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="white" class="w-6 h-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M5.636 5.636a9 9 0 1012.728 0M12 3v9" />
                         </svg>

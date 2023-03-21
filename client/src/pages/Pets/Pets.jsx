@@ -31,7 +31,6 @@ export const Pets = () => {
         getPets();
     }, []);
 
-
     const goTo = (e, id) => {
         e.preventDefault();
 
@@ -39,22 +38,15 @@ export const Pets = () => {
             navigate(`/pet/${id}`)
         }, 1500);
     };
-    
-    // const delPet = async (e, id) => {
-    //     e.preventDefault();
-
-    //     const userDoc = doc(db, "pets", id);
-    //     await deleteDoc(userDoc)
-    //     navigate("/pets");
-    // };
 
     const goToLogin = () => {
         navigate("/login");
     };
 
-    const extendMemb = (e) => {
+    const extendMemb = (e, id) => {
         e.preventDefault();
 
+        localStorage.setItem("petToExtend", id);
         navigate("/addMore");
     };
 
@@ -89,7 +81,7 @@ export const Pets = () => {
                                     </div>
                                     {/* <h>Quiero <h class="cursor-pointer text-red-600" onClick={(e) => delPet(e, pet.id)}>cancelar</h> la suscripción de esta mascota</h>
                                     <h>Quiero <h class="cursor-pointer text-red-600" onClick={(e) => delPet(e, pet.id)}>cancelar</h> la suscripción de esta mascota</h> */}
-                                    <h>La membresía de esta mascota vence el {user && user.memberships.find(memb => memb.pet === pet.name)?.expiration}, ¿querés <h class="cursor-pointer text-third underline underline-offset-4" onClick={(e) => extendMemb(e)}>extenderla</h>?</h>
+                                    <h>La membresía de esta mascota vence el {user && user.memberships.find(memb => memb.pet === pet.name)?.expiration}, ¿querés <h class="cursor-pointer text-third underline underline-offset-4" onClick={(e) => extendMemb(e, pet.id)}>extenderla</h>?</h>
                                 </div>
                             )})}   
                     </div>

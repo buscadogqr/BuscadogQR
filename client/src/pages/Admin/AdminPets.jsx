@@ -11,6 +11,8 @@ export const AdminPets = () => {
     const [filterPets, setFilterPets] = useState([]);
     const [input, setInput] = useState("");
     const userLogged = localStorage.getItem("email");
+    const userId = localStorage.getItem("userId");
+    const [user, setUser] = useState([]);
 
     useEffect(() => {
         const getPets = async () => {
@@ -20,7 +22,16 @@ export const AdminPets = () => {
             setFilterPets(petsInfo);
         };
 
+        const checkIfAdmin = async () => {
+            const userDoc = doc(db, "users", userId);
+            const userData = await getDoc(userDoc);
+            const userInfo = userData.data();
+    
+            setUser(userInfo);
+        };
+
         getPets();
+        checkIfAdmin();
     }, []);
 
     const goToAdmin = (e) => {
@@ -58,22 +69,24 @@ export const AdminPets = () => {
         navigate(`/${whereTo}`);
     };
 
-    const goToLogin = () => {
-        navigate("/login");
-    };
-
     return (
         <div class="m-10">
 
-            { !userLogged && goToLogin() }
-            { userLogged !== "buscadogqr@gmail.com" && (
+            { !userLogged && (
+                <div class="flex flex-col gap-y-5 m-16">
+                    <h class="pb-5 text-titles text-4xl font-bold">Oops! Parece que no tienes los permisos para acceder a esta ruta</h>
+                    <button class="self-start p-3 bg-third hover:bg-orange-700 text-white rounded-3xl" onClick={(e) => goTo(e, "login")}>Iniciar sesión</button>
+                </div>
+            )}
+
+            { !userLogged || user && user.type !== "Admin" && (
                 <div class="flex flex-col gap-y-5 m-16">
                     <h class="pb-5 text-titles text-4xl font-bold">Oops! Parece que no tienes los permisos para acceder a esta ruta</h>
                     <button class="self-start p-3 bg-third hover:bg-orange-700 text-white rounded-3xl" onClick={(e) => goTo(e, "profile")}>Volver a mi perfil</button>
                 </div>
             )}
 
-            {userLogged === "buscadogqr@gmail.com" && (<div>
+            {user && user.type === "Admin" && (<div>
                 <div class="flex flex-row gap-x-2">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 hover:stroke-amber-400 cursor-pointer" onClick={(e) => goToAdmin(e)}>
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />

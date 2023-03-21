@@ -58,7 +58,17 @@ export const PetDetails = () => {
                             <h1 class="mx-3 text-white font-semibold text-lg">Mascota</h1>
                         </div>
                         <div class="py-4 px-6">
-                            <h1 class="text-2xl font-semibold">{pet && pet.name}</h1>
+                            <div class="flex justify-between">
+                                <h1 class="text-2xl font-semibold">{pet && pet.name}</h1>
+                                {userMail === pet.userOwner && (
+                                    <Link to={`/editPetInfo/${id}`}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="white" class="w-6 h-6 hover:stroke-amber-400">
+                                            <title>Editar información de {pet.name}</title>
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                                        </svg>
+                                    </Link>
+                                )}
+                            </div>
                             <div class="flex items-center mt-4">
                                 <h1 class="px-2 text-sm">Edad: {pet && pet.age}</h1>
                             </div>
@@ -70,13 +80,7 @@ export const PetDetails = () => {
                             </div>
                         </div>
                     </div>
-                    {userLogged === pet.userOwner && (
-                        <Link to={`/editPetInfo/${id}`}>
-                            <button class="flex flex-row gap-x-5 bg-third outline-none text-white border border-2 border-third rounded-xl p-2 hover:bg-orange-700 hover:border-orange-700 cursor-pointer mb-5">Editar información de mascota</button>
-                        </Link>
-                    )}
                 </div>
-
                 <div class="max-w-sm bg-gray-700 shadow-lg rounded-lg overflow-hidden my-4">
                     <img class="w-full h-56 object-cover object-center" src={user && user.profilePic || ""} alt={user && user.name}/>
                     <div class="flex items-center px-6 py-3 bg-gray-800">
