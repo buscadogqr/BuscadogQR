@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { db } from "../../firebase-config.js";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, getDocs } from "firebase/firestore";
 import "./Register.css";
 import axios from "axios";
 
@@ -23,48 +23,67 @@ export const Register = () => {
         if(input.password === confirmPass) return "Passwords match!";
         else if(confirmPass !== "") return false;
     };
+
+    const checkIfEmailExists = async () => {
+        const users = await getDocs(usersCollectionRef);
+        const usersInfo = users && users.docs.map(user => ({...user.data(), id: user.id}));
+
+        if(usersInfo.find(user => user.mail == input.mail)) return "Mail already registered";
+        else return "Mail available";
+    };
     
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if(checkPasswordsMatch() === "Passwords match!") {
-            const defaultUserImage = "https://img.freepik.com/vector-premium/icono-avatar-masculino-persona-desconocida-o-anonima-icono-perfil-avatar-predeterminado-usuario-redes-sociales-hombre-negocios-silueta-perfil-hombre-aislado-sobre-fondo-blanco-ilustracion-vectorial_735449-120.jpg";
-            
-            document.getElementById("passwordsDontMatch").style.display = 'none';
-            document.getElementById("registerModal").style.display = 'block';
-    
-            //Si el usuario adjunta una foto de perfil, se sube a cloudinary y se guarda en la bd
-            if(imageSelected) {
-                const formData = new FormData();
-                formData.append("file", imageSelected);
-                formData.append("upload_preset", "yhp17atl");
+        //chequeamos que el mail indicado esté disponible
+        if(await checkIfEmailExists() === "Mail available") {
+            //chequeamos que las contraseñas coincidan
+            if(checkPasswordsMatch() === "Passwords match!") {
+                const defaultUserImage = "https://img.freepik.com/vector-premium/icono-avatar-masculino-persona-desconocida-o-anonima-icono-perfil-avatar-predeterminado-usuario-redes-sociales-hombre-negocios-silueta-perfil-hombre-aislado-sobre-fondo-blanco-ilustracion-vectorial_735449-120.jpg";
                 
-                await axios.post("https://api.cloudinary.com/v1_1/dtm9ibgrj/image/upload", formData)
-                .then(response => {
-                    const photo = response.data.secure_url;
-
-                    addDoc(usersCollectionRef, { ...input, profilePic: photo, type: "Usuario sin membresías" } )
-                    .then(data => {
-                        document.getElementById("registerModal").style.display = 'none';
-                        navigate('/login');
-                    });
-                })
-            }
+                document.getElementById("passwordsDontMatch").style.display = 'none';
+                document.getElementById("emailAlreadyRegistered").style.display = "none";
+                document.getElementById("registerModal").style.display = 'block';
+        
+                //Si el usuario adjunta una foto de perfil, se sube a cloudinary y se guarda en la bd
+                if(imageSelected) {
+                    const formData = new FormData();
+                    formData.append("file", imageSelected);
+                    formData.append("upload_preset", "yhp17atl");
+                    
+                    await axios.post("https://api.cloudinary.com/v1_1/dtm9ibgrj/image/upload", formData)
+                    .then(response => {
+                        const photo = response.data.secure_url;
     
-            //Si el usuario NO adjunta una foto de perfil, se guarda en la bd una por default
+                        addDoc(usersCollectionRef, { ...input, profilePic: photo, type: "Usuario sin membresías" } )
+                        .then(data => {
+                            document.getElementById("registerModal").style.display = 'none';
+                            navigate('/login');
+                        });
+                    })
+                }
+        
+                //Si el usuario NO adjunta una foto de perfil, se guarda en la bd una por default
+                else {
+                    addDoc(usersCollectionRef, { ...input, profilePic: defaultUserImage, type: "Usuario sin membresías" } )
+                    .then(data => {
+                        setTimeout( () => {
+                            document.getElementById("registerModal").style.display = 'none';
+                            navigate('/login');
+                        }, 1000)
+                    });
+                }
+            }
+            //si las contraseñas no coinciden, mostramos el error
             else {
-                addDoc(usersCollectionRef, { ...input, profilePic: defaultUserImage, type: "Usuario sin membresías" } )
-                .then(data => {
-                    setTimeout( () => {
-                        document.getElementById("registerModal").style.display = 'none';
-                        navigate('/login');
-                    }, 1000)
-                });
+                document.getElementById("emailAlreadyRegistered").style.display = "none";
+                document.getElementById("passwordsDontMatch").style.display = 'block';
             }
         }
-
+        //si el mail no se encuentra disponible, mostramos el error
         else {
-            document.getElementById("passwordsDontMatch").style.display = 'block';
+            document.getElementById("passwordsDontMatch").style.display = 'none';
+            document.getElementById("emailAlreadyRegistered").style.display = "block";
         }
     };
 
@@ -82,6 +101,12 @@ export const Register = () => {
             if(tipo.type == "password") tipo.type = "text";
             else tipo.type = "password";     
         }
+    };
+
+    const forgotPass = (e) => {
+        e.preventDefault();
+
+        navigate("/forgotPass");
     };
 
     document.getElementById('confirmPass') && document.getElementById('confirmPass').addEventListener('keypress', function(event) {
@@ -213,6 +238,12 @@ export const Register = () => {
                     {(
                         <div id="passwordsDontMatch" className="modal" class="mb-5 text-red-700 font-bold hidden">
                             <h>Las contraseñas no coinciden</h>
+                        </div>
+                    )}
+
+                    {(
+                        <div id="emailAlreadyRegistered" class="mb-5 mt-10 text-third font-bold hidden">
+                            <h>Oops, parece que ya tenemos un usuario registrado con el mail <h class="text-orange-700">{input.mail}</h>. Si no te registraste ya, te pedimos que elijas un mail distinto por favor. <br/> Si ya te registraste pero olvidaste tu contraseña, te invitamos a que la <button onClick={(e) => forgotPass(e)} class="underline underline-offset-4 text-orange-700">recuperes</button>.</h>
                         </div>
                     )}
                 </div>
