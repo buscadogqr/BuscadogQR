@@ -19,8 +19,6 @@ import { EditPetDetails } from "./pages/Pets/EditPetDetails.jsx";
 import { Subscribe } from "./pages/Subscribe/Subscribe.jsx";
 import { AddPet } from "./pages/Pets/AddPet.jsx";
 import { Admin } from "./pages/Admin/Admin.jsx";
-import { AdminUsers } from "./pages/Admin/AdminUsers.jsx";
-import { AdminPets } from "./pages/Admin/AdminPets.jsx";
 import { OurStories } from "./pages/OurStories/OurStories.jsx";
 import { ForgotPassword } from "./pages/ForgotPassword/ForgotPassword.jsx";
 import { ResetPassword } from "./pages/ForgotPassword/ResetPassword.jsx";
@@ -102,16 +100,6 @@ const AppRouter = () => {
           <Route
           path="/admin"
           element={<Admin/>}
-          />
-
-          <Route
-          path="/adminUsers"
-          element={<AdminUsers/>}
-          />
-
-          <Route
-          path="/adminPets"
-          element={<AdminPets/>}
           />
 
           <Route
