@@ -5,7 +5,6 @@ import { collection, getDocs } from "firebase/firestore";
 
 export const PetDetails = () => {
     const { id } = useParams();
-    const userLogged = localStorage.getItem("userId");
     const userMail = localStorage.getItem("email");
     const usersCollectionRef = collection(db, "users");
     const petsCollectionRef = collection(db, "pets");

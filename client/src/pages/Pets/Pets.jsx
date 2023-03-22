@@ -9,7 +9,6 @@ export const Pets = () => {
     const navigate = useNavigate();
     const petsCollectionRef = collection(db, "pets");
     const usersCollectionRef = collection(db, "users");
-    const [user, setUser] = useState([]);
     const [pets, setPets] = useState([]);
 
     useEffect(() => {
@@ -20,14 +19,6 @@ export const Pets = () => {
             setPets(pets);
         };
 
-        const getUser = async () => {
-            const users = await getDocs(usersCollectionRef);
-            const usersInfo = users && users.docs.map(user => ({...user.data(), id: user.id}));
-            const user = usersInfo && usersInfo.find(user => user.id === userLoggedId);
-            setUser(user);
-        };
-
-        getUser();
         getPets();
     }, []);
 
@@ -43,13 +34,6 @@ export const Pets = () => {
         navigate("/login");
     };
 
-    const extendMemb = (e, id) => {
-        e.preventDefault();
-
-        localStorage.setItem("petToExtend", id);
-        navigate("/addMore");
-    };
-
     return (
         <div>
 
@@ -61,7 +45,7 @@ export const Pets = () => {
                     <h1>Oops! Parece que todavía no tienes mascotas agregadas</h1>
                     <h1>¿Quieres suscribirte a la comunidad de BuscadogQR y agregar una mascota?</h1>
                     <Link to="/subscribe">
-                        <button class="self-center text-white outline-none bg-third border-2 border-third rounded-3xl font-medium text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:bg-orange-700 hover:border-orange-700 mt-5">Suscribirme</button>
+                        <button class="self-center text-white outline-none bg-third border-2 border-third rounded-3xl font-medium text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:bg-orange-700 hover:border-orange-700 mt-5">Quiero suscribirme</button>
                     </Link>
                 </div>
             )}
@@ -79,9 +63,6 @@ export const Pets = () => {
                                             <h1>{pet.name}</h1>
                                         </div>
                                     </div>
-                                    {/* <h>Quiero <h class="cursor-pointer text-red-600" onClick={(e) => delPet(e, pet.id)}>cancelar</h> la suscripción de esta mascota</h>
-                                    <h>Quiero <h class="cursor-pointer text-red-600" onClick={(e) => delPet(e, pet.id)}>cancelar</h> la suscripción de esta mascota</h> */}
-                                    {/* <h>La membresía de esta mascota vence el {user && user.memberships.find(memb => memb.pet === pet.name)?.expiration}, ¿querés <h class="cursor-pointer text-third underline underline-offset-4" onClick={(e) => extendMemb(e, pet.id)}>extenderla</h>?</h> */}
                                 </div>
                             )})}   
                     </div>

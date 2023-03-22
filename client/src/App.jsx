@@ -22,8 +22,6 @@ import { Admin } from "./pages/Admin/Admin.jsx";
 import { OurStories } from "./pages/OurStories/OurStories.jsx";
 import { ForgotPassword } from "./pages/ForgotPassword/ForgotPassword.jsx";
 import { ResetPassword } from "./pages/ForgotPassword/ResetPassword.jsx";
-import { AddMore } from "./pages/Subscribe/AddMore.jsx";
-import { ExtendMembership } from "./pages/Pets/ExtendMembership.jsx";
 
 const AppRouter = () => {
   return (
@@ -116,16 +114,6 @@ const AppRouter = () => {
           path="resetPass"
           element={<ResetPassword/>}
           />
-
-          {/* <Route
-          path="addMore"
-          element={<AddMore/>}
-          />
-
-          <Route
-          path="extendMembership/:months"
-          element={<ExtendMembership/>}
-          /> */}
 
         </Routes>
 

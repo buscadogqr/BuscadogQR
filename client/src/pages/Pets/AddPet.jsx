@@ -37,18 +37,15 @@ export const AddPet = () => {
                 const breedAnimal = `${input.animal} - ${input.breed}`
 
                 const todayDate = new Date();
-                const newDate = new Date();
-                newDate.setMonth(newDate.getMonth() + 1);
                 const acquired = todayDate.getDate() + "-" + (todayDate.getMonth() + 1) + "-" + todayDate.getFullYear();
-                const expiration = newDate.getDate() + "-" + (newDate.getMonth() + 1) + "-" + newDate.getFullYear();
             
                 addDoc(petsCollectionRef, { userOwner: user.mail, name: input.name, age: input.age, breed: breedAnimal, photo, notes: input.notes })
                 .then(async data => {
                     if(user.memberships && user.memberships.length) {
-                        await updateDoc(userCr,  { type: "Usuario con membresías", memberships: [...user.memberships, { acquired, expiration, months: 1, status: "Up to date", pet: input.name }] });
+                        await updateDoc(userCr,  { type: "Usuario con membresías", memberships: [...user.memberships, { acquired, pet: input.name }] });
                         navigate('/pets');
                     } else {
-                        await updateDoc(userCr,  { type: "Usuario con membresías", memberships: [{ acquired, expiration, months: 1, status: "Up to date", pet: input.name }] });
+                        await updateDoc(userCr,  { type: "Usuario con membresías", memberships: [{ acquired, pet: input.name }] });
                         navigate('/pets');
                     }
                 })
@@ -61,18 +58,15 @@ export const AddPet = () => {
             const user = userInfo.data();
 
             const todayDate = new Date();
-            const newDate = new Date();
-            newDate.setMonth(newDate.getMonth() + Number(1));
             const acquired = todayDate.getDate() + "-" + (todayDate.getMonth() + 1) + "-" + todayDate.getFullYear();
-            const expiration = newDate.getDate() + "-" + (newDate.getMonth() + 1) + "-" + newDate.getFullYear();
 
             addDoc(petsCollectionRef, { userOwner: user.mail, name: input.name, age: input.age, breed: breedAnimal, photo: "https://www.educima.com/dibujo-para-colorear-perro-dl19661.jpg", notes: input.notes })
             .then(async data => {
                 if(user.memberships && user.memberships.length) {
-                    await updateDoc(userCr,  { type: "Usuario con membresías", memberships: [...user.memberships, { acquired, expiration, months: 1, status: "Up to date", pet: input.name }] });
+                    await updateDoc(userCr,  { type: "Usuario con membresías", memberships: [...user.memberships, { acquired, pet: input.name }] });
                     navigate('/pets');
                 } else {
-                    await updateDoc(userCr,  { type: "Usuario con membresías", memberships: [{ acquired, expiration, months: 1, status: "Up to date", pet: input.name }] });
+                    await updateDoc(userCr,  { type: "Usuario con membresías", memberships: [{ acquired, pet: input.name }] });
                     navigate('/pets');
                 }
             })

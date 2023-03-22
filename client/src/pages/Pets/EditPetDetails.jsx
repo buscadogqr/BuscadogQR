@@ -14,7 +14,6 @@ export const EditPetDetails = () => {
         notes: ""
     });
     const userLogged = localStorage.getItem("userId");
-    const userMail = localStorage.getItem("email");
     const petsCollectionRef = collection(db, "pets");
     const [pet, setPet] = useState([]);
     const [imageSelected, setImageSelected] = useState("");

@@ -22,40 +22,24 @@ export const Subscribe = () => {
                 <div class="h-1 mx-auto gradient w-64 opacity-25 my-0 py-0 rounded-t"></div>
                 </div>
                 <div class="flex flex-col sm:flex-row justify-center pt-12 my-12 sm:my-4">
-                <div class="flex flex-col w-5/6 lg:w-1/4 mx-auto lg:mx-0 rounded-none lg:rounded-l-lg bg-white mt-4">
-                    <div class="flex-1 bg-white text-gray-600 rounded-t rounded-b-none overflow-hidden shadow">
-                    <div class="p-8 text-3xl font-bold text-center border-b-4">
-                        Costo inicial
-                    </div>
-                    <ul class="w-full text-center text-sm">
-                        <li class="border-b py-4">Activación e instalación del código QR en el collar</li>
-                    </ul>
-                    </div>
-                    <div class="flex-none mt-auto bg-white rounded-b rounded-t-none overflow-hidden shadow p-6">
-                    <div class="w-full pt-6 text-3xl text-gray-600 font-bold text-center">
-                        $1200
-                    </div>
-                    </div>
-                </div>
                 <div class="flex flex-col w-5/6 lg:w-1/3 mx-auto lg:mx-0 rounded-lg bg-white mt-4 sm:-mt-6 shadow-lg z-10">
                     <div class="flex-1 bg-white rounded-t rounded-b-none overflow-hidden shadow">
-                    <div class="w-full p-8 text-3xl font-bold text-center">Costo mensual</div>
+                    <div class="w-full p-8 text-3xl font-bold text-center">Collar con código QR</div>
                     <div class="h-1 w-full gradient my-0 py-0 rounded-t"></div>
                     <ul class="w-full text-center text-base font-bold">
-                        <li class="border-b py-4">Mantenimiento</li>
+                        <li class="border-b py-4">Collar + mantenimiento de la página</li>
                     </ul>
                     </div>
                     <div class="flex-none mt-auto bg-white rounded-b rounded-t-none overflow-hidden shadow p-6">
                     <div class="w-full pt-6 text-4xl font-bold text-center">
-                        $300
-                        <span class="text-base"> ($10 por día)</span>
+                        $2000
                     </div>
                     </div>
                 </div>
                 </div>
             </div>
 
-            <a href="https://mpago.la/1FCDhWB" target="_blank" class="self-center text-white bg-third border-2 border-third rounded-3xl font-medium text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:bg-orange-700 outline-none hover:border-orange-700 cursor-pointer mt-10">Suscribirme</a>
+            <a href="https://mpago.la/1MMC4PL" target="_blank" class="self-center text-white bg-third border-2 border-third rounded-3xl font-medium text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:bg-orange-700 outline-none hover:border-orange-700 cursor-pointer mt-10">Quiero suscribirme</a>
         </div>
     )
 };
