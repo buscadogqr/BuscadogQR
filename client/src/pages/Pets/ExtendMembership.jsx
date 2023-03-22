@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
 import { db } from "../../firebase-config.js";
 import { collection, updateDoc, doc, getDoc } from "firebase/firestore";
 
@@ -8,36 +7,64 @@ export const ExtendMembership = () => {
     const navigate = useNavigate();
     const userLogged = localStorage.getItem("userId");
     const petToExtend = localStorage.getItem("petToExtend");
-    const petsCollectionRef = collection(db, "pets");
     const { months } = useParams();
     
-    const handleSubmit = (async e => {
-        e.preventDefault();
+    const extending = (async () => {
 
         const userInfo = doc(db, "users", userLogged);
         const userData = await getDoc(userInfo);
         const user = userData.data();
 
-        const membershipToExtend = user && user.memberships.find(memb => memb.pet === petToExtend);
-        const pastMemberships = user && user.memberships.filter(memb => memb.pet !== petToExtend);
-        
-        // const todayDate = new Date();
-        // const newDate = new Date();
-        // newDate.setMonth(newDate.getMonth() + Number(months));
-        // const acquired = todayDate.getDate() + "-" + (todayDate.getMonth() + months) + "-" + todayDate.getFullYear();
-        // const expiration = newDate.getDate() + "-" + (newDate.getMonth() + months) + "-" + newDate.getFullYear();
+        const petInfo = doc(db, "pets", petToExtend);
+        const petData = await getDoc(petInfo);
+        const pet = petData.data();
+
+        let membershipToExtend = user && user.memberships.find(memb => memb.pet === pet.name);
+        const pastMemberships = user && user.memberships.filter(memb => memb.pet !== pet.name);
+
+        //setting the new expiration date + adding the new months
+        let [ day, month, year ] = membershipToExtend.expiration.split("-");
+        let monthsToGo = 0;
+        let membership = {};
+
+        for(let i = 0; i <= Number(months); i++) {
+            if(Number(month) <= 12) month = Number(month) + 1;
+            else {
+                ++monthsToGo;
+            }
+        }
+
+        if(monthsToGo) {
+           membership = {
+                acquired: membershipToExtend && membershipToExtend.acquired,
+                expiration: `${day}-${monthsToGo}-${++year}`,
+                pet: pet && pet.name,
+                months: membershipToExtend && Number(membershipToExtend.months) + Number(months),
+                status: "Up to date"
+            }
+        }
+        else {
+            membership = {
+                acquired: membershipToExtend && membershipToExtend.acquired,
+                expiration: `${day}-${month}-${year}`,
+                months: membershipToExtend && Number(membershipToExtend.months) + Number(months),
+                status: "Up to date"
+            }
+        }
     
-        // addDoc(petsCollectionRef, { userOwner: user.mail, name: input.name, age: input.age, breed: breedAnimal, photo, notes: input.notes })
-        // .then(async data => {
-        //     if(user.memberships && user.memberships.length) {
-        //         await updateDoc(userCr,  { type: "Usuario con membresías", memberships: [...user.memberships, { acquired, expiration, months: months, status: "Up to date", pet: input.name }] });
-        //         navigate('/pets');
-        //     } else {
-        //         await updateDoc(userCr,  { type: "Usuario con membresías", memberships: [{ acquired, expiration, months: months, status: "Up to date", pet: input.name }] });
-        //         navigate('/pets');
-        //     }
-        // })
+        //updating the new membership to the user's memberships
+        updateDoc(userInfo, { memberships: [ ...pastMemberships, membership ] })
+        .then(data => {
+            navigate("/pets")
+        });
     });
+
+    const confirmed = () => {
+        setTimeout(async () => {
+            await extending();
+            navigate("/pets");
+        }, 5000)
+    }
 
     const goToLogin = () => {
         navigate("/login");
@@ -47,7 +74,8 @@ export const ExtendMembership = () => {
         <div class="flex m-16">
             {!userLogged && goToLogin}
 
-            <h class="pb-5 text-titles text-4xl font-bold">Confirmando la extensión de tu membresía...</h>
+            <h class="pb-5 text-titles text-4xl font-bold">Confirmando la extensión de tu suscripción...</h>
+            { confirmed() }
         </div>
     )
 };

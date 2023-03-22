@@ -61,9 +61,14 @@ export const Login = () => {
         navigate("/forgotPass");
     };
 
-    document.getElementById('password') && document.getElementById('password').addEventListener('keypress', function(event) {
-        if (event.keyCode == 13) {
-            event.preventDefault();
+    document.getElementById("input-group-1") && document.getElementById("input-group-1").addEventListener("keydown", function(event) {
+        if(event.keyCode == 13) {
+            goToProfile(event);
+        }
+    });
+
+    document.getElementById("password") && document.getElementById("password").addEventListener("keydown", function(event) {
+        if(event.keyCode == 13) {
             goToProfile(event);
         }
     });

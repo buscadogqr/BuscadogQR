@@ -161,7 +161,7 @@ export const AddPet = () => {
                     />                          
                 </div>
 
-                <button class="bg-third text-white border border-2 border-third outline-none rounded-3xl p-2 mt-10 hover:text-third hover:bg-white cursor-pointe" onClick={(e) => handleSubmit(e)}>¡Agregar mascota!</button>
+                <button class="bg-third text-white border border-2 border-third outline-none rounded-3xl p-2 mt-10 hover:bg-orange-700 hover:border-orange-700 cursor-pointer" onClick={(e) => handleSubmit(e)}>¡Agregar mascota!</button>
 
             </div>
         </div>

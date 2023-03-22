@@ -129,7 +129,7 @@ const AppRouter = () => {
           element={<ResetPassword/>}
           />
 
-          <Route
+          {/* <Route
           path="addMore"
           element={<AddMore/>}
           />
@@ -137,7 +137,7 @@ const AppRouter = () => {
           <Route
           path="extendMembership/:months"
           element={<ExtendMembership/>}
-          />
+          /> */}
 
         </Routes>
 

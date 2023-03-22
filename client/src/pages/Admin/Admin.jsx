@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { db } from "../../firebase-config.js";
-import { collection, getDocs, getDoc, doc } from "firebase/firestore";
+import { collection, getDocs, getDoc, doc, updateDoc } from "firebase/firestore";
 
 export const Admin = () => {
     const navigate = useNavigate();
@@ -15,6 +15,7 @@ export const Admin = () => {
     const [filterUsers, setFilterUsers] = useState([]);
     const [filterPets, setFilterPets] = useState([]);
     const [input, setInput] = useState("");
+    const [inputPets, setInputPets] = useState("");
 
     useEffect(() => {
         const getUsers = async () => {
@@ -75,6 +76,7 @@ export const Admin = () => {
         };
         
         setFilterUsers(results);
+        if(!results.length) setInput("");
     };
 
     const showUserInfo = (e, id) => {
@@ -98,7 +100,7 @@ export const Admin = () => {
 
         //encontrando el id del perro
         const allPets = await getDocs(petsCollectionRef);
-        const petsInfo = allPets && allPets.docs.map(user => ({...user.data(), id: user.id}));
+        const petsInfo = allPets && allPets.docs.map(pet => ({...pet.data(), id: pet.id}));
         const petData = petsInfo && petsInfo.find(pet => pet.name === petName && pet.userOwner === userData.mail);
         //eliminando al perro
         const pet = doc(db, "pets", petData.id);
@@ -132,11 +134,14 @@ export const Admin = () => {
 
     const searchPet = (e) => {
         e.preventDefault();
+        const results = [];
 
-        const allPets = pets.length && pets.filter(data => data.name.toLowerCase() === input.toLowerCase());
+        for(let i = 0; i < pets.length; i++) {
+            if(pets[i].name.toLowerCase().search(inputPets.toLowerCase()) !== -1) results.push(pets[i]);
+        };
 
-        if(Array.isArray(allPets)) setFilterPets(allPets);
-        else setFilterPets([allPets]);
+        setFilterPets(results);
+        if(!results.length) setInputPets("");
     };
 
     const allPets = (e) => {
@@ -184,9 +189,9 @@ export const Admin = () => {
                 </div>
             )}
 
-            {user && user.type === "Admin" && (<div class="m-16">
-                <h1 class="pb-5 text-titles text-4xl font-bold">Información de administrador</h1>
-                <div class="flex flex-col gap-y-5 md:grid md:grid-cols-2 md:gap-x-5 m-5 justify-self-center">
+            {user && user.type === "Admin" && (<div>
+                <h1 class="pb-5 m-16 mb-5 text-titles text-4xl font-bold">Información de administrador</h1>
+                <div class="flex flex-col gap-y-5 md:grid md:grid-cols-2 md:gap-x-5 m-16 justify-self-center">
                     <div class="bg-third text-white p-5">
                         <h2 class="font-semibold mb-2">Usuarios</h2>
                         <h class="m-5 text-3xl">{users && users.length}</h>
@@ -197,8 +202,8 @@ export const Admin = () => {
                     </div>
                 </div>
 
-                <div class="mt-16 text-white m-5 flex flex-col">
-                    <div class="w-fit md:w-auto">
+                <div class="text-white flex flex-col mb-10">
+                    <div class="w-screen md:w-auto md:mx-16 md:mt-5 md:mb-1">
                         <div class="flex flex-row gap-x-5 mb-5 bg-buscabrown p-5">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 hover:stroke-amber-400 cursor-pointer hover:rotate-90" onClick={(e) => showUsersOrPets(e, "usersList")}>
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
@@ -258,6 +263,7 @@ export const Admin = () => {
                                                                     <h>Suscripción de {memb.pet}</h>
                                                                     <h>Adquirida: {memb.acquired}</h>
                                                                     <h>Expira: {memb.expiration}</h>
+                                                                    <h>Meses: {memb.months}</h>
                                                                     <h>Estado: {memb.status === "Up to date" && "Al día" || "Expirada"}</h>
                                                                 </div>
 
@@ -298,7 +304,7 @@ export const Admin = () => {
                             )}
                         </div>
                     </div>
-                    <div>
+                    <div class="w-screen md:w-auto md:m-16 md:mt-1">
                         <div class="flex flex-row gap-x-5 bg-buscabrown p-5">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 hover:stroke-amber-400 cursor-pointer hover:rotate-90" onClick={(e) => showUsersOrPets(e, "petsList")}>
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
@@ -308,7 +314,7 @@ export const Admin = () => {
                         <div class="hidden flex flex-col gap-2 mb-5 mt-5 p-3 pt-5 bg-gray-700 justify-self-center" id="petsList">
                             <button onClick={(e) => allPets(e)} class="justify-self-center md:justify-start mb-5 mt-10 md:mt-5 mr-10 hover:underline hover:underline-offset-4 hover:text-orange-700">Mostrar todas las mascotas</button>
                             <div class="flex flex-row justify-between gap-x-4 mb-3">
-                                <input placeholder="Buscar..." value={input} id="searchPets" class="bg-gray-800 rounded-2xl p-2 pl-5 w-full text-white h-fit" onChange={(e) => setInput(e.target.value)}/>
+                                <input placeholder="Buscar..." value={inputPets} id="searchPets" class="bg-gray-800 rounded-2xl p-2 pl-5 w-full text-white h-fit" onChange={(e) => setInputPets(e.target.value)}/>
                                 <button class="bg-gray-800 p-2 md:px-5 rounded-2xl text-white hover:bg-gray-800/75 h-fit" onClick={(e) => searchPet(e)}>Buscar</button>
                             </div>
                             {!!filterPets.length && filterPets.map(pet => {
@@ -317,7 +323,9 @@ export const Admin = () => {
                                         <div class="flex flex-row justify-between">
                                             <div class="flex flex-row gap-x-10">
                                                 <img src={pet.photo && pet.photo} alt="-" class="w-6 h-6"/>
-                                                <h3>{pet.name}</h3>
+                                                <Link to={`/pet/${pet.id}`}>
+                                                    <h3 class="hover:underline hover:underline-offset-4 hover:text-orange-700">{pet.name}</h3>
+                                                </Link>
                                             </div>
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="white" class="w-6 h-6 hover:stroke-amber-400 cursor-pointer" onClick={(e) => showPetInfo(e, pet.id)}>
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />

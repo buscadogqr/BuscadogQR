@@ -49,11 +49,13 @@ export const AdminPets = () => {
 
     const search = (e) => {
         e.preventDefault();
+        const results = [];
 
-        const allPets = pets.length && pets.filter(data => data.name.toLowerCase() === input.toLowerCase());
-
-        if(Array.isArray(allPets)) setFilterPets(allPets);
-        else setFilterPets([allPets]);
+        for(let i = 0; i < pets.length; i++) {
+            if(pets[i].name.toLowerCase().search(input.toLowerCase()) !== -1) results.push(pets[i]);
+        };
+        console.log(results)
+        setFilterPets(results);
     };
 
     const showAll = (e) => {
