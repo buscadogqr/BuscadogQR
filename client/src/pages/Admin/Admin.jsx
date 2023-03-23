@@ -158,6 +158,20 @@ export const Admin = () => {
         else document.getElementById(`pet${id}`).style.display = "block";
     };
 
+    const joinCellNumbers = (cellphone) => {
+        if(isNaN(Number(cellphone))) {
+            let onlyNumbers = [];
+            
+            for(let i = 0; i < cellphone.length; i++) {
+                if(!isNaN(cellphone[i]) && cellphone[i] !== " ") onlyNumbers.push(cellphone[i]);
+            }
+            
+            return onlyNumbers.join("");
+        } else {
+            return cellphone;
+        }
+    };
+
     document.getElementById('searchUsers') && document.getElementById('searchUsers').addEventListener('keypress', function(event) {
         if (event.keyCode == 13) {
             event.preventDefault();
@@ -247,7 +261,7 @@ export const Admin = () => {
                                                 </div>
                                                 <div class="flex flex-row gap-x-2 mb-2">
                                                     <h3 class="text-amber-600">Celular:</h3>
-                                                    <h3>{user.cellphone}</h3>
+                                                    <a target="_blank" href={`https://wa.me/${joinCellNumbers(user.cellphone)}`}>{user.cellphone}</a>
                                                 </div>
                                                 <div class="flex flex-row gap-x-2 mb-2">
                                                     <h3 class="text-amber-600">Dirección:</h3>
