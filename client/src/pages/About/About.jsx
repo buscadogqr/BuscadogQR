@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 export const About = () => {
     const navigate = useNavigate();
+    const userLogged = localStorage.getItem("email");
 
     const goToRegister = (e) => {
         e.preventDefault();
@@ -17,10 +18,10 @@ export const About = () => {
     };
 
     return (
-        <div class="mx-10 mt-5">
+        <div class="mx-10 mt-5 mb-5">
             <h1 class="mt-8 mb-10 text-buscabrown font-extrabold text-[32px] sm:text-[40px] lg:text-[36px] xl:text-[40px]">NOSOTROS</h1>
             <div class="flex flex-row gap-x-5 m-4">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mt-1 stroke-third">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 md:w-6 md:h-6 mt-1 stroke-third">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 013.75 9.375v-4.5zM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 01-1.125-1.125v-4.5zM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0113.5 9.375v-4.5z" />
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 6.75h.75v.75h-.75v-.75zM6.75 16.5h.75v.75h-.75v-.75zM16.5 6.75h.75v.75h-.75v-.75zM13.5 13.5h.75v.75h-.75v-.75zM13.5 19.5h.75v.75h-.75v-.75zM19.5 13.5h.75v.75h-.75v-.75zM19.5 19.5h.75v.75h-.75v-.75zM16.5 16.5h.75v.75h-.75v-.75z" />
                 </svg>
@@ -36,7 +37,7 @@ export const About = () => {
                 <h3 class="text-third text-2xl font-bold m-4 mb-1">¿Cómo funciona?</h3>
             </div>
 
-            <h class="m-4 md:text-justify sm:text-left">Te proporcionamos un código QR único que va ubicado en un collar. Ese código, al ser escaneado por la persona que encuentre a tu mascota, va a dirigirla a una página que tenga la información necesaria para contactarte (nombre, domicilio, celular, mail). Una vez escaneado, podrán contactarse con vos.</h>
+            <h class="m-4 md:text-justify sm:text-left">Te proporcionamos una chapita con un código QR único que va ubicado en el collar de tu mascota. Ese código, al ser escaneado por la persona que encuentre a tu mascota, va a dirigirla a una página que tenga la información necesaria para contactarte (nombre, domicilio, celular, mail). Una vez escaneado, podrán contactarse con vos.</h>
 
             <div class="flex flex-row gap-x-1 m-4">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mt-5 stroke-third">
@@ -45,12 +46,13 @@ export const About = () => {
                 <h3 class="text-third text-2xl font-bold m-4 mb-1">Costos</h3>
             </div>
 
-            <h class="m-4 md:text-justify sm:text-left">El collar con el código QR tiene un costo de $2000, esto incluye el costo del mantenimiento de la página. El envío del mismo puede estar sujeto a costos adicionales. Ante cualquier duda, por favor <button class="text-orange-600 hover:underline hover:underline-offset-4" onClick={(e) => contact(e)}>contactanos</button>.</h>
+            <h class="m-4 md:text-justify sm:text-left">La chapita con el código QR tiene un costo de $2000, esto incluye el costo del mantenimiento de la página. El envío del mismo puede estar sujeto a costos adicionales. Ante cualquier duda, por favor <button class="text-orange-600 hover:underline hover:underline-offset-4" onClick={(e) => contact(e)}>contactanos</button>.</h>
             <br/>
             
-
-            <h3 class="text-third text-xl font-bold mt-10 m-4 mb-0">¿Qué esperas para suscribirte?</h3>
-            <h3 class="text-third text-xl font-bold m-4 mt-0 mb-10">¡<button onClick={(e) => goToRegister(e)} class="text-orange-600 hover:underline hover:underline-offset-4">Unite</button> a la comunidad de BuscadogQR!</h3>
+            { !userLogged && (<div>
+                <h3 class="text-third text-xl font-bold mt-10 m-4 mb-0">¿Qué esperas para suscribirte?</h3>
+                <h3 class="text-third text-xl font-bold m-4 mt-0 mb-5">¡<button onClick={(e) => goToRegister(e)} class="text-orange-600 hover:underline hover:underline-offset-4">Unite</button> a la comunidad de BuscadogQR!</h3>
+            </div>)}
         </div>
     )
 };

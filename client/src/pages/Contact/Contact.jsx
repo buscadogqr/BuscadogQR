@@ -43,7 +43,7 @@ export const Contact = () => {
                     <p class="text-body-color text-base">+54 9 11 5647-3033</p>
                     </div> */}
                 {/* </div> */}
-                <div class="mb-8 flex w-full max-w-[370px]">
+                <a class="mb-8 flex w-full max-w-[370px]" href="mailto:buscadogqr@gmail.com" target="_blank">
                     <div
                     class="bg-primary text-primary mr-6 flex h-[60px] w-full max-w-[60px] items-center justify-center overflow-hidden rounded bg-opacity-5 sm:h-[70px] sm:max-w-[70px]"
                     >
@@ -62,9 +62,9 @@ export const Contact = () => {
                     <h4 class="text-dark mb-1 text-xl font-bold">Email</h4>
                     <p class="text-body-color text-base">buscadogqr@gmail.com</p>
                     </div>
-                </div>
+                </a>
 
-                <div class="mb-8 flex w-full max-w-[370px]">
+                <a class="mb-8 flex w-full max-w-[370px]" href="http://www.instagram.com/buscadogqr" target="_blank">
                     <div class="bg-primary text-primary mr-6 flex h-[60px] w-full max-w-[60px] items-center justify-center overflow-hidden rounded bg-opacity-5 sm:h-[70px] sm:max-w-[70px]">
                         <svg
                             fill="#000000"
@@ -84,7 +84,7 @@ export const Contact = () => {
                         <h4 class="text-dark mb-1 text-xl font-bold">Instagram</h4>
                         <p class="text-body-color text-base">@buscadogqr</p>
                         </div>
-                    </div>
+                    </a>
                 </div>
             </div>
             </div>

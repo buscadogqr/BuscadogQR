@@ -2,16 +2,12 @@ import React,  { useEffect, useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { db } from "../../firebase-config.js";
 import { collection, getDocs, doc, deleteDoc } from "firebase/firestore";
-import "./Profile.css";
-import { CToast,  CToastBody, CButton, CToastClose, CToaster } from '@coreui/react';
 
 export const Profile = () => {
     const userLogged = localStorage.getItem("userId");
     const navigate = useNavigate();
     const usersCollectionRef = collection(db, "users");
     const [user, setUser] = useState([]);
-    const [toast, addToast] = useState(0)
-    const toaster = useRef()
     
     useEffect(() => {
         const getUser = async () => {
@@ -41,23 +37,9 @@ export const Profile = () => {
         navigate(`/${whereTo}`);
     };
 
-    const confirmDeletion = (
-        // document.getElementById('myModal').style.display = 'block';
-
-        <CToast closebutton>
-            <CToastBody>
-                Hello, world! This is a toast message.
-                <div className="mt-2 pt-2 border-top">
-                <CButton type="button" color="primary" size="sm">
-                    Take action
-                </CButton>
-                <CToastClose component={CButton} color="secondary" size="sm" className="ms-1">
-                    Close
-                </CToastClose>
-                </div>
-            </CToastBody>
-        </CToast>
-    );
+    const confirmDeletion = () => {
+        document.getElementById('myModal').style.display = 'block';
+    };
 
     const cancelDeletion = () => {
         document.getElementById('myModal').style.display = 'none';
@@ -121,7 +103,7 @@ export const Profile = () => {
                             <h3>{user && user.cellphone}</h3>
                         </div>
                         <div class="flex flex-row gap-x-5 mt-4">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 md:w-6 md:h-6">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
                             </svg>
@@ -137,14 +119,6 @@ export const Profile = () => {
                         </svg>
                         <button>Editar perfil</button>
                     </div>
-
-                    {/* <div class="flex flex-row gap-x-5 bg-orange-800 outline-none text-white border border-2 border-orange-800 rounded-xl p-2 hover:border-orange-700 hover:bg-orange-700 cursor-pointer" onClick={() => addToast(confirmDeletion)}>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="white" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M5.636 5.636a9 9 0 1012.728 0M12 3v9" />
-                        </svg>
-                        <h3>Cerrar sesión</h3>
-                    </div> */}
-                    {/* <CToaster ref={toaster} push={toast} placement="top-end" /> */}
                     
                     <div class="flex flex-row gap-x-5 bg-orange-800 outline-none text-white border border-2 border-orange-800 rounded-xl p-2 hover:border-orange-700 hover:bg-orange-700 cursor-pointer" onClick={(e) => handleLogout(e)}>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="white" class="w-6 h-6">
@@ -159,17 +133,22 @@ export const Profile = () => {
                         </svg>
                         <h3>Borrar cuenta</h3>
                     </div>
+                </div>
 
-                    <div id='myModal' className='modal'>
-                        <div>
-                            <div>
-                                <h3>¿Estás seguro de que quieres eliminar tu cuenta permanentemente?</h3>
-                                <input type='button' className='btn' value='Eliminar cuenta' onClick={(e) => handleDeleteAcc(e)}/>
-                                <button class="outline-none " onClick={cancelDeletion}>Cancelar X</button>
-                            </div>
-                        </div>
+                <div class="hidden mt-5 flex flex-col" id="myModal">
+                    <h3 class="text-red-900">¿Estás seguro de que quieres eliminar tu cuenta permanentemente?</h3>
+                    <div class="flex flex-row gap-2 mt-2 cursor-pointer" onClick={(e) => handleDeleteAcc(e)}>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 stroke-green-900">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                        </svg>
+                        <h>Si, eliminar mi cuenta</h>
                     </div>
-
+                    <div class="flex flex-row gap-2 mt-1 cursor-pointer" onClick={cancelDeletion}>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 stroke-red-900">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                        <h class="outline-none">Cancelar</h>
+                    </div>
                 </div>
 
                 <h class="mt-7 text-sm">¿<h class="hover:underline hover:underline-offset-4 text-third cursor-pointer" onClick={(e) => settingLS(e)}>Olvidaste</h> tu contraseña?</h>
