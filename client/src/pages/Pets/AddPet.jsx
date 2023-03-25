@@ -84,79 +84,84 @@ export const AddPet = () => {
 
             <div class="flex flex-col">
                 <h1 class="text-titles text-2xl font-bold">Añade una mascota</h1>
-                <label for="photo" class="block mb-2 text-sm font-medium text-buscabrown mt-5">Imagen</label>
-                <input
-                    name="photo"
-                    onChange={(e) => setImageSelected(e.target.files[0])}
-                    type="file"
-                    id="photo"
-                    class="bg-form border border-form outline-none text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                />
-               
-                <div class="flex flex-row flex-wrap gap-4 mt-5">
-                    <div>
-                        <label for="first_name" class="block mb-2 text-sm font-medium text-buscabrown">Nombre</label>
-                        <input
-                            name="name"
-                            onChange={(e) => handleInputChange(e)}
-                            type="text"
-                            id="first_name"
-                            class="bg-form border border-form outline-none text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            placeholder="Zeus"
-                        />
-                    </div>
-                    <div>
-                        <label for="age" class="block mb-2 text-sm font-medium text-buscabrown">Edad</label>
-                        <input
-                            name="age"
-                            onChange={(e) => handleInputChange(e)}
-                            type="text"
-                            id="age"
-                            class="bg-form border border-form text-white outline-none text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            placeholder="1 año"
-                        />
-                    </div>
-                </div>
-                
-                <div class="flex flex-row flex-wrap gap-4 mt-5">
-                    <div>
-                        <label for="animal" class="block mb-2 text-sm font-medium text-buscabrown">Animal</label>
-                        <input
-                            name="animal"
-                            onChange={(e) => handleInputChange(e)}
-                            type="text"
-                            id="animal"
-                            class="bg-form border border-form text-white outline-none text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            placeholder="Perro"
-                        />                          
-                    </div>
-                    <div>
-                        <label for="breed" class="block mb-2 text-sm font-medium text-buscabrown">Raza</label>
-                        <input
-                            name="breed"
-                            onChange={(e) => handleInputChange(e)}
-                            type="text"
-                            id="breed"
-                            class="bg-form border border-form text-white outline-none text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            placeholder="Golden Retriever"
-                        />                          
-                    </div>
-                </div>
-
-                <div class="mt-5">
-                    <label for="notes" class="block mb-2 text-sm font-medium text-buscabrown">Notas</label>
+                <form onSubmit={(e) => handleSubmit(e)}>
+                    <label for="photo" class="block mb-2 text-sm font-medium text-buscabrown mt-5">Imagen (opcional)</label>
                     <input
-                        name="notes"
-                        onChange={(e) => handleInputChange(e)}
-                        type="text"
-                        id="notes"
-                        class="bg-form border border-form text-white text-sm outline-none rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        placeholder="Bebe mucha agua, es asustadizo..."
-                    />                          
-                </div>
+                        name="photo"
+                        onChange={(e) => setImageSelected(e.target.files[0])}
+                        type="file"
+                        id="photo"
+                        class="bg-form border border-form outline-none text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    />
+                
+                    <div class="flex flex-row flex-wrap gap-4 mt-5">
+                        <div>
+                            <label for="first_name" class="block mb-2 text-sm font-medium text-buscabrown">Nombre</label>
+                            <input
+                                name="name"
+                                onChange={(e) => handleInputChange(e)}
+                                type="text"
+                                id="first_name"
+                                class="bg-form border border-form outline-none text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                placeholder="Zeus"
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label for="age" class="block mb-2 text-sm font-medium text-buscabrown">Edad</label>
+                            <input
+                                name="age"
+                                onChange={(e) => handleInputChange(e)}
+                                type="text"
+                                id="age"
+                                class="bg-form border border-form text-white outline-none text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                placeholder="1 año"
+                                required
+                            />
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-row flex-wrap gap-4 mt-5">
+                        <div>
+                            <label for="animal" class="block mb-2 text-sm font-medium text-buscabrown">Animal</label>
+                            <input
+                                name="animal"
+                                onChange={(e) => handleInputChange(e)}
+                                type="text"
+                                id="animal"
+                                class="bg-form border border-form text-white outline-none text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                placeholder="Perro"
+                                required
+                            />                          
+                        </div>
+                        <div>
+                            <label for="breed" class="block mb-2 text-sm font-medium text-buscabrown">Raza</label>
+                            <input
+                                name="breed"
+                                onChange={(e) => handleInputChange(e)}
+                                type="text"
+                                id="breed"
+                                class="bg-form border border-form text-white outline-none text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                placeholder="Golden Retriever"
+                                required
+                            />                          
+                        </div>
+                    </div>
 
-                <button class="bg-third text-white border border-2 border-third outline-none rounded-3xl p-2 mt-10 hover:bg-orange-700 hover:border-orange-700 cursor-pointer" onClick={(e) => handleSubmit(e)}>¡Agregar mascota!</button>
+                    <div class="mt-5">
+                        <label for="notes" class="block mb-2 text-sm font-medium text-buscabrown">Notas (opcional)</label>
+                        <input
+                            name="notes"
+                            onChange={(e) => handleInputChange(e)}
+                            type="text"
+                            id="notes"
+                            class="bg-form border border-form text-white text-sm outline-none rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            placeholder="Bebe mucha agua, es asustadizo..."
+                        />                          
+                    </div>
 
+                    <button class="bg-third text-white border border-2 border-third outline-none rounded-3xl p-2 mt-10 hover:bg-orange-700 hover:border-orange-700 cursor-pointer" type="submit">¡Agregar mascota!</button>
+                </form>
             </div>
         </div>
     )

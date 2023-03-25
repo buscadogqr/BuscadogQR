@@ -7,6 +7,7 @@ export const Login = () => {
     const [input, setInput] = useState({email: "", password: ""});
     const navigate = useNavigate();
     const usersCollectionRef = collection(db, "users");
+    const registeringPet = localStorage.getItem("petToRegister");
     
     const handleInputChange = (e) => {
         setInput({
@@ -44,7 +45,7 @@ export const Login = () => {
             setTimeout(() => {
                 localStorage.setItem("email", input.email);
                 localStorage.setItem("userId", user.id);
-                navigate("/profile");
+                !registeringPet ? navigate("/profile") : navigate(`/petRegistering/${registeringPet}`);
             })
         }
     };
