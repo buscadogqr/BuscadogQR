@@ -35,7 +35,7 @@ export const Subscribe = () => {
                 </div>
             </div>
 
-            <a href="https://mpago.la/1MMC4PL" target="_blank" class="self-center text-white bg-third border-2 border-third rounded-3xl font-medium text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:bg-orange-700 outline-none hover:border-orange-700 cursor-pointer mt-10">Quiero suscribirme</a>
+            <h>Para continuar con la suscripción, ponte en <a href="mailto:buscadogqr@gmail.com" target="_blank" class="text-third hover:underline hover:underline-offset-4 hover:text-orange-700 cursor-pointer mt-10">contacto</a> con nosotros. Coordinaremos la forma de pago y un lugar de entrega.</h>
         </div>
     )
 };

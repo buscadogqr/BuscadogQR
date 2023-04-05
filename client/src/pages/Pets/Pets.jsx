@@ -68,7 +68,7 @@ export const Pets = () => {
                     </div>
 
                     <Link to="/subscribe">
-                        <button class="mt-10 self-center text-white bg-titles border-2 border-titles rounded-3xl font-medium text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:border-green-900 hover:bg-green-900">¿Quieres agregar otra mascota?</button>
+                        <h class="mt-10 text-sm">¿Quieres <h class="text-third hover:text-orange-700 hover:underline hover:underline-offset-4">agregar</h> otra mascota?</h>
                     </Link>
                 </div>
                 )

@@ -205,9 +205,6 @@ export const ExternalPets = () => {
                                         </div>
                                     </div>
         
-                                    {/* <div class="flex flex-row flex-wrap gap-4 mt-5"> */}
-                                    {/* </div> */}
-        
                                     <div class="mt-5">
                                         <label>Notas adicionales (opcional): </label>
                                         <input
