@@ -239,8 +239,8 @@ export const Admin = () => {
                 </div>
 
                 <div class="ml-16 mb-10 text-xl font-semibold">
-                    <h>Precio actual del collar: <h class="font-normal">${price.length && price[0].price}</h></h>
-                    <div class="flex gap-x-2 items-center">
+                    <h class="self-center">Precio actual del collar: <h class="font-normal">${price.length && price[0].price}</h></h>
+                    <div class="flex flex-col gap-y-2 w-fit md:flex-row md:gap-x-2 md:items-center">
                         <h>¿Quieres cambiar el precio? </h>
                         <input 
                         class="border-buscabrown rounded-xl bg-buscabrown outline-none text-white font-normal"
