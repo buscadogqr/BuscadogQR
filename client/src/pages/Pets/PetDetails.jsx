@@ -131,10 +131,10 @@ export const PetDetails = () => {
                                         <path fill="#c5221f" d="M52 51v8l20 15V48l-5.6-4.2c-5.94-4.45-14.4-.22-14.4 7.2"/>
                                         </svg>
                                         <h1 class="px-2 text-sm">{user && user.mail}</h1>
-                                    </a>
                                     {userMail !== pet.userOwner && (
                                         <h class="text-red-600 font-semibold text-xs hover:underline hover:underline-offset-4 cursor-pointer"> (¡Mandale un mail!)</h>
-                                    )}
+                                        )}
+                                    </a>
                                 </div>
                                 <div class="flex flex-col gap-y-2">
                                     <a class="flex items-center mt-4" href={`https://wa.me/${joinCellNumbers(user && user.cellphone)}`} target="_blank">
@@ -147,10 +147,10 @@ export const PetDetails = () => {
                                             </g>
                                         </svg>
                                         <h class="px-2 text-sm">{user && user.cellphone}</h>
-                                    </a>
                                     {userMail !== pet.userOwner && (
                                         <h class="text-lime-600 font-semibold text-xs hover:underline hover:underline-offset-4 cursor-pointer"> (¡Mandale un mensaje!)</h>
-                                    )}
+                                        )}
+                                    </a>
                                 </div>
                             </div>
                         </div>

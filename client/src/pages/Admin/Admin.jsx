@@ -9,6 +9,7 @@ export const Admin = () => {
     const userId = localStorage.getItem("userId");
     const usersCollectionRef = collection(db, "users");
     const petsCollectionRef = collection(db, "pets");
+    const othersCollectionRef = collection(db, "others");
     const [users, setUsers] = useState([]);
     const [pets, setPets] = useState([]);
     const [user, setUser] = useState([]);
@@ -16,6 +17,8 @@ export const Admin = () => {
     const [filterPets, setFilterPets] = useState([]);
     const [input, setInput] = useState("");
     const [inputPets, setInputPets] = useState("");
+    const [price, setPrice] = useState(0);
+    const [priceInput, setPriceInput] = useState("");
 
     useEffect(() => {
         const getUsers = async () => {
@@ -40,9 +43,16 @@ export const Admin = () => {
             setUser(userInfo);
         };
 
+        const getPrice = async () => {
+            const others = await getDocs(othersCollectionRef);
+            const price = others && others.docs.map(docum => ({...docum.data(), id: docum.id}));
+            setPrice(price);
+        };
+
         getUsers();
         getPets();
         checkIfAdmin();
+        getPrice()
     }, []);
 
     const goTo = (e, whereTo) => {
@@ -172,6 +182,18 @@ export const Admin = () => {
         }
     };
 
+    const updatePrice = async () => {
+        const price = doc(db, "others", "price");
+        await updateDoc(price, { price: priceInput })
+        .then(() => location.reload());
+    };
+
+    document.getElementById("price") && document.getElementById("price").addEventListener("keydown", function(event) {
+        if(event.keyCode == 13) {
+            updatePrice();
+        }
+    });
+
     document.getElementById('searchUsers') && document.getElementById('searchUsers').addEventListener('keypress', function(event) {
         if (event.keyCode == 13) {
             event.preventDefault();
@@ -213,6 +235,21 @@ export const Admin = () => {
                     <div class="bg-third text-white p-5">
                         <h2 class="font-semibold mb-2">Mascotas</h2>
                         <h class="m-5 text-3xl">{pets && pets.length}</h>
+                    </div>
+                </div>
+
+                <div class="ml-16 mb-10 text-xl font-semibold">
+                    <h>Precio actual del collar: <h class="font-normal">${price.length && price[0].price}</h></h>
+                    <div class="flex gap-x-2 items-center">
+                        <h>¿Quieres cambiar el precio? </h>
+                        <input 
+                        class="border-buscabrown rounded-xl bg-buscabrown outline-none text-white font-normal"
+                        type="text"
+                        id="price"
+                        placeholder={price.length && price[0].price}
+                        onChange={(event) => setPriceInput(event.target.value)}
+                        />
+                        <button class="bg-third border-2 border-third outline-none text-white hover:bg-orange-700 hover:border-orange-700 rounded-3xl font-medium text-sm w-full sm:w-auto px-3 py-2.5 text-center cursor-pointer font-normal" onClick={() => updatePrice()}>Cambiar</button>
                     </div>
                 </div>
 

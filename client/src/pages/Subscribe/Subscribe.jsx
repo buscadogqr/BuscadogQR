@@ -1,9 +1,23 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { db } from "../../firebase-config.js";
+import { collection, getDocs } from "firebase/firestore";
 
 export const Subscribe = () => {
     const userLogged = localStorage.getItem("email");
     const navigate = useNavigate();
+    const othersCollectionRef = collection(db, "others");
+    const [price, setPrice] = useState(0);
+
+    useEffect(() => {
+        const getPrice = async () => {
+            const others = await getDocs(othersCollectionRef);
+            const price = others && others.docs.map(docum => ({...docum.data(), id: docum.id}));
+            setPrice(price);
+        };
+
+        getPrice()
+    }, []);
 
     const goToLogin = () => {
         navigate("/login");
@@ -28,7 +42,7 @@ export const Subscribe = () => {
                     </div>
                     <div class="flex-none mt-auto bg-white rounded-b rounded-t-none overflow-hidden shadow p-6">
                     <div class="w-full pt-6 text-4xl font-bold text-center">
-                        $2000
+                        ${price.length && price[0].price}
                     </div>
                     </div>
                 </div>
