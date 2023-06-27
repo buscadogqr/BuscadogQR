@@ -75,7 +75,7 @@ export const Login = () => {
     });
 
     return (
-        <form class="bg-white p-10">
+        <form class="p-10">
             <h1 class="pb-5 text-buscabrown text-2xl font-bold">Iniciar sesión</h1>
             <label for="input-group-1" class="block mb-2 text-sm font-medium text-buscabrown">Email</label>
             <div class="flex flex-col md:p-2 md:pr-10">

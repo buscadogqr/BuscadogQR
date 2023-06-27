@@ -31,8 +31,12 @@ export const Admin = () => {
         const getPets = async () => {
             const allPets = await getDocs(petsCollectionRef);
             const petsInfo = allPets && allPets.docs.map(user => ({...user.data(), id: user.id}));
-            setPets(petsInfo);
-            setFilterPets(petsInfo);
+            const registeredPets = petsInfo && petsInfo.filter(pet => pet.name);
+            const petsToRegister = petsInfo && petsInfo.filter(pet => !pet.name);
+            const orderedPets = [...registeredPets, ...petsToRegister];
+            console.log(orderedPets)
+            setPets(orderedPets);
+            setFilterPets(orderedPets);
         };
 
         const checkIfAdmin = async () => {
@@ -95,38 +99,6 @@ export const Admin = () => {
         if(document.getElementById(`user${id}`).style.display === "block") document.getElementById(`user${id}`).style.display = "none";
         else document.getElementById(`user${id}`).style.display = "block";
     };
-
-    // const deleteMembership = async (e, userId, petName) => {
-    //     e.preventDefault();
-
-    //     //actualizando la información del usuario
-    //     const userCr = doc(db, "users", userId);
-    //     const userInfo = await getDoc(userCr);
-    //     const userData = userInfo.data();
-    //     const updateData = userData.memberships.filter(m => m.pet !== petName);
-
-    //     await updateDoc(userCr, { memberships: updateData });
-    //     !updateData.length && await updateDoc(userCr, { type: "Usuario sin membresías" });
-
-    //     //encontrando el id del perro
-    //     const allPets = await getDocs(petsCollectionRef);
-    //     const petsInfo = allPets && allPets.docs.map(pet => ({...pet.data(), id: pet.id}));
-    //     const petData = petsInfo && petsInfo.find(pet => pet.name === petName && pet.userOwner === userData.mail);
-    //     //eliminando al perro
-    //     const pet = doc(db, "pets", petData.id);
-    //     await deleteDoc(pet);
-
-    //     document.getElementById(`sacarMembresía${petName}`).style.display = "block";
-    //     document.getElementById(`confirm${petName}`).style.display = "none";
-    //     location.reload();
-    // };
-
-    // const cancelDelete = (e, id) => {
-    //     e.preventDefault();
-
-    //     document.getElementById(`sacarMembresía${id}`).style.display = "block";
-    //     document.getElementById(`confirm${id}`).style.display = "none";
-    // };
 
     const changeToInput = (e, id) => {
         e.preventDefault();

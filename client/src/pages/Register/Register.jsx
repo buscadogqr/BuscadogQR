@@ -117,7 +117,7 @@ export const Register = () => {
     });
 
     return (
-        <div class="mx-10 my-5 bg-gray-100 border-4 border-titles rounded-3xl p-10">
+        <div class="mx-10 my-5 bg-gray-100/50 border-4 border-titles rounded-3xl p-10">
             <h1 class="pb-5 text-titles text-2xl font-bold">Registrarse</h1>
             <form onSubmit={(e) => handleSubmit(e)}>
                 <div class="grid gap-6 mb-6 md:grid-cols-2">

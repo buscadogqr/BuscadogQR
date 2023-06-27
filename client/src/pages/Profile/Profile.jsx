@@ -73,7 +73,7 @@ export const Profile = () => {
     };
 
     return (
-        <div class="flex justify-center items-center m-20 mt-16 w-fit self-center bg-gray-100 border-4 border-titles rounded-3xl p-10">
+        <div class="flex justify-center items-center m-20 mt-16 w-fit self-center bg-gray-100/50 border-4 border-titles rounded-3xl p-10">
 
             {!userLogged && goToLogin()}
 

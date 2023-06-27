@@ -2,7 +2,7 @@ import React from "react";
 
 export const Contact = () => {
     return (
-        <section class="relative z-10 overflow-hidden bg-white m-10 text-titles">
+        <section class="relative z-10 overflow-hidden m-10 text-titles">
         <div class="container mx-auto">
             <div class="-mx-4 flex flex-wrap lg:justify-between">
             <div class="w-full px-4 lg:w-1/2 xl:w-6/12">
@@ -43,7 +43,7 @@ export const Contact = () => {
                     <p class="text-body-color text-base">+54 9 11 5647-3033</p>
                     </div> */}
                 {/* </div> */}
-                <a class="mb-8 flex w-full max-w-[370px]" href="mailto:buscadogqr@gmail.com" target="_blank">
+                <a class="mb-8 flex w-full max-w-[370px] hover:scale-105" href="mailto:buscadogqr@gmail.com" target="_blank">
                     <div
                     class="bg-primary text-primary mr-6 flex h-[60px] w-full max-w-[60px] items-center justify-center overflow-hidden rounded bg-opacity-5 sm:h-[70px] sm:max-w-[70px]"
                     >
@@ -64,7 +64,7 @@ export const Contact = () => {
                     </div>
                 </a>
 
-                <a class="mb-8 flex w-full max-w-[370px]" href="http://www.instagram.com/buscadogqr" target="_blank">
+                <a class="mb-8 flex w-full max-w-[370px] hover:scale-105" href="http://www.instagram.com/buscadogqr" target="_blank">
                     <div class="bg-primary text-primary mr-6 flex h-[60px] w-full max-w-[60px] items-center justify-center overflow-hidden rounded bg-opacity-5 sm:h-[70px] sm:max-w-[70px]">
                         <svg
                             fill="#000000"
