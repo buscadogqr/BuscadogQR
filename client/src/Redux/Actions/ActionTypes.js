@@ -1,0 +1,13 @@
+export const GET_ALL_USERS = "GET_ALL_USERS";
+export const GET_ALL_PETS = "GET_ALL_PETS";
+export const GET_PET_BY_ID = "GET_PET_BY_ID";
+export const GET_USER_BY_ID = "GET_USER_BY_ID";
+export const GET_USER_BY_MAIL = "GET_USER_BY_MAIL";
+export const GET_PETS_BY_OWNER = "GET_PETS_BY_OWNER";
+export const CREATE_USER = "CREATE_USER";
+export const CREATE_PET = "CREATE_PET";
+export const GET_PRICE = "GET_PRICE";
+export const UPDATE_PRICE = "UPDATE_PRICE";
+export const UPDATE_USER_DETAILS = "UPDATE_USER_DETAILS";
+export const UPDATE_PET_DETAILS = "UPDATE_PET_DETAILS";
+export const DELETE_USER = "DELETE_USER";

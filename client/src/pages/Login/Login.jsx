@@ -1,13 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { db } from "../../firebase-config.js";
-import { collection, getDocs } from "firebase/firestore";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllUsers, getUserById } from "../../Redux/Actions/Actions";
 
 export const Login = () => {
-    const [input, setInput] = useState({email: "", password: ""});
+    const dispatch = useDispatch();
     const navigate = useNavigate();
-    const usersCollectionRef = collection(db, "users");
+    const { users } = useSelector(state => state);
     const registeringPet = localStorage.getItem("petToRegister");
+    const [input, setInput] = useState({email: "", password: ""});
+
+    useEffect(() => {
+        !users.length && dispatch(getAllUsers());
+    }, []);
     
     const handleInputChange = (e) => {
         setInput({
@@ -26,9 +31,7 @@ export const Login = () => {
     const goToProfile = async (e) => {
         e.preventDefault();
 
-        const users = await getDocs(usersCollectionRef);
-        const usersInfo = users && users.docs.map(user => ({...user.data(), id: user.id}));
-        const user = usersInfo && usersInfo.find(user => user.mail === input.email);
+        const user = users.length && users.find(user => user.mail == input.email);
 
         document.getElementById("nombre").style.display = "none";
         document.getElementById("contra").style.display = "none";
@@ -45,7 +48,10 @@ export const Login = () => {
             setTimeout(() => {
                 localStorage.setItem("email", input.email);
                 localStorage.setItem("userId", user.id);
-                !registeringPet ? navigate("/profile") : navigate(`/petRegistering/${registeringPet}`);
+                dispatch(getUserById(user.id))
+                .then(() => {
+                    !registeringPet ? navigate("/profile") : navigate(`/petRegistering/${registeringPet}`);
+                });
             })
         }
     };

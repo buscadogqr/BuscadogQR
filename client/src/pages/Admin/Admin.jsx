@@ -1,63 +1,40 @@
 import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
-import { db } from "../../firebase-config.js";
-import { collection, getDocs, getDoc, doc, updateDoc } from "firebase/firestore";
+import { updatePrice, getPrice, getAllUsers, getAllPets, getUserById } from "../../Redux/Actions/Actions.js";
 
 export const Admin = () => {
     const navigate = useNavigate();
-    const userLogged = localStorage.getItem("email");
+    const dispatch = useDispatch();
     const userId = localStorage.getItem("userId");
-    const usersCollectionRef = collection(db, "users");
-    const petsCollectionRef = collection(db, "pets");
-    const othersCollectionRef = collection(db, "others");
-    const [users, setUsers] = useState([]);
-    const [pets, setPets] = useState([]);
-    const [user, setUser] = useState([]);
-    const [filterUsers, setFilterUsers] = useState([]);
-    const [filterPets, setFilterPets] = useState([]);
+    const userMail = localStorage.getItem("email");
     const [input, setInput] = useState("");
     const [inputPets, setInputPets] = useState("");
-    const [price, setPrice] = useState(0);
     const [priceInput, setPriceInput] = useState("");
+    const [filterPets, setFilterPets] = useState([]);
+    const [filterUsers, setFilterUsers] = useState([]);
+    const { price, userLogged, users, pets } = useSelector(state => state);
 
     useEffect(() => {
-        const getUsers = async () => {
-            const users = await getDocs(usersCollectionRef);
-            const usersInfo = users && users.docs.map(user => ({...user.data(), id: user.id}));
-            setUsers(usersInfo);
-            setFilterUsers(usersInfo);
-        };
+        !price && dispatch(getPrice());
+        !pets.length && dispatch(getAllPets())
+        !users.length && dispatch(getAllUsers())
+        !Object.keys(userLogged).length && dispatch(getUserById(userId));
 
-        const getPets = async () => {
-            const allPets = await getDocs(petsCollectionRef);
-            const petsInfo = allPets && allPets.docs.map(user => ({...user.data(), id: user.id}));
-            const registeredPets = petsInfo && petsInfo.filter(pet => pet.name);
-            const petsToRegister = petsInfo && petsInfo.filter(pet => !pet.name);
-            const orderedPets = [...registeredPets, ...petsToRegister];
-            console.log(orderedPets)
-            setPets(orderedPets);
-            setFilterPets(orderedPets);
-        };
-
-        const checkIfAdmin = async () => {
-            const userDoc = doc(db, "users", userId);
-            const userData = await getDoc(userDoc);
-            const userInfo = userData.data();
-    
-            setUser(userInfo);
-        };
-
-        const getPrice = async () => {
-            const others = await getDocs(othersCollectionRef);
-            const price = others && others.docs.map(docum => ({...docum.data(), id: docum.id}));
-            setPrice(price);
-        };
-
-        getUsers();
-        getPets();
-        checkIfAdmin();
-        getPrice()
+        setFilterPets(pets);
+        setFilterUsers(users);
     }, []);
+
+    // window.onload = () => {
+    //     var qrcode = new QRCode("test", {
+    //         text: "http://jindo.dev.naver.com/collie",
+    //         width: 128,
+    //         height: 128,
+    //         colorDark : "#000000",
+    //         colorLight : "#ffffff",
+    //         correctLevel : QRCode.CorrectLevel.H
+    //     });
+    // }
 
     const goTo = (e, whereTo) => {
         e.preventDefault();
@@ -154,9 +131,8 @@ export const Admin = () => {
         }
     };
 
-    const updatePrice = async () => {
-        const price = doc(db, "others", "price");
-        await updateDoc(price, { price: priceInput })
+    const newPrice = () => {
+        dispatch(updatePrice({ price: priceInput }))
         .then(() => location.reload());
     };
 
@@ -183,21 +159,25 @@ export const Admin = () => {
     return (
         <div>
 
-            { !userLogged && (
+            { !userMail && (
                 <div class="flex flex-col gap-y-5 m-16">
                     <h class="pb-5 text-titles text-4xl font-bold">Oops! Parece que no tienes los permisos para acceder a esta ruta</h>
                     <button class="self-start p-3 bg-third hover:bg-orange-700 text-white rounded-3xl" onClick={(e) => goTo(e, "login")}>Iniciar sesión</button>
                 </div>
             )}
 
-            { !userLogged || user && user.type !== "Admin" && (
+            { !Object.keys(userLogged).length && (
+                <img src="https://i.stack.imgur.com/kOnzy.gif" alt="Loading..." class="h-16 w-16 mt-48 ml-[10rem] md:ml-[25rem] lg:ml-[45rem]"/>
+            )}
+
+            { !!Object.keys(userLogged).length && userLogged.type !== "Admin" && (
                 <div class="flex flex-col gap-y-5 m-16">
                     <h class="pb-5 text-titles text-4xl font-bold">Oops! Parece que no tienes los permisos para acceder a esta ruta</h>
                     <button class="self-start p-3 bg-third hover:bg-orange-700 text-white rounded-3xl" onClick={(e) => goTo(e, "profile")}>Volver a mi perfil</button>
                 </div>
             )}
 
-            {user && user.type === "Admin" && (<div>
+            { !!Object.keys(userLogged).length && userLogged.type === "Admin" && (<div class="flex flex-col">
                 <h1 class="pb-5 m-16 mb-5 text-titles text-4xl font-bold">Información de administrador</h1>
                 <div class="flex flex-col gap-y-5 md:grid md:grid-cols-2 md:gap-x-5 m-16 justify-self-center">
                     <div class="bg-third text-white p-5">
@@ -209,21 +189,36 @@ export const Admin = () => {
                         <h class="m-5 text-3xl">{pets && pets.length}</h>
                     </div>
                 </div>
+                
+                <div class="flex justify-between flex-wrap self-center md:self-start">
+                    <div class="mb-10 text-xl mx-16 font-semibold">
+                        <h class="self-center">Precio actual del collar: <h class="font-normal">${price}</h></h>
+                        <div class="flex flex-col gap-y-2 w-fit md:flex-row md:gap-x-2 md:items-center">
+                            <h>¿Quieres cambiar el precio? </h>
+                            <input 
+                            class="border-buscabrown rounded-xl bg-buscabrown outline-none text-white font-normal"
+                            type="text"
+                            id="price"
+                            placeholder={price}
+                            onChange={(event) => setPriceInput(event.target.value)}
+                            />
+                            <button class="bg-third border-2 border-third outline-none text-white hover:bg-orange-700 hover:border-orange-700 rounded-3xl font-medium text-sm w-full sm:w-auto px-3 py-2.5 text-center cursor-pointer font-normal" onClick={() => newPrice()}>Cambiar</button>
+                        </div>
+                    </div>
 
-                <div class="ml-16 mb-10 text-xl font-semibold">
-                    <h class="self-center">Precio actual del collar: <h class="font-normal">${price.length && price[0].price}</h></h>
-                    <div class="flex flex-col gap-y-2 w-fit md:flex-row md:gap-x-2 md:items-center">
-                        <h>¿Quieres cambiar el precio? </h>
-                        <input 
-                        class="border-buscabrown rounded-xl bg-buscabrown outline-none text-white font-normal"
-                        type="text"
-                        id="price"
-                        placeholder={price.length && price[0].price}
-                        onChange={(event) => setPriceInput(event.target.value)}
-                        />
-                        <button class="bg-third border-2 border-third outline-none text-white hover:bg-orange-700 hover:border-orange-700 rounded-3xl font-medium text-sm w-full sm:w-auto px-3 py-2.5 text-center cursor-pointer font-normal" onClick={() => updatePrice()}>Cambiar</button>
+                    <div class="mx-16 mb-10">
+                        <h class="font-semibold text-xl">Generar nuevo código QR: </h>
+                        <div class="flex flex-col gap-y-2 w-fit md:flex-row md:gap-x-2 md:items-center">
+                            <h>https://buscadogqr.vercel.app/pet/</h>
+                            <input value={!!pets.length && pets.length + 1} type="text" class="border-buscabrown rounded-xl bg-buscabrown outline-none text-white"/>
+                            <button class="bg-third border-2 border-third outline-none text-white hover:bg-orange-700 hover:border-orange-700 rounded-3xl font-medium text-sm w-full sm:w-auto px-3 py-2.5 text-center cursor-pointer font-normal">Generar</button>
+                        </div>
+
+                        {/* <div id="test" class="self-center"></div> */}
                     </div>
                 </div>
+
+                {/* <div id="qrcode"></div> */}
 
                 <div class="text-white flex flex-col mb-10">
                     <div class="w-screen md:w-auto md:mx-16 md:mt-5 md:mb-1">

@@ -1,32 +1,26 @@
 import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { db } from "../../firebase-config.js";
+import { getPetById, getUserById, updatePetDetails, updateUserDetails } from "../../Redux/Actions/Actions";
 import axios from "axios";
-import { collection, getDocs, getDoc, doc, updateDoc } from "firebase/firestore";
 
 export const EditPetDetails = () => {
     const { id } = useParams();
+    const dispatch = useDispatch();
     const navigate = useNavigate();
+    const userId = localStorage.getItem("userId");
+    const [imageSelected, setImageSelected] = useState("");
+    const { petById, userLogged } = useSelector(state => state);
     const [inputs, setInputs] = useState({
         name: "",
         breed: "",
         age: "",
         notes: ""
     });
-    const userLogged = localStorage.getItem("userId");
-    const petsCollectionRef = collection(db, "pets");
-    const [pet, setPet] = useState([]);
-    const [imageSelected, setImageSelected] = useState("");
-
+    
     useEffect(() => {
-        const getPets = async () => {
-            const allPets = await getDocs(petsCollectionRef);
-            const petsInfo = allPets && allPets.docs.map(user => ({...user.data(), id: user.id}));
-            const pet = petsInfo && petsInfo.find(pet => pet.id === id);
-            setPet(pet);
-        };
-
-        getPets();
+        dispatch(getPetById(id));
+        !Object.keys(userLogged).length && dispatch(getUserById(userId));
     }, []);
 
     const handleInputChange = (e) => {
@@ -38,9 +32,6 @@ export const EditPetDetails = () => {
 
     const submitChanges = async (e) => {
         document.getElementById("confirmMsg").style.display = "block";
-        const owner = doc(db, "users", userLogged);
-        const ownerInfo = await getDoc(owner);
-        const ownerData = ownerInfo.data();
 
         if(imageSelected) {
             e.preventDefault();
@@ -52,7 +43,6 @@ export const EditPetDetails = () => {
             await axios.post("https://api.cloudinary.com/v1_1/dtm9ibgrj/image/upload", formData)
             .then(async response => {
                 const photo = response.data.secure_url;
-                const petToUpdate = doc(db, "pets", id);
         
                 let updatedPet1 = {}
         
@@ -63,18 +53,18 @@ export const EditPetDetails = () => {
                 };
 
                 if(updatedPet1.name) {
-                    let memb = ownerData && ownerData.memberships && ownerData.memberships.find(memb => memb.pet === pet.name);
-                    let otherMembs = ownerData && ownerData.memberships && ownerData.memberships.filter(memb => memb.pet !== pet.name);
+                    let memb = Object.keys(userLogged).length && userLogged.memberships && userLogged.memberships.find(memb => memb.pet === pet.name);
+                    let otherMembs = Object.keys(userLogged).length && ownerData.memberships && ownerData.memberships.filter(memb => memb.pet !== pet.name);
                     memb = {...memb, pet: updatedPet1.name};
-                    await updateDoc(owner, { memberships: [...otherMembs, memb] });
+                    dispatch(updateUserDetails(userId, { memberships: [...otherMembs, memb] }));
                 };
         
-                await updateDoc(petToUpdate, {...updatedPet1, photo})
-                navigate(`/pet/${id}`);
+                dispatch(updatePetDetails(id, {...updatedPet1, photo}))
+                .then(() => {
+                    navigate(`/pet/${id}`);
+                });
             });
         } else {
-            const petToUpdate = doc(db, "pets", id);
-        
             let updatedPet2 = {}
     
             for(let i in inputs) {
@@ -84,22 +74,24 @@ export const EditPetDetails = () => {
             };
 
             if(updatedPet2.name) {
-                let memb = ownerData && ownerData.memberships && ownerData.memberships.find(memb => memb.pet === pet.name);
-                let otherMembs = ownerData && ownerData.memberships && ownerData.memberships.filter(memb => memb.pet !== pet.name);
+                let memb = Object.keys(userLogged).length && userLogged.memberships && userLogged.memberships.find(memb => memb.pet === pet.name);
+                let otherMembs = Object.keys(userLogged).length && userLogged.memberships && userLogged.memberships.filter(memb => memb.pet !== pet.name);
                 memb = {...memb, pet: updatedPet2.name};
-                await updateDoc(owner, { memberships: [...otherMembs, memb] });
+                dispatch(updateUserDetails(userId, { memberships: [...otherMembs, memb] }));
             };
 
-            await updateDoc(petToUpdate, updatedPet2)
-            navigate(`/pet/${id}`);
+            dispatch(updatePetDetails(id, updatedPet2))
+            .then(() => {
+                navigate(`/pet/${id}`);
+            });
         }
     };
 
-    const goBack = (e, id) => {
-        e.preventDefault();
+    // const goBack = (e, id) => {
+    //     e.preventDefault();
 
-        navigate(`/pet/${id}`);
-    };
+    //     navigate(`/pet/${id}`);
+    // };
 
     return (
         <div class="flex justify-center m-20 mt-10 items-center">
@@ -126,7 +118,7 @@ export const EditPetDetails = () => {
                             type="text"
                             id="first_name"
                             class="bg-form border border-form outline-none text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            placeholder={pet && pet.name}
+                            placeholder={petById && petById.name}
                         />
                     </div>
 
@@ -138,7 +130,7 @@ export const EditPetDetails = () => {
                             type="text"
                             id="age"
                             class="bg-form border border-form outline-none text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            placeholder={pet && pet.age}
+                            placeholder={petById && petById.age}
                             />
                     </div>
                 </div>
@@ -151,7 +143,7 @@ export const EditPetDetails = () => {
                         type="text"
                         id="breed"
                         class="bg-form border border-form outline-none text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        placeholder={pet && pet.breed}
+                        placeholder={petById && petById.breed}
                     />
                 </div>
 
@@ -163,7 +155,7 @@ export const EditPetDetails = () => {
                         type="text"
                         id="notes"
                         class="bg-form border border-form outline-none text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        placeholder={pet && pet.notes}
+                        placeholder={petById && petById.notes}
                     />
                 </div>
 

@@ -1,15 +1,16 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { db } from "../../firebase-config.js";
-import { collection, doc, getDoc, updateDoc  } from "firebase/firestore";
+import { updateUserDetails } from "../../Redux/Actions/Actions";
 
 export const ResetPassword = () => {
+    const dispatch= useDispatch();
     const navigate = useNavigate();
     const [pass, SetPass] = useState("");
     const [confirmPass, setConfirmPass] = useState("");
-    const userResetName = localStorage.getItem("userResetName");
-    const userResetId = localStorage.getItem("userResetId");
     const userLogged = localStorage.getItem("userId");
+    const userResetId = localStorage.getItem("userResetId");
+    const userResetName = localStorage.getItem("userResetName");
 
     const showPassword = (pass) => {
         if(pass === "password") {
@@ -32,8 +33,7 @@ export const ResetPassword = () => {
         document.getElementById("passwordsDontMatch").style.display = 'none';
 
         if(pass === confirmPass) {
-            const userDoc = doc(db, "users", userResetId);
-            await updateDoc(userDoc, { password: pass });
+            dispatch(updateUserDetails(userResetId, { password: pass }));
             localStorage.removeItem("userResetName");
             localStorage.removeItem("userResetId");
 

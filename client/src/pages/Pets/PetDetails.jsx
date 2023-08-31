@@ -1,38 +1,22 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
-import { db } from "../../firebase-config.js";
-import { collection, getDocs } from "firebase/firestore";
+import { useDispatch, useSelector } from "react-redux";
+import { useParams, useNavigate } from "react-router-dom";
+import { getPetById, getAllUsers, getAllPets } from "../../Redux/Actions/Actions";
 
 export const PetDetails = () => {
     const { id } = useParams();
-    const userMail = localStorage.getItem("email");
-    const usersCollectionRef = collection(db, "users");
-    const petsCollectionRef = collection(db, "pets");
-    const [user, setUser] = useState([]);
-    const [pet, setPet] = useState([]);
+    const dispatch = useDispatch();
     const navigate = useNavigate();
+    const [user, setUser] = useState([]);
+    const userMail = localStorage.getItem("email");
+    const { petById, pets, users } = useSelector(state => state);
 
     useEffect(() => {
-        const getPets = async () => {
-            const allPets = await getDocs(petsCollectionRef);
-            const petsInfo = allPets && allPets.docs.map(user => ({...user.data(), id: user.id}));
-            const pet = petsInfo && petsInfo.find(pet => pet.id === id);
-            setPet(pet);
-            return pet;
-        };
-        
-        getPets()
-        .then(data => {
-            const getUser = async () => {
-                const users = await getDocs(usersCollectionRef);
-                const usersInfo = users && users.docs.map(user => ({...user.data(), id: user.id}));
-                const user = usersInfo && usersInfo.find(user => user.mail === data.userOwner);
-                setUser(user);
-            };
-    
-            getUser();
-        })
-
+        dispatch(getAllPets());
+        dispatch(getPetById(id))
+        // dispatch(getAllUsers())
+        // const owner = users.length && users.find(user => user.mail == petById.userOwner);
+        // setUser(owner);
     }, []);
 
     const goBack = (e) => {
@@ -64,12 +48,12 @@ export const PetDetails = () => {
     return (
         <div>
 
-            { pet && !pet.name && navigate(`/petRegistering/${id}`) }
+            { !!petById && !petById.name && navigate(`/petRegistering/${id}`) }
 
-            { pet && !!pet.name && (
+            { !!Object.keys(petById).length ? (
                 <div class="flex flex-col text-white mt-10">
 
-                    {userMail === pet.userOwner && (
+                    {userMail === petById.userOwner && (
                         <div class="flex flex-row gap-x-2 text-black m-5 mx-10 self-start">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 hover:stroke-amber-400 cursor-pointer" onClick={(e) => goBack(e)}>
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
@@ -81,33 +65,33 @@ export const PetDetails = () => {
                     <div class="flex self-center flex-col md:flex-row gap-x-16 p-6">
                         <div class="flex flex-col">
                             <div class="max-w-sm bg-gray-700 shadow-lg rounded-lg overflow-hidden my-4">
-                                <img class="w-full h-56 object-cover object-center" src={pet && pet.photo} alt={pet && pet.name}/>
+                                <img class="w-full h-56 object-cover object-center" src={petById.photo} alt={petById.name}/>
                                 <div class="flex items-center px-6 py-3 bg-gray-800">
                                     <h1 class="mx-3 text-white font-semibold text-lg">Mascota</h1>
                                 </div>
                                 <div class="py-4 px-6">
                                     <div class="flex flex-row justify-between">
-                                        <h1 class="text-2xl font-semibold">{pet && pet.name}</h1>
-                                        {userMail === pet.userOwner && (
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 cursor-pointer hover:stroke-amber-500" onClick={(e) => editPet(e, pet && pet.id)}>
+                                        <h1 class="text-2xl font-semibold">{petById.name}</h1>
+                                        {userMail === petById.userOwner && (
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 cursor-pointer hover:stroke-amber-500" onClick={(e) => editPet(e, petById.id)}>
                                                 <title>Editar información de mascota</title>
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
                                             </svg>
                                         )}
                                     </div>
                                     <div class="flex items-center mt-4">
-                                        <h1 class="px-2 text-sm"><h class="font-bold">Edad:</h> {pet && pet.age}</h1>
+                                        <h1 class="px-2 text-sm"><h class="font-bold">Edad:</h> {petById.age}</h1>
                                     </div>
                                     <div class="flex items-center mt-4">
-                                        <h1 class="px-2 text-sm"><h class="font-bold">Mascota:</h> {pet && pet.breed}</h1>
+                                        <h1 class="px-2 text-sm"><h class="font-bold">Mascota:</h> {petById.breed}</h1>
                                     </div>
                                     <div class="flex items-center mt-4">
-                                        <h1 class="px-2 text-sm"><h class="font-bold">Notas adicionales:</h> {pet && pet.notes || "-"}</h1>
+                                        <h1 class="px-2 text-sm"><h class="font-bold">Notas adicionales:</h> {petById.notes || "-"}</h1>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="max-w-sm bg-gray-700 shadow-lg rounded-lg overflow-hidden my-4">
+                        {/* <div class="max-w-sm bg-gray-700 shadow-lg rounded-lg overflow-hidden my-4">
                             <img class="w-full h-56 object-cover object-center" src={user && user.profilePic || ""} alt={user && user.name}/>
                             <div class="flex items-center px-6 py-3 bg-gray-800">
                                 <h1 class="mx-3 text-white font-semibold text-lg">Dueño/a</h1>
@@ -131,7 +115,7 @@ export const PetDetails = () => {
                                         <path fill="#c5221f" d="M52 51v8l20 15V48l-5.6-4.2c-5.94-4.45-14.4-.22-14.4 7.2"/>
                                         </svg>
                                         <h1 class="px-2 text-sm">{user && user.mail}</h1>
-                                    {userMail !== pet.userOwner && (
+                                    {userMail !== petById.userOwner && (
                                         <h class="text-red-600 font-semibold text-xs hover:underline hover:underline-offset-4 cursor-pointer"> (¡Mandale un mail!)</h>
                                         )}
                                     </a>
@@ -147,16 +131,16 @@ export const PetDetails = () => {
                                             </g>
                                         </svg>
                                         <h class="px-2 text-sm">{user && user.cellphone}</h>
-                                    {userMail !== pet.userOwner && (
+                                    {userMail !== petById.userOwner && (
                                         <h class="text-lime-600 font-semibold text-xs hover:underline hover:underline-offset-4 cursor-pointer"> (¡Mandale un mensaje!)</h>
                                         )}
                                     </a>
                                 </div>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
-            )}
+            ) :  <img src="https://i.stack.imgur.com/kOnzy.gif" alt="Loading..." class="h-16 w-16 mt-48 ml-[10rem] md:ml-[25rem] lg:ml-[45rem]"/>}
         </div>
     ) 
 }

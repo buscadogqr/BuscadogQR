@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { db } from "../../firebase-config.js";
 import axios from "axios";
-import { getDoc, doc, updateDoc } from "firebase/firestore";
+import { getPetById, getUserById, updatePetDetails, updateUserDetails } from "../../Redux/Actions/Actions";
 
 export const ExternalPets = () => {
-    const userLogged = localStorage.getItem("userId");
-    const userMail = localStorage.getItem("email");
-    const petRegistering = localStorage.getItem("petToRegister");
+    const dispatch = useDispatch();
     const navigate = useNavigate();
     const { id } = useParams();
+    const { petById, userLogged } = useSelector(state => state);
+    const userId = localStorage.getItem("userId");
+    const userMail = localStorage.getItem("email");
+    const petRegistering = localStorage.getItem("petToRegister");
     const [imageSelected, setImageSelected] = useState("");
-    const [pet, setPet] = useState([]);
     const [inputs, setInputs] = useState({
         name: "",
         animal: "",
@@ -21,15 +22,8 @@ export const ExternalPets = () => {
     });
 
     useEffect(() => {
-        const getPet = async () => {
-            const petDoc = doc(db, "pets", id);
-            const petData = await getDoc(petDoc);
-            const pet = petData.data();
-    
-            setPet(pet);
-        };
-
-        getPet();
+        dispatch(getPetById(id));
+        dispatch(getUserById(userId));
     }, [])
 
     const goToLogin = (e) => {
@@ -58,11 +52,6 @@ export const ExternalPets = () => {
 
         document.getElementById("confirmMsg").style.display = "block";
 
-        //usuario al que se le asignará la mascota a registrar
-        const userCr = doc(db, "users", userLogged);
-        const userInfo = await getDoc(userCr);
-        const user = userInfo.data();
-
         //fecha en la que se adquiere la membresía
         const todayDate = new Date();
         const acquired = todayDate.getDate() + "-" + (todayDate.getMonth() + 1) + "-" + todayDate.getFullYear();
@@ -75,36 +64,34 @@ export const ExternalPets = () => {
             formData.append("upload_preset", "yhp17atl");
         
             await axios.post("https://api.cloudinary.com/v1_1/dtm9ibgrj/image/upload", formData)
-            .then(async response => {
+            .then(response => {
                 const photo = response.data.secure_url;
-                const petToUpdate = doc(db, "pets", id);
                 const breedAnimal = `${inputs.animal} - ${inputs.breed}`
         
-                await updateDoc(petToUpdate, { userOwner: userMail, name: inputs.name, age: inputs.age, breed: breedAnimal, notes: inputs.notes, photo})
-                .then(async data => {
+                dispatch(updatePetDetails(id, { userOwner: userMail, name: inputs.name, age: inputs.age, breed: breedAnimal, notes: inputs.notes, photo}))
+                .then(data => {
                     if(user.memberships && user.memberships.length) {
-                        await updateDoc(userCr,  { type: "Usuario con membresías", memberships: [...user.memberships, { acquired, pet: inputs.name }] });
+                        dispatch(updateUserDetails(userId,  { type: "Usuario con membresías", memberships: [...user.memberships, { acquired, pet: inputs.name }] }));
                         petRegistering && localStorage.removeItem("petToRegister");
                         navigate(`/pet/${id}`);
                     } else {
-                        await updateDoc(userCr,  { type: "Usuario con membresías", memberships: [{ acquired, pet: inputs.name }] });
+                        dispatch(updateUserDetails(userId,  { type: "Usuario con membresías", memberships: [{ acquired, pet: inputs.name }] }));
                         petRegistering && localStorage.removeItem("petToRegister");
                         navigate(`/pet/${id}`);
                     }
                 })
             });
         } else {
-            const petToUpdate = doc(db, "pets", id);
             const breedAnimal = `${inputs.animal} - ${inputs.breed}`
 
-            await updateDoc(petToUpdate, { userOwner: userMail, name: inputs.name, age: inputs.age, breed: breedAnimal, notes: inputs.notes, photo: "https://www.educima.com/dibujo-para-colorear-perro-dl19661.jpg"})
-            .then(async data => {
+            dispatch(updatePetDetails(id, { userOwner: userMail, name: inputs.name, age: inputs.age, breed: breedAnimal, notes: inputs.notes, photo: "https://www.educima.com/dibujo-para-colorear-perro-dl19661.jpg"}))
+            .then(data => {
                 if(user.memberships && user.memberships.length) {
-                    await updateDoc(userCr,  { type: "Usuario con membresías", memberships: [...user.memberships, { acquired, pet: inputs.name }] });
+                    dispatch(updateUserDetails(userCr,  { type: "Usuario con membresías", memberships: [...user.memberships, { acquired, pet: inputs.name }] }));
                     petRegistering && localStorage.removeItem("petToRegister");
                     navigate(`/pet/${id}`);
                 } else {
-                    await updateDoc(userCr,  { type: "Usuario con membresías", memberships: [{ acquired, pet: inputs.name }] });
+                    dispatch(updateUserDetails(userCr,  { type: "Usuario con membresías", memberships: [{ acquired, pet: inputs.name }] }));
                     petRegistering && localStorage.removeItem("petToRegister");
                     navigate(`/pet/${id}`);
                 }
@@ -115,9 +102,9 @@ export const ExternalPets = () => {
     return (
         <div>
 
-            { pet && pet.name && navigate(`/pet/${id}`) }
+            { Object.keys(petById).length && petById.name && navigate(`/pet/${id}`) }
 
-            { pet && !pet.name && (
+            { petById && !petById.name && (
                 <div class="m-16 flex flex-col">
                     <h1 class="pb-5 text-titles text-4xl font-bold">Registra una mascota</h1>
                     <h>¡Nos alegra que hayas decidido unirte a nuestra comunidad!</h>

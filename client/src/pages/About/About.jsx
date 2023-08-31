@@ -1,22 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { db } from "../../firebase-config.js";
-import { collection, getDocs } from "firebase/firestore";
+import { getPrice } from "../../Redux/Actions/Actions";
 
 export const About = () => {
+    const dispatch = useDispatch();
     const navigate = useNavigate();
+    const { price } = useSelector(state => state);
     const userLogged = localStorage.getItem("email");
-    const othersCollectionRef = collection(db, "others");
-    const [price, setPrice] = useState(0);
 
     useEffect(() => {
-        const getPrice = async () => {
-            const others = await getDocs(othersCollectionRef);
-            const price = others && others.docs.map(docum => ({...docum.data(), id: docum.id}));
-            setPrice(price);
-        };
-
-        getPrice()
+        dispatch(getPrice());
     }, []);
 
     const goToRegister = (e) => {
@@ -60,7 +54,7 @@ export const About = () => {
                 <h3 class="text-third text-2xl font-bold m-4 mb-1">Costos</h3>
             </div>
 
-            <h class="m-4 md:text-justify sm:text-left">La chapita con el código QR tiene un costo de ${price.length && price[0].price}, esto incluye el costo del mantenimiento de la página. El envío del mismo puede estar sujeto a costos adicionales. Ante cualquier duda, por favor <button class="text-orange-600 hover:underline hover:underline-offset-4" onClick={(e) => contact(e)}>contactanos</button>.</h>
+            <h class="m-4 md:text-justify sm:text-left">La chapita con el código QR tiene un costo de ${price}, esto incluye el costo del mantenimiento de la página. El envío del mismo puede estar sujeto a costos adicionales. Ante cualquier duda, por favor <button class="text-orange-600 hover:underline hover:underline-offset-4" onClick={(e) => contact(e)}>contactanos</button>.</h>
             <br/>
             
             { !userLogged && (<div>

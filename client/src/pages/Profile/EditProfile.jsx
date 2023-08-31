@@ -1,11 +1,15 @@
 import React,  {useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { db } from "../../firebase-config.js";
-import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
+import { getUserById, updateUserDetails } from "../../Redux/Actions/Actions";
 
 export const EditProfile = () => {
-    const userLogged = localStorage.getItem("userId");
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const userId = localStorage.getItem("userId");
+    const { userLogged } = useSelector(state => state);
+    const [imageSelected, setImageSelected] = useState("");
     const [inputs, setInputs] = useState({
         name: "",
         surname: "",
@@ -13,20 +17,9 @@ export const EditProfile = () => {
         direction: "",
         mail: ""
     });
-    const usersCollectionRef = collection(db, "users");
-    const [user, setUser] = useState([]);
-    const [imageSelected, setImageSelected] = useState("");
-    const navigate = useNavigate();
 
     useEffect(() => {
-        const getUser = async () => {
-            const users = await getDocs(usersCollectionRef);
-            const usersInfo = users && users.docs.map(user => ({...user.data(), id: user.id}));
-            const user = usersInfo && usersInfo.find(user => user.id === userLogged);
-            setUser(user);
-        };
-
-        getUser();
+        !Object.keys(userLogged).length && dispatch(getUserById(userId));
     }, []);
 
     const handleInputChange = (e) => {
@@ -49,7 +42,6 @@ export const EditProfile = () => {
             await axios.post("https://api.cloudinary.com/v1_1/dtm9ibgrj/image/upload", formData)
             .then(async response => {
                 const profilePic = response.data.secure_url;
-                const user = doc(db, "users", userLogged);
         
                 let updatedUser1 = {}
         
@@ -59,15 +51,13 @@ export const EditProfile = () => {
                     }
                 };
         
-                await updateDoc(user, {...updatedUser1, profilePic})
+                dispatch(updateUserDetails(userId, {...updatedUser1, profilePic}))
                 .then(data => {
                     inputs.mail && localStorage.setItem("email", inputs.mail);
                     navigate('/profile');
                 })
             });
         } else {
-            const user = doc(db, "users", userLogged);
-        
             let updatedUser2 = {}
     
             for(let i in inputs) {
@@ -76,7 +66,7 @@ export const EditProfile = () => {
                 }
             };
 
-            updateDoc(user, updatedUser2)
+            dispatch(updateUserDetails(userId, updatedUser2))
             .then(data => {
                 setTimeout( () => {
                     inputs.mail && localStorage.setItem("email", inputs.mail)
@@ -99,7 +89,7 @@ export const EditProfile = () => {
     return (
         <div class="flex flex-col gap-y-5 justify-center m-20 mt-10 items-center">
 
-            {!userLogged && goToLogin()}
+            {!userId && goToLogin()}
 
             <div class="flex flex-row gap-x-2 self-start">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 hover:stroke-amber-400 cursor-pointer" onClick={(e) => goBack(e)}>
@@ -129,7 +119,7 @@ export const EditProfile = () => {
                         type="text"
                         id="name"
                         class="bg-form border border-form text-white outline-none text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        placeholder={user && user.name}
+                        placeholder={!!Object.keys(userLogged).length && userLogged.name}
                     />
                 </div>
                 <div class="mt-5">
@@ -140,7 +130,7 @@ export const EditProfile = () => {
                         type="text"
                         id="surname"
                         class="bg-form border border-form text-white outline-none text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        placeholder={user && user.surname}
+                        placeholder={!!Object.keys(userLogged).length && userLogged.surname}
                     />
                 </div>
                 <div class="mt-5">
@@ -151,7 +141,7 @@ export const EditProfile = () => {
                         type="text"
                         id="mail"
                         class="bg-form border border-form text-white outline-none text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        placeholder={user && user.mail}
+                        placeholder={!!Object.keys(userLogged).length && userLogged.mail}
                     />
                 </div>
                 <div class="mt-5">
@@ -162,7 +152,7 @@ export const EditProfile = () => {
                         type="text"
                         id="cellphone"
                         class="bg-form border border-form text-white outline-none text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        placeholder={user && user.cellphone}
+                        placeholder={!!Object.keys(userLogged).length && userLogged.cellphone}
                     />
                 </div>
                 <div class="mt-5">
@@ -173,7 +163,7 @@ export const EditProfile = () => {
                         type="text"
                         id="direction"
                         class="bg-form border border-form text-white outline-none text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        placeholder={user && user.direction}
+                        placeholder={!!Object.keys(userLogged).length && userLogged.direction}
                     />
                 </div>
 

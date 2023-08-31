@@ -1,21 +1,22 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { db } from "../../firebase-config.js";
-import { collection, getDocs } from "firebase/firestore";
+import { getUserByMail } from "../../Redux/Actions/Actions";
 
 export const ForgotPassword = () => {
+    const dispatch = useDispatch();
     const navigate = useNavigate();
     const [mail, setMail] = useState("");
     const [user, setUser] = useState("");
-    const usersCollectionRef = collection(db, "users");
+    const { userByMail } = useSelector(state => state);
 
     const showAreYou = async (e) => {
         e.preventDefault();
 
-        const allUsers = await getDocs(usersCollectionRef);
-        const usersInfo = allUsers && allUsers.docs.map(user => ({...user.data(), id: user.id}));
-        const userData = usersInfo && usersInfo.find(user => user.mail === mail);
-        setUser(userData);
+        dispatch(getUserByMail(mail))
+        .then(() => {
+            setUser(userByMail);
+        })
 
         document.getElementById("writeEmail").style.display = "none";
         document.getElementById("areYou").style.display = "block";

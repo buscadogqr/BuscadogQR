@@ -1,25 +1,17 @@
-import React, {useEffect, useState } from "react";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { db } from "../../firebase-config.js";
-import { collection, getDocs, doc, deleteDoc } from "firebase/firestore";
+import { getAllPets, getPetsByOwner } from "../../Redux/Actions/Actions";
 
 export const Pets = () => {
-    const userLogged = localStorage.getItem("email");
-    const userLoggedId = localStorage.getItem("userId");
+    const dispatch = useDispatch();
     const navigate = useNavigate();
-    const petsCollectionRef = collection(db, "pets");
-    const usersCollectionRef = collection(db, "users");
-    const [pets, setPets] = useState([]);
+    const userLogged = localStorage.getItem("email");
+    const { pets, petsByOwner } = useSelector(state => state);
 
     useEffect(() => {
-        const getPets = async () => {
-            const allPets = await getDocs(petsCollectionRef);
-            const petsInfo = allPets && allPets.docs.map(pet => ({...pet.data(), id: pet.id}));
-            const pets = petsInfo && petsInfo.filter(pet => pet.userOwner === userLogged);
-            setPets(pets);
-        };
-
-        getPets();
+        !pets.length && dispatch(getAllPets());
+        !petsByOwner.length && dispatch(getPetsByOwner(userLogged));
     }, []);
 
     const goTo = (e, id) => {
@@ -39,7 +31,7 @@ export const Pets = () => {
 
             {!userLogged && goToLogin()}
 
-            {!pets.length && (
+            {!petsByOwner.length && (
                 <div class="m-16">
                     <h1 class="pb-5 text-titles text-4xl font-bold">MIS MASCOTAS</h1>
                     <h1>Oops! Parece que todavía no tienes mascotas agregadas</h1>
@@ -50,11 +42,11 @@ export const Pets = () => {
                 </div>
             )}
 
-            {!!pets.length && (
+            {!!petsByOwner.length && (
                 <div class="m-16">
                     <h1 class="pb-5 text-titles text-4xl font-bold">MIS MASCOTAS</h1>
                     <div class="flex flex-col">
-                        {pets.map(pet => {
+                        {petsByOwner.map(pet => {
                             return (
                                 <div class="flex flex-col">
                                     <div class="bg-third text-white h-fit md:h-12 rounded-xl pl-10 pt-2 flex flex-wrap space-x-96 border border-2 border-third hover:bg-orange-700 hover:border-orange-700 outline-none cursor-pointer mt-5 w-full pr-10 justify-between pb-2 md:pb-0" onClick={(e) => goTo(e, pet.id)}>

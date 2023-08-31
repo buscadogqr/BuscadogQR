@@ -1,22 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getPrice } from "../../Redux/Actions/Actions";
 import { useNavigate } from "react-router-dom";
 import mascotas from "../../assets/mascotas.png";
-import { db } from "../../firebase-config.js";
-import { collection, getDocs } from "firebase/firestore";
 
 export const Home = () => {
+    const dispatch = useDispatch();
     const navigate = useNavigate();
-    const othersCollectionRef = collection(db, "others");
-    const [price, setPrice] = useState(0);
+    const price = useSelector(state => state.price);
 
     useEffect(() => {
-        const getPrice = async () => {
-            const others = await getDocs(othersCollectionRef);
-            const price = others && others.docs.map(docum => ({...docum.data(), id: docum.id}));
-            setPrice(price);
-        };
-
-        getPrice()
+        dispatch(getPrice());
     }, []);
 
     const goToRegister = (e) => {
@@ -277,7 +271,7 @@ export const Home = () => {
                     </div>
                     <div class="flex-none mt-auto bg-white rounded-b rounded-t-none overflow-hidden shadow p-6">
                     <div class="w-full pt-6 text-4xl font-bold text-center">
-                        ${price.length && price[0].price}
+                        ${price}
                     </div>
                     </div>
                 </div>

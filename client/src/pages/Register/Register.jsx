@@ -1,16 +1,21 @@
 import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { db } from "../../firebase-config.js";
-import { collection, addDoc, getDocs } from "firebase/firestore";
-import "./Register.css";
 import axios from "axios";
+import "./Register.css";
+import { getAllUsers, createUser } from "../../Redux/Actions/Actions";
 
 export const Register = () => {
-    const [input, setInput] = useState({name: '', surname: "", direction: "", cellphone: "", mail: "", password: ""});
-    const [confirmPass, setConfirmPass] = useState({confirmPass: ""});
+    const dispatch = useDispatch();
     const navigate = useNavigate();
+    const { users } = useSelector(state => state);
     const [imageSelected, setImageSelected] = useState("");
-    const usersCollectionRef = collection(db, "users");
+    const [confirmPass, setConfirmPass] = useState({confirmPass: ""});
+    const [input, setInput] = useState({name: '', surname: "", direction: "", cellphone: "", mail: "", password: ""});
+
+    useEffect(() => {
+        !users.length && dispatch(getAllUsers());
+    }, []);
 
     const handleInputChange = (e) => {
         setInput({
@@ -25,10 +30,7 @@ export const Register = () => {
     };
 
     const checkIfEmailExists = async () => {
-        const users = await getDocs(usersCollectionRef);
-        const usersInfo = users && users.docs.map(user => ({...user.data(), id: user.id}));
-
-        if(usersInfo.find(user => user.mail == input.mail)) return "Mail already registered";
+        if(users.find(user => user.mail == input.mail)) return "Mail already registered";
         else return "Mail available";
     };
     
@@ -55,7 +57,7 @@ export const Register = () => {
                     .then(response => {
                         const photo = response.data.secure_url;
     
-                        addDoc(usersCollectionRef, { ...input, profilePic: photo, type: "Usuario sin membresías" } )
+                        dispatch(createUser({ ...input, profilePic: photo, type: "Usuario sin membresías" }))
                         .then(data => {
                             document.getElementById("registerModal").style.display = 'none';
                             navigate('/login');
@@ -65,7 +67,7 @@ export const Register = () => {
         
                 //Si el usuario NO adjunta una foto de perfil, se guarda en la bd una por default
                 else {
-                    addDoc(usersCollectionRef, { ...input, profilePic: defaultUserImage, type: "Usuario sin membresías" } )
+                    dispatch(createUser({ ...input, profilePic: defaultUserImage, type: "Usuario sin membresías" }  ))
                     .then(data => {
                         setTimeout( () => {
                             document.getElementById("registerModal").style.display = 'none';
