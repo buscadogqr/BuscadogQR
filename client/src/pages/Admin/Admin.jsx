@@ -182,7 +182,6 @@ export const Admin = () => {
     // <----- QR CODE FUNCTIONS ----->
 
     const createQRcode = async () => {
-        const qr = document.getElementById("qrcode");
         const url = `https://buscadogqr.vercel.app/pet/${pets.length + 1}`;
         const size = 150;
 
@@ -194,13 +193,6 @@ export const Admin = () => {
             setTimeout(() => {
                 hideSpinner();
                 generateQRcode(url, size);
-
-                setTimeout(() => {
-                    // Get save url
-                    const saveUrl = qr.querySelector("img").src;
-                    // Create save button
-                    saveImage(saveUrl);
-                }, 10);
             }, 1000)
         })
     };
@@ -233,19 +225,7 @@ export const Admin = () => {
 
     // Hide loader
     const hideSpinner = () => {
-        const downloadBtn = document.getElementById("downloadCode");
-
         document.getElementById("qrcodeLoader").style.display = "none";
-        if(downloadBtn.style.display == "block") downloadBtn.style.display = "none"
-    };
-
-    // Save image in gallery
-    const saveImage = (saveUrl) => {
-        const downloadBtn = document.getElementById("downloadCode");
-
-        downloadBtn.style.display = "block";
-        downloadBtn.href = saveUrl;
-        downloadBtn.download = "qrcode.png";
     };
     
     return (
@@ -299,7 +279,7 @@ export const Admin = () => {
                     </div>
 
                     <div class="flex flex-col mx-16 mb-10">
-                        <div>
+                        <div class="self-center">
                             <h class="font-semibold text-xl">Generar nuevo código QR: </h>
                             <div class="flex flex-col gap-y-2 w-fit md:flex-row md:gap-x-2 md:items-center">
                                 <h>https://buscadogqr.vercel.app/pet/</h>
@@ -311,7 +291,6 @@ export const Admin = () => {
                         <div class="flex flex-col self-center mt-10">
                             <img id="qrcodeLoader" src="https://i.stack.imgur.com/kOnzy.gif" alt="Loading..." class="h-10 w-10 hidden"/>
                             <div id="qrcode" class="self-center mb-5"></div>
-                            <a id="downloadCode" class="hidden bg-buscabrown/60 px-3 py-2 rounded-xl hover:bg-buscabrown/80 text-white font-semibold">DESCARGAR CÓDIGO QR PARA MASCOTA N° {pets.length}</a>
                         </div>
                     </div>
                 </div>
