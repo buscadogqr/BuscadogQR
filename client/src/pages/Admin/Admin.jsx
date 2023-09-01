@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { db } from "../../firebase-config.js";
-import { collection, getDocs, getDoc, doc, updateDoc } from "firebase/firestore";
+import { collection, getDocs, getDoc, doc, updateDoc, setDoc } from "firebase/firestore";
 
 export const Admin = () => {
     const navigate = useNavigate();
@@ -20,39 +20,38 @@ export const Admin = () => {
     const [price, setPrice] = useState(0);
     const [priceInput, setPriceInput] = useState("");
 
+    const getUsers = async () => {
+        const users = await getDocs(usersCollectionRef);
+        const usersInfo = users && users.docs.map(user => ({...user.data(), id: user.id}));
+        setUsers(usersInfo);
+        setFilterUsers(usersInfo);
+    };
+
+    const getPets = async () => {
+        const allPets = await getDocs(petsCollectionRef);
+        const petsInfo = allPets && allPets.docs.map(user => ({...user.data(), id: user.id}));
+        const registeredPets = petsInfo && petsInfo.filter(pet => pet.name);
+        const petsToRegister = petsInfo && petsInfo.filter(pet => !pet.name);
+        const orderedPets = [...registeredPets, ...petsToRegister];
+        setPets(orderedPets);
+        setFilterPets(orderedPets);
+    };
+
+    const checkIfAdmin = async () => {
+        const userDoc = doc(db, "users", userId);
+        const userData = await getDoc(userDoc);
+        const userInfo = userData.data();
+
+        setUser(userInfo);
+    };
+
+    const getPrice = async () => {
+        const others = await getDocs(othersCollectionRef);
+        const price = others && others.docs.map(docum => ({...docum.data(), id: docum.id}));
+        setPrice(price);
+    };
+
     useEffect(() => {
-        const getUsers = async () => {
-            const users = await getDocs(usersCollectionRef);
-            const usersInfo = users && users.docs.map(user => ({...user.data(), id: user.id}));
-            setUsers(usersInfo);
-            setFilterUsers(usersInfo);
-        };
-
-        const getPets = async () => {
-            const allPets = await getDocs(petsCollectionRef);
-            const petsInfo = allPets && allPets.docs.map(user => ({...user.data(), id: user.id}));
-            const registeredPets = petsInfo && petsInfo.filter(pet => pet.name);
-            const petsToRegister = petsInfo && petsInfo.filter(pet => !pet.name);
-            const orderedPets = [...registeredPets, ...petsToRegister];
-            console.log(orderedPets)
-            setPets(orderedPets);
-            setFilterPets(orderedPets);
-        };
-
-        const checkIfAdmin = async () => {
-            const userDoc = doc(db, "users", userId);
-            const userData = await getDoc(userDoc);
-            const userInfo = userData.data();
-    
-            setUser(userInfo);
-        };
-
-        const getPrice = async () => {
-            const others = await getDocs(othersCollectionRef);
-            const price = others && others.docs.map(docum => ({...docum.data(), id: docum.id}));
-            setPrice(price);
-        };
-
         getUsers();
         getPets();
         checkIfAdmin();
@@ -180,6 +179,75 @@ export const Admin = () => {
         }
     });
 
+    // <----- QR CODE FUNCTIONS ----->
+
+    const createQRcode = async () => {
+        const qr = document.getElementById("qrcode");
+        const url = `https://buscadogqr.vercel.app/pet/${pets.length + 1}`;
+        const size = 150;
+
+        clearQRcode();
+        createPetDoc()
+        .then(() => {
+            showSpinner();
+
+            setTimeout(() => {
+                hideSpinner();
+                generateQRcode(url, size);
+
+                setTimeout(() => {
+                    // Get save url
+                    const saveUrl = qr.querySelector("img").src;
+                    // Create save button
+                    saveImage(saveUrl);
+                }, 10);
+            }, 1000)
+        })
+    };
+
+    // Add doc
+    const createPetDoc = async () => {
+        const docId = pets.length + 1;
+        await setDoc(doc(db, "pets", String(docId)), {});
+        getPets();
+    };
+
+    // Generate QR code
+    const generateQRcode = (url, size) => {
+        const qrcode = new QRCode("qrcode", {
+        text: url,
+        width: size,
+        height: size,
+        });
+    };
+
+    // Clear content from previous QR code
+    const clearQRcode = () => {
+        document.getElementById("qrcode").innerHTML = "";
+    };
+
+    // Show loader
+    const showSpinner = () => {
+        document.getElementById("qrcodeLoader").style.display = "block";
+    };
+
+    // Hide loader
+    const hideSpinner = () => {
+        const downloadBtn = document.getElementById("downloadCode");
+
+        document.getElementById("qrcodeLoader").style.display = "none";
+        if(downloadBtn.style.display == "block") downloadBtn.style.display = "none"
+    };
+
+    // Save image in gallery
+    const saveImage = (saveUrl) => {
+        const downloadBtn = document.getElementById("downloadCode");
+
+        downloadBtn.style.display = "block";
+        downloadBtn.href = saveUrl;
+        downloadBtn.download = "qrcode.png";
+    };
+    
     return (
         <div>
 
@@ -190,14 +258,18 @@ export const Admin = () => {
                 </div>
             )}
 
-            { !userLogged || user && user.type !== "Admin" && (
+            { !Object.keys(user).length && (
+                <img src="https://i.stack.imgur.com/kOnzy.gif" alt="Loading..." class="h-16 w-16 mt-48 ml-[10rem] md:ml-[25rem] lg:ml-[45rem]"/>
+            )}
+
+            { !!Object.keys(user).length && user.type !== "Admin" && (
                 <div class="flex flex-col gap-y-5 m-16">
                     <h class="pb-5 text-titles text-4xl font-bold">Oops! Parece que no tienes los permisos para acceder a esta ruta</h>
                     <button class="self-start p-3 bg-third hover:bg-orange-700 text-white rounded-3xl" onClick={(e) => goTo(e, "profile")}>Volver a mi perfil</button>
                 </div>
             )}
 
-            {user && user.type === "Admin" && (<div>
+            { !!Object.keys(user).length && user.type === "Admin" && (<div>
                 <h1 class="pb-5 m-16 mb-5 text-titles text-4xl font-bold">Información de administrador</h1>
                 <div class="flex flex-col gap-y-5 md:grid md:grid-cols-2 md:gap-x-5 m-16 justify-self-center">
                     <div class="bg-third text-white p-5">
@@ -210,18 +282,37 @@ export const Admin = () => {
                     </div>
                 </div>
 
-                <div class="ml-16 mb-10 text-xl font-semibold">
-                    <h class="self-center">Precio actual del collar: <h class="font-normal">${price.length && price[0].price}</h></h>
-                    <div class="flex flex-col gap-y-2 w-fit md:flex-row md:gap-x-2 md:items-center">
-                        <h>¿Quieres cambiar el precio? </h>
-                        <input 
-                        class="border-buscabrown rounded-xl bg-buscabrown outline-none text-white font-normal"
-                        type="text"
-                        id="price"
-                        placeholder={price.length && price[0].price}
-                        onChange={(event) => setPriceInput(event.target.value)}
-                        />
-                        <button class="bg-third border-2 border-third outline-none text-white hover:bg-orange-700 hover:border-orange-700 rounded-3xl font-medium text-sm w-full sm:w-auto px-3 py-2.5 text-center cursor-pointer font-normal" onClick={() => updatePrice()}>Cambiar</button>
+                <div class="flex justify-between flex-wrap self-center md:self-start">
+                    <div class="mb-10 text-xl mx-16 font-semibold">
+                        <h class="self-center">Precio actual del collar: <h class="font-normal">${price.length && price[0].price}</h></h>
+                        <div class="flex flex-col gap-y-2 w-fit md:flex-row md:gap-x-2 md:items-center">
+                            <h>¿Quieres cambiar el precio? </h>
+                            <input 
+                            class="border-buscabrown rounded-xl bg-buscabrown outline-none text-white font-normal"
+                            type="text"
+                            id="price"
+                            placeholder={price.length && price[0].price}
+                            onChange={(event) => setPriceInput(event.target.value)}
+                            />
+                            <button class="bg-third border-2 border-third outline-none text-white hover:bg-orange-700 hover:border-orange-700 rounded-3xl font-medium text-sm w-full sm:w-auto px-3 py-2.5 text-center cursor-pointer font-normal" onClick={() => newPrice()}>Cambiar</button>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col mx-16 mb-10">
+                        <div>
+                            <h class="font-semibold text-xl">Generar nuevo código QR: </h>
+                            <div class="flex flex-col gap-y-2 w-fit md:flex-row md:gap-x-2 md:items-center">
+                                <h>https://buscadogqr.vercel.app/pet/</h>
+                                <h class="border-buscabrown rounded-xl bg-buscabrown outline-none text-white py-2 px-16">{!!pets.length && pets.length + 1}</h>
+                                <button class="bg-third border-2 border-third outline-none text-white hover:bg-orange-700 hover:border-orange-700 rounded-3xl font-medium text-sm w-full sm:w-auto px-3 py-2.5 text-center cursor-pointer font-normal" onClick={() => createQRcode()}>Generar</button>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col self-center mt-10">
+                            <img id="qrcodeLoader" src="https://i.stack.imgur.com/kOnzy.gif" alt="Loading..." class="h-10 w-10 hidden"/>
+                            <div id="qrcode" class="self-center mb-5"></div>
+                            <a id="downloadCode" class="hidden bg-buscabrown/60 px-3 py-2 rounded-xl hover:bg-buscabrown/80 text-white font-semibold">DESCARGAR CÓDIGO QR PARA MASCOTA N° {pets.length}</a>
+                        </div>
                     </div>
                 </div>
 
