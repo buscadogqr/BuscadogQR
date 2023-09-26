@@ -274,7 +274,7 @@ export const Admin = () => {
                             placeholder={price.length && price[0].price}
                             onChange={(event) => setPriceInput(event.target.value)}
                             />
-                            <button class="bg-third border-2 border-third outline-none text-white hover:bg-orange-700 hover:border-orange-700 rounded-3xl font-medium text-sm w-full sm:w-auto px-3 py-2.5 text-center cursor-pointer font-normal" onClick={() => newPrice()}>Cambiar</button>
+                            <button class="bg-third border-2 border-third outline-none text-white hover:bg-orange-700 hover:border-orange-700 rounded-3xl font-medium text-sm w-full sm:w-auto px-3 py-2.5 text-center cursor-pointer font-normal" onClick={() => updatePrice()}>Cambiar</button>
                         </div>
                     </div>
 
