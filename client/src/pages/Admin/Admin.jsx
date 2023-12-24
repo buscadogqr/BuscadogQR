@@ -159,6 +159,12 @@ export const Admin = () => {
         .then(() => location.reload());
     };
 
+    const viewDataBase = (e) => {
+        e.preventDefault();
+
+        navigate("/dataBase");
+    };
+
     document.getElementById("price") && document.getElementById("price").addEventListener("keydown", function(event) {
         if(event.keyCode == 13) {
             updatePrice();
@@ -278,13 +284,15 @@ export const Admin = () => {
                         </div>
                     </div>
 
-                    <div class="flex flex-col mx-16 mb-10">
+                    <div class="flex flex-col mx-16 mb-5">
                         <div class="self-center">
                             <h class="font-semibold text-xl">Generar nuevo código QR: </h>
                             <div class="flex flex-col gap-y-2 w-fit md:flex-row md:gap-x-2 md:items-center">
-                                <h>https://buscadogqr.vercel.app/pet/</h>
-                                <h class="border-buscabrown rounded-xl bg-buscabrown outline-none text-white py-2 px-16">{!!pets.length && pets.length + 1}</h>
-                                <button class="bg-third border-2 border-third outline-none text-white hover:bg-orange-700 hover:border-orange-700 rounded-3xl font-medium text-sm w-full sm:w-auto px-3 py-2.5 text-center cursor-pointer font-normal" onClick={() => createQRcode()}>Generar</button>
+                                <h>buscadogqr.vercel.app/pet/</h>
+                                <div class="flex gap-x-2">
+                                    <h class="border-buscabrown rounded-xl bg-buscabrown outline-none text-white py-2 px-16 w-fit">{!!pets.length && pets.length + 1}</h>
+                                    <button class="bg-third border-2 border-third outline-none text-white hover:bg-orange-700 hover:border-orange-700 rounded-3xl font-medium text-sm w-fit px-3 py-2.5 text-center cursor-pointer font-normal" onClick={() => createQRcode()}>Generar</button>
+                                </div>
                             </div>
                         </div>
 
@@ -438,6 +446,9 @@ export const Admin = () => {
                         </div>
                     </div>
                 </div>
+
+                <button class="mb-16 ml-16 font-bold hover:underline hover:underline-offset-4 hover:text-third" onClick={(e) => viewDataBase(e)}>VISUALIZAR BASE DE DATOS</button>                
+                                
             </div>)}
         </div>
     )

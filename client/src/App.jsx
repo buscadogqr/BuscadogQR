@@ -22,6 +22,7 @@ import { OurStories } from "./pages/OurStories/OurStories.jsx";
 import { ForgotPassword } from "./pages/ForgotPassword/ForgotPassword.jsx";
 import { ResetPassword } from "./pages/ForgotPassword/ResetPassword.jsx";
 import { ExternalPets } from "./pages/ExternalPets/ExternalPets.jsx";
+import { DataBase } from "./pages/Admin/DataBase.jsx";
 
 const AppRouter = () => {
   return (
@@ -113,6 +114,11 @@ const AppRouter = () => {
           <Route
           path="/petRegistering/:id"
           element={<ExternalPets/>}
+          />
+
+          <Route
+          path="/dataBase"
+          element={<DataBase/>}
           />
 
         </Routes>

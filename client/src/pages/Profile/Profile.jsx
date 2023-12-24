@@ -77,7 +77,11 @@ export const Profile = () => {
 
             {!userLogged && goToLogin()}
 
-            <div class="flex flex-col">
+            { !Object.keys(user).length && (
+                <img src="https://i.stack.imgur.com/kOnzy.gif" alt="Loading..." class="h-16 w-16 my-40 mx-48"/>
+            )}
+
+            { !!Object.keys(user).length && (<div class="flex flex-col">
                 <h1 class="text-titles text-2xl font-bold">Mi perfil</h1>
                 <div class="flex flex-col md:flex-row gap-x-16">
                     <div>
@@ -154,7 +158,7 @@ export const Profile = () => {
                 </div>
 
                 <h class="mt-7 text-sm">¿<h class="hover:underline hover:underline-offset-4 text-third cursor-pointer" onClick={(e) => settingLS(e)}>Olvidaste</h> tu contraseña?</h>
-            </div>
+            </div> )}
         </div>
     )
 };
