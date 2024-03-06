@@ -23,6 +23,16 @@ export const Admin = () => {
     const getUsers = async () => {
         const users = await getDocs(usersCollectionRef);
         const usersInfo = users && users.docs.map(user => ({...user.data(), id: user.id}));
+
+        const orderedAlphabetically = () => {
+            usersInfo.length && usersInfo.sort((userA, userB) => {
+                if(userA.name.toLowerCase() < userB.name.toLowerCase()) return -1;
+                if(userA.name.toLowerCase() > userB.name.toLowerCase()) return 1;
+                return 0;
+            })
+        };
+
+        orderedAlphabetically();
         setUsers(usersInfo);
         setFilterUsers(usersInfo);
     };

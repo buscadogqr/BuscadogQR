@@ -91,7 +91,7 @@ export const DataBase = () => {
                             <option value="" selected>USUARIOS</option>
                             { !!users.length && users?.map(user => {
                                 return (
-                                    <option value={user.id}>{user.name}</option>
+                                    <option value={user.id}>{user.name + " " + user.surname}</option>
                             )})}
                         </select>
                     </div>
