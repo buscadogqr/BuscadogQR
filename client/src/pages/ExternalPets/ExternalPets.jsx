@@ -127,9 +127,11 @@ export const ExternalPets = () => {
                             <h class="pb-5 text-third text-2xl font-bold">Pasos a seguir para activar correctamente el código QR:</h>
                             <ul class="list-decimal ml-5">
                                 <li><h class="font-semibold"><h class="text-third hover:underline hover:underline-offset-4 cursor-pointer" onClick={(e) => goToLogin(e)}>Inicia sesión</h>/<h class="text-third hover:underline hover:underline-offset-4 cursor-pointer" onClick={(e) => goToRegister(e)}>Registrate</h></h>: si todavía no te registraste, ¡este es el momento! Para asociar a la mascota que quieres registrar con un dueño, necesitamos algunos datos básicos tuyos. Si ya lo hiciste, inicia sesión.</li>
+                                <br/>
                                 <li>
-                                    <h><h class="font-semibold">Registra a tu mascota</h>: una vez que inicies sesión se te redigirá a esta parte de vuelta, dónde ya podrás registrar a tu mascota. Una vez que lo hagas, podrás verla ya en la parte de "Mis mascotas".</h>
+                                    <h><h class="font-semibold">Registra a tu mascota</h>: una vez que inicies sesión, se te redigirá a esta parte de vuelta, dónde ya podrás registrar a tu mascota. Una vez que lo hagas, podrás verla en la parte de "Mis mascotas". Si te perdes o no sos redirigido, no te preocupes, hasta no completar la suscripción de tu mascota no se finaliza el proceso. En ese caso simplemente escanea el QR nuevamente y vas a poder continuar con el registro.</h>
                                 </li>
+                                <br/>
                                 <li>
                                     <h><h class="font-semibold">¡Disfrutá de tu suscripción!</h>: ya con todo configurado, vas a poder quedarte tranquilo de que, en caso de que pierdas a tu mascota, esta tendrá todos los datos necesarios para que alguien te contacte con tan solo un escaneo.</h>
                                 </li>

@@ -11,6 +11,7 @@ export const Register = () => {
     const navigate = useNavigate();
     const [imageSelected, setImageSelected] = useState("");
     const usersCollectionRef = collection(db, "users");
+    const registeringPet = localStorage.getItem("petToRegister");
 
     const handleInputChange = (e) => {
         setInput({
@@ -40,6 +41,7 @@ export const Register = () => {
             //chequeamos que las contraseñas coincidan
             if(checkPasswordsMatch() === "Passwords match!") {
                 const defaultUserImage = "https://img.freepik.com/vector-premium/icono-avatar-masculino-persona-desconocida-o-anonima-icono-perfil-avatar-predeterminado-usuario-redes-sociales-hombre-negocios-silueta-perfil-hombre-aislado-sobre-fondo-blanco-ilustracion-vectorial_735449-120.jpg";
+                let photo;
                 
                 document.getElementById("passwordsDontMatch").style.display = 'none';
                 document.getElementById("emailAlreadyRegistered").style.display = "none";
@@ -53,26 +55,25 @@ export const Register = () => {
                     
                     await axios.post("https://api.cloudinary.com/v1_1/dtm9ibgrj/image/upload", formData)
                     .then(response => {
-                        const photo = response.data.secure_url;
-    
-                        addDoc(usersCollectionRef, { ...input, profilePic: photo, type: "Usuario sin membresías" } )
-                        .then(data => {
-                            document.getElementById("registerModal").style.display = 'none';
-                            navigate('/login');
-                        });
+                        photo = response.data.secure_url;
                     })
                 }
-        
-                //Si el usuario NO adjunta una foto de perfil, se guarda en la bd una por default
-                else {
-                    addDoc(usersCollectionRef, { ...input, profilePic: defaultUserImage, type: "Usuario sin membresías" } )
+
+                addDoc(usersCollectionRef, { ...input, profilePic: photo || defaultUserImage, type: "Usuario sin membresías" } )
                     .then(data => {
-                        setTimeout( () => {
+                        setTimeout( async () => {
+                            const users = await getDocs(usersCollectionRef);
+                            const usersInfo = users && users.docs.map(user => ({...user.data(), id: user.id}));
+                            const user = usersInfo && usersInfo.find(user => user.mail === input.mail);
+
+                            console.log(user)
                             document.getElementById("registerModal").style.display = 'none';
-                            navigate('/login');
-                        }, 1000)
-                    });
-                }
+                            localStorage.setItem("email", input.mail);
+                            localStorage.setItem("userId", user.id);
+                            !registeringPet ? navigate("/profile") : navigate(`/petRegistering/${registeringPet}`);
+                        }, 500)
+                });
+        
             }
             //si las contraseñas no coinciden, mostramos el error
             else {
