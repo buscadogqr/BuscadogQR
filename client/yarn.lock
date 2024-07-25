@@ -2218,11 +2218,6 @@
     "@types/node" ">=13.7.0"
     "long" "^5.0.0"
 
-"qrcodejs@^1.0.0":
-  "integrity" "sha512-67rj3mMBhSBepaD57qENnltO+r8rSYlqM7HGThks/BiyDAkc86sLvkKqjkqPS5v13f7tvnt6dbEf3qt7zq+BCg=="
-  "resolved" "https://registry.npmjs.org/qrcodejs/-/qrcodejs-1.0.0.tgz"
-  "version" "1.0.0"
-
 "queue-microtask@^1.2.2":
   "integrity" "sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A=="
   "resolved" "https://registry.npmjs.org/queue-microtask/-/queue-microtask-1.2.3.tgz"
@@ -2426,6 +2421,11 @@
   "integrity" "sha512-b39TBaTSfV6yBrapU89p5fKekE2m/NwnDocOVruQFS1/veMgdzuPcnOM34M6CwxW8jH/lxEa5rBoDeUwu5HHTw=="
   "resolved" "https://registry.npmjs.org/semver/-/semver-6.3.0.tgz"
   "version" "6.3.0"
+
+"sexy-qr@^0.3.3":
+  "integrity" "sha512-TD8NJILGHVJwwOfPKE8IJJIEtsrZlm6eEOdyKcbKizKSNhM8qNbA28kIAVWydlubnzU/jDBfWIwUTrVelvrolw=="
+  "resolved" "https://registry.npmjs.org/sexy-qr/-/sexy-qr-0.3.3.tgz"
+  "version" "0.3.3"
 
 "shebang-command@^2.0.0":
   "integrity" "sha512-kHxr2zZpYtdmrN1qDjrrX/Z1rR1kG8Dx+gkpK1G4eXmvXswmcE1hTWBWYUzlraYw1/yZp6YuDY77YtvbN0dmDA=="

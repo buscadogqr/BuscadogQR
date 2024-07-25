@@ -60,7 +60,7 @@ export const DataBase = () => {
             )}
 
             { !Object.keys(user).length && (
-                <img src="https://i.stack.imgur.com/kOnzy.gif" alt="Loading..." class="h-16 w-16 mt-48 ml-[10rem] md:ml-[25rem] lg:ml-[45rem]"/>
+                <img src="https://retchhh.wordpress.com/wp-content/uploads/2015/03/loading1.gif" alt="Loading..." class="h-[16rem] w-[16rem] mt-40 ml-[3rem] md:ml-[25rem] lg:ml-[40rem]"/>
             )}
 
             { !!Object.keys(user).length && user.type !== "Admin" && (

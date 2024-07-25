@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { db } from "../../firebase-config.js";
 import { collection, getDocs, getDoc, doc, updateDoc, setDoc } from "firebase/firestore";
+import { QRCode, QRSvg } from "sexy-qr";
 
 export const Admin = () => {
     const navigate = useNavigate();
@@ -202,15 +203,15 @@ export const Admin = () => {
         const size = 150;
 
         clearQRcode();
-        createPetDoc()
-        .then(() => {
+        // createPetDoc()
+        // .then(() => {
             showSpinner();
 
             setTimeout(() => {
                 hideSpinner();
                 generateQRcode(url, size);
             }, 1000)
-        })
+        // })
     };
 
     // Add doc
@@ -222,11 +223,20 @@ export const Admin = () => {
 
     // Generate QR code
     const generateQRcode = (url, size) => {
-        const qrcode = new QRCode("qrcode", {
-        text: url,
-        width: size,
-        height: size,
+        const qrCode = new QRCode({
+        content: url,
+        ecl: "M"
         });
+
+        const qrSvg = new QRSvg(qrCode, {
+            cornerBlocksAsCircles: false,
+            roundOuterCorners: true,
+            roundInnerCorners: true,
+            size
+        });
+
+        document.getElementById("qrcode").innerHTML = qrSvg.svg;
+        return qrSvg.svg;
     };
 
     // Clear content from previous QR code
@@ -255,7 +265,7 @@ export const Admin = () => {
             )}
 
             { !Object.keys(user).length && (
-                <img src="https://i.stack.imgur.com/kOnzy.gif" alt="Loading..." class="h-16 w-16 mt-48 ml-[10rem] md:ml-[25rem] lg:ml-[45rem]"/>
+                <img src="https://retchhh.wordpress.com/wp-content/uploads/2015/03/loading1.gif" alt="Loading..." class="h-[16rem] w-[16rem] mt-40 ml-[3rem] md:ml-[25rem] lg:ml-[40rem]"/>
             )}
 
             { !!Object.keys(user).length && user.type !== "Admin" && (
@@ -294,6 +304,8 @@ export const Admin = () => {
                         </div>
                     </div>
 
+                    {/* QR CODE */}
+
                     <div class="flex flex-col mx-16 mb-5">
                         <div class="self-center">
                             <h class="font-semibold text-xl">Generar nuevo código QR: </h>
@@ -307,10 +319,14 @@ export const Admin = () => {
                         </div>
 
                         <div class="flex flex-col self-center mt-10">
-                            <img id="qrcodeLoader" src="https://i.stack.imgur.com/kOnzy.gif" alt="Loading..." class="h-10 w-10 hidden"/>
+                            <img id="qrcodeLoader" src="https://retchhh.wordpress.com/wp-content/uploads/2015/03/loading1.gif" alt="Loading..." class="h-[10rem] w-[10rem] hidden"/>
                             <div id="qrcode" class="self-center mb-5"></div>
                         </div>
+
                     </div>
+
+                    {/* QR CODE */}
+                    
                 </div>
 
                 <div class="text-white flex flex-col mb-10">
