@@ -203,15 +203,15 @@ export const Admin = () => {
         const size = 150;
 
         clearQRcode();
-        // createPetDoc()
-        // .then(() => {
+        createPetDoc()
+        .then(() => {
             showSpinner();
 
             setTimeout(() => {
                 hideSpinner();
                 generateQRcode(url, size);
             }, 1000)
-        // })
+        })
     };
 
     // Add doc
