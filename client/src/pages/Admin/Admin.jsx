@@ -1,8 +1,7 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { db } from "../../firebase-config.js";
 import { collection, getDocs, getDoc, doc, updateDoc, setDoc } from "firebase/firestore";
-import { QRCode, QRSvg } from "sexy-qr";
 
 export const Admin = () => {
     const navigate = useNavigate();
@@ -223,20 +222,11 @@ export const Admin = () => {
 
     // Generate QR code
     const generateQRcode = (url, size) => {
-        const qrCode = new QRCode({
-        content: url,
-        ecl: "M"
+        const qrCode = new QRCode("qrcode", {
+        text: url,
+        width: size,
+        height: size
         });
-
-        const qrSvg = new QRSvg(qrCode, {
-            cornerBlocksAsCircles: false,
-            roundOuterCorners: true,
-            roundInnerCorners: true,
-            size
-        });
-
-        document.getElementById("qrcode").innerHTML = qrSvg.svg;
-        return qrSvg.svg;
     };
 
     // Clear content from previous QR code
