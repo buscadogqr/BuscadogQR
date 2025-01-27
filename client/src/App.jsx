@@ -11,6 +11,7 @@ import { Login } from "./pages/Login/Login.jsx";
 import { Register } from "./pages/Register/Register.jsx";
 import { Contact } from "./pages/Contact/Contact.jsx";
 import { Error } from "./pages/Error/Error.jsx";
+import { Mantainance } from "./pages/Mantainance/Mantainance.jsx";
 import { Profile } from "./pages/Profile/Profile.jsx";
 import { EditProfile } from "./pages/Profile/EditProfile.jsx";
 import { Pets } from "./pages/Pets/Pets.jsx";
@@ -27,16 +28,16 @@ import { DataBase } from "./pages/Admin/DataBase.jsx";
 const AppRouter = () => {
   return (
     <>
-        <NavBar />
+        {/* <NavBar /> */}
         
         <Routes>
 
           <Route
           path="*"
-          element={<Error/>}
+          element={<Mantainance/>}
           />
 
-          <Route 
+          {/* <Route 
           path= "/home"
           element={<Home/>} 
           />
@@ -119,11 +120,11 @@ const AppRouter = () => {
           <Route
           path="/dataBase"
           element={<DataBase/>}
-          />
+          /> */}
 
         </Routes>
 
-        <Footer />
+        {/* <Footer /> */}
     </>
   );
 };

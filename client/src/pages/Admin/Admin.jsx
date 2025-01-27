@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { db } from "../../firebase-config.js";
-import { collection, getDocs, getDoc, doc, updateDoc, setDoc } from "firebase/firestore";
+import { collection, getDocs, getDoc, doc, updateDoc, setDoc, addDoc } from "firebase/firestore";
 
 export const Admin = () => {
     const navigate = useNavigate();
@@ -66,6 +66,7 @@ export const Admin = () => {
         getPets();
         checkIfAdmin();
         getPrice()
+        console.log(users, pets, price)
     }, []);
 
     const goTo = (e, whereTo) => {
