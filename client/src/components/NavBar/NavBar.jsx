@@ -1,39 +1,24 @@
-import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate, Link } from "react-router-dom";
 import logo from "../../assets/BuscadogIcon.png";
-import { db } from "../../firebase-config.js";
-import { collection, doc, getDoc, getDocs } from "firebase/firestore";
+import { getAllUsers, logout } from "../../redux/Actions/Actions";
 import "./NavBar.css";
 
 export const NavBar = () => {
     const navigate = useNavigate();
-    const checkLocalStorage = () => {
-        return localStorage.getItem("userId");
-    };
-    const usersCollectionRef = collection(db, "users");
-    const [user, setUser] = useState([]);
-    const userLogged = localStorage.getItem("userId");
-    const userMail = localStorage.getItem("email");
-
-    useEffect(() => {
-        const getUser = async () => {
-            const users = await getDocs(usersCollectionRef);
-            const usersInfo = users && users.docs.map(user => ({...user.data(), id: user.id}));
-            const user = usersInfo && usersInfo.find(user => user.id === userLogged);
-            setUser(user);
-        };
-
-        const checkIfAdmin = async () => {
-            const userDoc = doc(db, "users", userLogged);
-            const userData = await getDoc(userDoc);
-            const userInfo = userData.data();
+    const dispatch = useDispatch();
+    const userLogged = useSelector(state => state.userLogged);
+    const id = localStorage.bgUserId;
+    const mail = localStorage.bgUserMail;
     
-            setUser(userInfo);
-        };
-
-        getUser();
-        checkIfAdmin();
-    }, []);
+    useEffect(() => {
+        if(mail == "undefined" && id == "undefined") {
+            dispatch(logout());
+        } else if(!userLogged && mail && id) {
+            dispatch(getAllUsers(`?userId=${id}`));
+        }
+    }, [dispatch, userLogged && userLogged.name]);
 
     const goTo = (e, whereTo) => {
         e.preventDefault();
@@ -92,22 +77,22 @@ export const NavBar = () => {
                             </div>
                         </div>
                         <div class="hidden text-white md:flex items-center space-x-3 ">
-                            {!checkLocalStorage() && (
+                            {!!userLogged && !userLogged.name && (
                                 <div class="flex flex-row space-x-3">
                                     <button onClick={(e) => goTo(e, "login")} class="py-2 px-2 outline-none font-medium rounded hover:bg-orange-700 hover:text-white transition duration-300">Iniciar sesión</button>
                                     <button onClick={(e) => goTo(e, "register")} class="py-2 px-2 outline-none font-medium bg-third rounded hover:bg-orange-700 transition duration-300">Registrarme</button>
                                 </div>
                             )}
-                            {checkLocalStorage() && (
+                            {!!userLogged && !!userLogged.name && (
                                 <div class="flex flex-row space-x-3">
 
-                                    {userMail === "buscadogqr@gmail.com" && (
+                                    {userLogged.mail === "buscadogqr@gmail.com" && (
                                         <div class="flex flex-row space-x-3" onClick={(e) => goTo(e, "admin")}>
                                             <button class="py-2 px-2 outline-none font-medium rounded hover:bg-orange-700 hover:text-white transition duration-300">Información de admin</button>
                                         </div>
                                     )}
 
-                                    {userMail !== "buscadogqr@gmail.com" && (
+                                    {userLogged.mail !== "buscadogqr@gmail.com" && (
                                         <div class="flex flex-row space-x-3" onClick={(e) => goTo(e, "pets")}>
                                             <button class="py-2 px-2 outline-none font-medium rounded hover:bg-orange-700 hover:text-white transition duration-300">Mis Mascotas</button>
                                         </div>
@@ -138,22 +123,22 @@ export const NavBar = () => {
                 </div>
                 <div id=".mobile-menu" class="hidden mobile-menu">
                     <ul class="">
-                        {!checkLocalStorage() && (
+                        {!!userLogged && !userLogged.name && (
                             <div>
                                 <li><h onClick={(e) => goTo(e, "login")} class="block text-sm text-white px-2 py-4 hover:bg-orange-700 transition duration-300 font-semibold outline-none">Iniciar sesión</h></li>
                                 <li><h onClick={(e) => goTo(e, "register")} class="block text-sm bg-third text-white px-2 py-4 hover:bg-orange-700 transition duration-300 font-semibold outline-none">Registrarme</h></li>
                             </div>
                         )}
-                        {checkLocalStorage() && (
+                        {!!userLogged && !!userLogged.name && (
                             <div>
 
-                                {userMail === "buscadogqr@gmail.com" && (
+                                {userLogged.mail === "buscadogqr@gmail.com" && (
                                     <div onClick={(e) => goTo(e, "admin")}>
                                         <li><h class="block outline-none text-sm text-white px-2 py-4 hover:bg-orange-700 transition duration-300 font-semibold">Información de admin</h></li>
                                     </div>
                                 )}
 
-                                {userMail !== "buscadogqr@gmail.com" && (
+                                {userLogged.mail !== "buscadogqr@gmail.com" && (
                                     <div onClick={(e) => goTo(e, "pets")}>
                                         <li><h class="block outline-none text-sm text-white px-2 py-4 hover:bg-orange-700 transition duration-300 font-semibold">Mis Mascotas</h></li>
                                     </div>

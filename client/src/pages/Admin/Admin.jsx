@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { db } from "../../firebase-config.js";
-import { collection, getDocs, getDoc, doc, updateDoc, setDoc, addDoc } from "firebase/firestore";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllUsers, getMembers, getPets, getRegisteredPets, getPrice, getStats, modifyPrice, createPet } from "../../redux/Actions/Actions.js";
 
 export const Admin = () => {
     const navigate = useNavigate();
-    const userLogged = localStorage.getItem("email");
-    const userId = localStorage.getItem("userId");
-    const usersCollectionRef = collection(db, "users");
-    const petsCollectionRef = collection(db, "pets");
-    const othersCollectionRef = collection(db, "others");
-    const [users, setUsers] = useState([]);
-    const [pets, setPets] = useState([]);
-    const [user, setUser] = useState([]);
+    const dispatch = useDispatch();
+    const userMail = localStorage.getItem("bgUserMail");
+    const userId = localStorage.getItem("bgUserId");
+    const user = useSelector(state => state.userLogged);
+    const users = useSelector(state => state.users); 
+    const members = useSelector(state => state.members); 
+    const pets = useSelector(state => state.pets); 
+    const registeredPets = useSelector(state => state.registeredPets); 
+    const statePrice = useSelector(state => state.price); 
+    const stats = useSelector(state => state.stats); 
     const [filterUsers, setFilterUsers] = useState([]);
     const [filterPets, setFilterPets] = useState([]);
     const [input, setInput] = useState("");
@@ -20,54 +22,22 @@ export const Admin = () => {
     const [price, setPrice] = useState(0);
     const [priceInput, setPriceInput] = useState("");
 
-    const getUsers = async () => {
-        const users = await getDocs(usersCollectionRef);
-        const usersInfo = users && users.docs.map(user => ({...user.data(), id: user.id}));
-
-        const orderedAlphabetically = () => {
-            usersInfo.length && usersInfo.sort((userA, userB) => {
-                if(userA.name.toLowerCase() < userB.name.toLowerCase()) return -1;
-                if(userA.name.toLowerCase() > userB.name.toLowerCase()) return 1;
-                return 0;
-            })
-        };
-
-        orderedAlphabetically();
-        setUsers(usersInfo);
-        setFilterUsers(usersInfo);
-    };
-
-    const getPets = async () => {
-        const allPets = await getDocs(petsCollectionRef);
-        const petsInfo = allPets && allPets.docs.map(user => ({...user.data(), id: user.id}));
-        const registeredPets = petsInfo && petsInfo.filter(pet => pet.name);
-        const petsToRegister = petsInfo && petsInfo.filter(pet => !pet.name);
-        const orderedPets = [...registeredPets, ...petsToRegister];
-        setPets(orderedPets);
-        setFilterPets(orderedPets);
-    };
-
-    const checkIfAdmin = async () => {
-        const userDoc = doc(db, "users", userId);
-        const userData = await getDoc(userDoc);
-        const userInfo = userData.data();
-
-        setUser(userInfo);
-    };
-
-    const getPrice = async () => {
-        const others = await getDocs(othersCollectionRef);
-        const price = others && others.docs.map(docum => ({...docum.data(), id: docum.id}));
-        setPrice(price);
-    };
-
     useEffect(() => {
-        getUsers();
-        getPets();
-        checkIfAdmin();
-        getPrice()
-        console.log(users, pets, price)
-    }, []);
+        if (!user.name && userMail && userId) {
+            dispatch(getAllUsers(`?userId=${userId}`));
+        }
+        dispatch(getAllUsers());
+        dispatch(getPets());
+        dispatch(getMembers());
+        dispatch(getRegisteredPets());
+        dispatch(getPrice());
+        dispatch(getStats());
+    }, [user, userMail, userId, dispatch]);
+    
+    useEffect(() => {
+        if (users.length) setFilterUsers(users);
+        if (pets.length) setFilterPets(pets);
+    }, [users, pets]);
 
     const goTo = (e, whereTo) => {
         e.preventDefault();
@@ -79,14 +49,6 @@ export const Admin = () => {
         e.preventDefault();
 
         setFilterUsers(users);
-        setInput("");
-    };
-
-    const filterOwners = (e, type) => {
-        e.preventDefault();
-        
-        const owners = users.length && users.filter(user => user.type === type);
-        setFilterUsers(owners);
         setInput("");
     };
 
@@ -103,18 +65,27 @@ export const Admin = () => {
         if(!results.length) setInput("");
     };
 
+    const filterOwners = (e, type) => {
+        e.preventDefault();
+        
+        const owners = users.length && users.filter(user => user.type === type);
+        setFilterUsers(owners);
+        setInput("");
+    };
+
+    const filterRegisteredPets = (e) => {
+        e.preventDefault();
+        
+        const registered = pets.length && pets.filter(pets => !!pets.name);
+        setFilterPets(registered);
+        setInput("");
+    };
+
     const showUserInfo = (e, id) => {
         e.preventDefault();
 
         if(document.getElementById(`user${id}`).style.display === "block") document.getElementById(`user${id}`).style.display = "none";
         else document.getElementById(`user${id}`).style.display = "block";
-    };
-
-    const changeToInput = (e, id) => {
-        e.preventDefault();
-
-        document.getElementById(`sacarMembresía${id}`).style.display = "none";
-        document.getElementById(`confirm${id}`).style.display = "block";
     };
 
     const showUsersOrPets = (e, data) => {
@@ -164,37 +135,10 @@ export const Admin = () => {
         }
     };
 
-    const updatePrice = async () => {
-        const price = doc(db, "others", "price");
-        await updateDoc(price, { price: priceInput })
+    const updatePrice = () => {
+        dispatch(modifyPrice(priceInput))
         .then(() => location.reload());
     };
-
-    const viewDataBase = (e) => {
-        e.preventDefault();
-
-        navigate("/dataBase");
-    };
-
-    document.getElementById("price") && document.getElementById("price").addEventListener("keydown", function(event) {
-        if(event.keyCode == 13) {
-            updatePrice();
-        }
-    });
-
-    document.getElementById('searchUsers') && document.getElementById('searchUsers').addEventListener('keypress', function(event) {
-        if (event.keyCode == 13) {
-            event.preventDefault();
-            search(event);
-        }
-    });
-    
-    document.getElementById("searchPets") && document.getElementById("searchPets").addEventListener('keypress', function(event) {
-        if (event.keyCode == 13) {
-            event.preventDefault();
-            searchPet(event);
-        }
-    });
 
     // <----- QR CODE FUNCTIONS ----->
 
@@ -217,8 +161,7 @@ export const Admin = () => {
     // Add doc
     const createPetDoc = async () => {
         const docId = pets.length + 1;
-        await setDoc(doc(db, "pets", String(docId)), {});
-        getPets();
+        dispatch(createPet(`?id=${docId}`));
     };
 
     // Generate QR code
@@ -248,15 +191,11 @@ export const Admin = () => {
     return (
         <div>
 
-            { !userLogged && (
+            { !user.name && (
                 <div class="flex flex-col gap-y-5 m-16">
                     <h class="pb-5 text-titles text-4xl font-bold">Oops! Parece que no tienes los permisos para acceder a esta ruta</h>
                     <button class="self-start p-3 bg-third hover:bg-orange-700 text-white rounded-3xl" onClick={(e) => goTo(e, "login")}>Iniciar sesión</button>
                 </div>
-            )}
-
-            { !Object.keys(user).length && (
-                <img src="https://retchhh.wordpress.com/wp-content/uploads/2015/03/loading1.gif" alt="Loading..." class="h-[16rem] w-[16rem] mt-40 ml-[3rem] md:ml-[25rem] lg:ml-[40rem]"/>
             )}
 
             { !!Object.keys(user).length && user.type !== "Admin" && (
@@ -281,14 +220,14 @@ export const Admin = () => {
 
                 <div class="flex justify-between flex-wrap self-center md:self-start">
                     <div class="mb-10 text-xl mx-16 font-semibold">
-                        <h class="self-center">Precio actual del collar: <h class="font-normal">${price.length && price[0].price}</h></h>
+                        <h class="self-center">Precio actual del collar: <h class="font-normal">${statePrice.length && statePrice[0]}</h></h>
                         <div class="flex flex-col gap-y-2 w-fit md:flex-row md:gap-x-2 md:items-center">
                             <h>¿Quieres cambiar el precio? </h>
                             <input 
                             class="border-buscabrown rounded-xl bg-buscabrown outline-none text-white font-normal"
                             type="text"
                             id="price"
-                            placeholder={price.length && price[0].price}
+                            placeholder={statePrice.length && statePrice[0]}
                             onChange={(event) => setPriceInput(event.target.value)}
                             />
                             <button class="bg-third border-2 border-third outline-none text-white hover:bg-orange-700 hover:border-orange-700 rounded-3xl font-medium text-sm w-full sm:w-auto px-3 py-2.5 text-center cursor-pointer font-normal" onClick={() => updatePrice()}>Cambiar</button>
@@ -326,7 +265,7 @@ export const Admin = () => {
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 hover:stroke-amber-400 cursor-pointer hover:rotate-90" onClick={(e) => showUsersOrPets(e, "usersList")}>
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
                             </svg>
-                            <h1 class="font-semibold">Lista de usuarios</h1>
+                            <h1 class="font-semibold">Usuarios</h1>
                         </div>
                         <div class="hidden flex flex-col gap-2 mb-5 mt-5 p-3 pt-5 bg-gray-700 justify-self-center" id="usersList">
                             <div class="flex flex-col md:flex-row justify-self-center md:justify-start mb-5 mt-10 md:mt-5 mr-10 gap-y-2 md:gap-x-5">
@@ -413,6 +352,7 @@ export const Admin = () => {
                         </div>
                         <div class="hidden flex flex-col gap-2 mb-5 mt-5 p-3 pt-5 bg-gray-700 justify-self-center" id="petsList">
                             <button onClick={(e) => allPets(e)} class="font-bold text-orange-400 justify-self-center md:justify-start mb-5 mt-10 md:mt-5 mr-10 hover:underline hover:underline-offset-4 hover:text-orange-300">Mostrar todas las mascotas</button>
+                            <button onClick={(e) => filterRegisteredPets(e)} class="font-bold text-orange-400 justify-self-center md:justify-start mb-5 mt-10 md:mt-5 mr-10 hover:underline hover:underline-offset-4 hover:text-orange-300">Mostrar mascotas registradas</button>
                             <div class="flex flex-row justify-between gap-x-4 mb-3">
                                 <input placeholder="Buscar..." value={inputPets} id="searchPets" class="bg-gray-800 rounded-2xl p-2 pl-5 w-full text-white h-fit" onChange={(e) => setInputPets(e.target.value)}/>
                                 <button class="bg-gray-800 p-2 md:px-5 rounded-2xl text-white hover:bg-gray-800/75 h-fit" onClick={(e) => searchPet(e)}>Buscar</button>
@@ -463,9 +403,6 @@ export const Admin = () => {
                         </div>
                     </div>
                 </div>
-
-                <button class="mb-16 ml-16 font-bold hover:underline hover:underline-offset-4 hover:text-third" onClick={(e) => viewDataBase(e)}>VISUALIZAR BASE DE DATOS</button>                
-                                
             </div>)}
         </div>
     )

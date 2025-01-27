@@ -1,32 +1,29 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { db } from "../../firebase-config.js";
-import { collection, getDocs } from "firebase/firestore";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllUsers } from "../../redux/Actions/Actions";
 
 export const ForgotPassword = () => {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const [mail, setMail] = useState("");
-    const [user, setUser] = useState("");
-    const usersCollectionRef = collection(db, "users");
+    const user = useSelector(state => state.userLogged);
+ 
+    useEffect(() => {
+        if(user[0] && user[0].name) {
+            localStorage.setItem("userResetName", user && user[0].name);
+            localStorage.setItem("userResetId", user && user[0].id);
+            navigate("/resetPass");
+        }
+    }, [user]);
 
-    const showAreYou = async (e) => {
+    const showAreYou = (e) => {
         e.preventDefault();
 
-        const allUsers = await getDocs(usersCollectionRef);
-        const usersInfo = allUsers && allUsers.docs.map(user => ({...user.data(), id: user.id}));
-        const userData = usersInfo && usersInfo.find(user => user.mail === mail);
-        setUser(userData);
+        dispatch(getAllUsers(`?userMail=${mail}`));
 
         document.getElementById("writeEmail").style.display = "none";
         document.getElementById("areYou").style.display = "block";
-    };
-
-    const settingLS = (e) => {
-        e.preventDefault();
-    
-        localStorage.setItem("userResetName", user && user.name);
-        localStorage.setItem("userResetId", user && user.id);
-        navigate("/resetPass");
     };
 
     return (
@@ -51,15 +48,15 @@ export const ForgotPassword = () => {
             </div>
 
             <div class="hidden mt-10" id="areYou">
-                {user && (
+                {!!user.name && (
                     <div class="flex flex-col gap-y-1">
-                        <h class="mb-2 text-2xl text-third font-bold">¿Eres {user && user.name}?</h>
-                        <h><h class="underline underline-offset-4 text-third cursor-pointer" onClick={(e) => settingLS(e)}>Si</h>, soy {user && user.name}</h>
+                        <h class="mb-2 text-2xl text-third font-bold">¿Eres {user.name}?</h>
+                        <h><h class="underline underline-offset-4 text-third cursor-pointer" onClick={(e) => settingLS(e)}>Si</h>, soy {user.name}</h>
                         <h><a href="/forgotPass" class="underline underline-offset-4 text-third">No</a>, escribí mal mi mail</h>
                     </div>
                 )}
 
-                {!user && (
+                {!user.name && (
                     <div class="flex flex-col gap-y-5">
                         <h>Hmm, lamentamos informarte que no tenemos ningun usuario registrado con el mail <h class="text-third">{mail}</h></h>
                         <a href="/forgotPass" class="flex flex-row gap-x-2">

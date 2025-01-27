@@ -9,7 +9,7 @@ export const OurStories = () => {
             <div class="flex flex-col gap-y-10 md:grid md:grid-cols-2 md:gap-x-5 m-5 justify-self-center">
                 <div class="bg-gradient-to-r from-third to-orange-700 text-white p-5 md:p-10 rounded-2xl">
                     <h1 class="mb-2 text-xl font-bold">Marilú (Bernal)</h1>
-                    <h>¡Gracias a ustedes encontré a Sansón! Es raro que se nos escapé, pero pasó ¡Muchas gracias de vuelta!</h>
+                    <h>¡Gracias a ustedes encontré a Sansón! Es raro que se nos escape, pero pasó ¡Muchas gracias de vuelta!</h>
                 </div>
                 <div class="bg-gradient-to-r from-orange-700 to-third text-white p-5 md:p-10 rounded-2xl">
                     <h1 class="mb-2 text-xl font-bold">Celeste (Lanús)</h1>

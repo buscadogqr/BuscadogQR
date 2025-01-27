@@ -1,32 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { db } from "../../firebase-config.js";
-import { collection, getDocs } from "firebase/firestore";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from 'react-redux';
+import { getPrice } from "../../redux/Actions/Actions";
 
 export const Subscribe = () => {
-    const userLogged = localStorage.getItem("email");
-    const navigate = useNavigate();
-    const othersCollectionRef = collection(db, "others");
-    const [price, setPrice] = useState(0);
+    const dispatch = useDispatch();
+    let price = useSelector(state => state.price);
 
     useEffect(() => {
-        const getPrice = async () => {
-            const others = await getDocs(othersCollectionRef);
-            const price = others && others.docs.map(docum => ({...docum.data(), id: docum.id}));
-            setPrice(price);
-        };
-
-        getPrice()
-    }, []);
-
-    const goToLogin = () => {
-        navigate("/login");
-    };
+        !price.length && dispatch(getPrice());
+    }, [dispatch]);
 
     return (
         <div class="m-16 flex flex-col">
-
-            {!userLogged && goToLogin()}
 
             <h1 class="pb-5 text-titles text-4xl font-bold">Suscribirte</h1>
             <h>¡Nos alegra que consideres unirte a nuestra comunidad!</h>
@@ -42,7 +27,7 @@ export const Subscribe = () => {
                     </div>
                     <div class="flex-none mt-auto bg-white rounded-b rounded-t-none overflow-hidden shadow p-6">
                     <div class="w-full pt-6 text-4xl font-bold text-center">
-                        ${price.length && price[0].price}
+                        ${price.length && price[0]}
                     </div>
                     </div>
                 </div>

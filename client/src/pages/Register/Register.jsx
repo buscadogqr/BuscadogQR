@@ -1,19 +1,39 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { db } from "../../firebase-config.js";
-import { collection, addDoc, getDocs } from "firebase/firestore";
-import "./Register.css";
+import { useDispatch, useSelector } from "react-redux";
+import { createUser } from "../../redux/Actions/Actions";
 import axios from "axios";
+import "./Register.css";
 
 export const Register = () => {
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const userLogged = useSelector(state => state.userLogged);
     const [input, setInput] = useState({name: '', surname: "", direction: "", cellphone: "", mail: "", password: ""});
     const [confirmPass, setConfirmPass] = useState({confirmPass: ""});
-    const navigate = useNavigate();
     const [imageSelected, setImageSelected] = useState("");
-    const usersCollectionRef = collection(db, "users");
     const registeringPet = localStorage.getItem("petToRegister");
 
+    useEffect(() => {
+        if(userLogged.name) {
+            setTimeout( async () => {
+                document.getElementById("registerModal").style.display = 'block';
+                localStorage.setItem("bgUserMail", userLogged.mail);
+                localStorage.setItem("bgUserId", userLogged.id);
+                !registeringPet ? navigate("/profile") : navigate(`/petRegistering/${registeringPet}`);
+            }, 500)
+
+        } else if(userLogged.error) {
+            document.getElementById("registerModal").style.display = 'none';
+            document.getElementById("passwordsDontMatch").style.display = 'none';
+            document.getElementById("emailAlreadyRegistered").style.display = "block";
+
+        }
+    }, [userLogged]);
+
     const handleInputChange = (e) => {
+        document.getElementById("emailAlreadyRegistered").style.display = "none";
+
         setInput({
             ...input,
             [e.target.name]: e.target.value
@@ -25,66 +45,29 @@ export const Register = () => {
         else if(confirmPass !== "") return false;
     };
 
-    const checkIfEmailExists = async () => {
-        const users = await getDocs(usersCollectionRef);
-        const usersInfo = users && users.docs.map(user => ({...user.data(), id: user.id}));
-
-        if(usersInfo.find(user => user.mail == input.mail)) return "Mail already registered";
-        else return "Mail available";
-    };
-    
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        //chequeamos que el mail indicado esté disponible
-        if(await checkIfEmailExists() === "Mail available") {
-            //chequeamos que las contraseñas coincidan
-            if(checkPasswordsMatch() === "Passwords match!") {
-                const defaultUserImage = "https://img.freepik.com/vector-premium/icono-avatar-masculino-persona-desconocida-o-anonima-icono-perfil-avatar-predeterminado-usuario-redes-sociales-hombre-negocios-silueta-perfil-hombre-aislado-sobre-fondo-blanco-ilustracion-vectorial_735449-120.jpg";
-                let photo;
+        if(checkPasswordsMatch() == "Passwords match!") {
+            const defaultUserImage = "https://img.freepik.com/vector-premium/icono-avatar-masculino-persona-desconocida-o-anonima-icono-perfil-avatar-predeterminado-usuario-redes-sociales-hombre-negocios-silueta-perfil-hombre-aislado-sobre-fondo-blanco-ilustracion-vectorial_735449-120.jpg";
+            let photo = defaultUserImage;
+
+            if(imageSelected) {
+                const formData = new FormData();
+                formData.append("file", imageSelected);
+                formData.append("upload_preset", "yhp17atl");
                 
-                document.getElementById("passwordsDontMatch").style.display = 'none';
-                document.getElementById("emailAlreadyRegistered").style.display = "none";
-                document.getElementById("registerModal").style.display = 'block';
-        
-                //Si el usuario adjunta una foto de perfil, se sube a cloudinary y se guarda en la bd
-                if(imageSelected) {
-                    const formData = new FormData();
-                    formData.append("file", imageSelected);
-                    formData.append("upload_preset", "yhp17atl");
-                    
-                    await axios.post("https://api.cloudinary.com/v1_1/dtm9ibgrj/image/upload", formData)
-                    .then(response => {
-                        photo = response.data.secure_url;
-                    })
-                }
-
-                addDoc(usersCollectionRef, { ...input, profilePic: photo || defaultUserImage, type: "Usuario sin membresías" } )
-                    .then(data => {
-                        setTimeout( async () => {
-                            const users = await getDocs(usersCollectionRef);
-                            const usersInfo = users && users.docs.map(user => ({...user.data(), id: user.id}));
-                            const user = usersInfo && usersInfo.find(user => user.mail === input.mail);
-
-                            console.log(user)
-                            document.getElementById("registerModal").style.display = 'none';
-                            localStorage.setItem("email", input.mail);
-                            localStorage.setItem("userId", user.id);
-                            !registeringPet ? navigate("/profile") : navigate(`/petRegistering/${registeringPet}`);
-                        }, 500)
-                });
-        
+                await axios.post("https://api.cloudinary.com/v1_1/dtm9ibgrj/image/upload", formData)
+                .then(response => {
+                    photo = response.data.secure_url;
+                })
             }
-            //si las contraseñas no coinciden, mostramos el error
-            else {
-                document.getElementById("emailAlreadyRegistered").style.display = "none";
-                document.getElementById("passwordsDontMatch").style.display = 'block';
-            }
-        }
-        //si el mail no se encuentra disponible, mostramos el error
-        else {
-            document.getElementById("passwordsDontMatch").style.display = 'none';
-            document.getElementById("emailAlreadyRegistered").style.display = "block";
+
+            dispatch(createUser(`name=${input.name}&surname=${input.surname}&direction=${input.direction}&cellphone=${input.cellphone}&mail=${input.mail}&password=${input.password}&profilePic${ photo || defaultUserImage }&type=Usuario sin membresías`));
+
+        } else {
+            document.getElementById("emailAlreadyRegistered").style.display = "none";
+            document.getElementById("passwordsDontMatch").style.display = 'block';
         }
     };
 
@@ -110,12 +93,12 @@ export const Register = () => {
         navigate("/forgotPass");
     };
 
-    document.getElementById('confirmPass') && document.getElementById('confirmPass').addEventListener('keypress', function(event) {
-        if (event.keyCode == 13) {
-            event.preventDefault();
-            handleSubmit(event);
-        }
-    });
+    // document.getElementById('confirmPass') && document.getElementById('confirmPass').addEventListener('keypress', function(event) {
+    //     if (event.keyCode == 13) {
+    //         event.preventDefault();
+    //         handleSubmit(event);
+    //     }
+    // });
 
     return (
         <div class="mx-10 my-5 bg-gray-100/50 border-4 border-titles rounded-3xl p-10">

@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { db } from "../../firebase-config.js";
+import { useDispatch, useSelector } from "react-redux";
+import { getPets, getAllUsers, modifyPet } from "../../redux/Actions/Actions";
 import axios from "axios";
-import { getDoc, doc, updateDoc } from "firebase/firestore";
 
 export const ExternalPets = () => {
-    const userLogged = localStorage.getItem("userId");
-    const userMail = localStorage.getItem("email");
-    const petRegistering = localStorage.getItem("petToRegister");
+    const dispatch = useDispatch();
     const navigate = useNavigate();
     const { id } = useParams();
+    const userMail = localStorage.getItem("bgUserMail");
+    const userId = localStorage.getItem("bgUserId");
+    const pet = useSelector(state => state.filteredPets);
+    const userLogged = useSelector(state => state.userLogged);
+    const petRegistering = localStorage.getItem("petToRegister");
     const [imageSelected, setImageSelected] = useState("");
-    const [pet, setPet] = useState([]);
     const [inputs, setInputs] = useState({
         name: "",
         animal: "",
@@ -21,15 +23,11 @@ export const ExternalPets = () => {
     });
 
     useEffect(() => {
-        const getPet = async () => {
-            const petDoc = doc(db, "pets", id);
-            const petData = await getDoc(petDoc);
-            const pet = petData.data();
-    
-            setPet(pet);
-        };
+        if(!userLogged.name && userMail && userId) {
+            dispatch(getAllUsers(`?userId=${userId}`));
+        } 
 
-        getPet();
+        dispatch(getPets(`?petId=${id}`));
     }, [])
 
     const goToLogin = (e) => {
@@ -58,15 +56,6 @@ export const ExternalPets = () => {
 
         document.getElementById("confirmMsg").style.display = "block";
 
-        //usuario al que se le asignará la mascota a registrar
-        const userCr = doc(db, "users", userLogged);
-        const userInfo = await getDoc(userCr);
-        const user = userInfo.data();
-
-        //fecha en la que se adquiere la membresía
-        const todayDate = new Date();
-        const acquired = todayDate.getDate() + "-" + (todayDate.getMonth() + 1) + "-" + todayDate.getFullYear();
-
         if(imageSelected) {
             e.preventDefault();
         
@@ -77,37 +66,28 @@ export const ExternalPets = () => {
             await axios.post("https://api.cloudinary.com/v1_1/dtm9ibgrj/image/upload", formData)
             .then(async response => {
                 const photo = response.data.secure_url;
-                const petToUpdate = doc(db, "pets", id);
-                const breedAnimal = `${inputs.animal} - ${inputs.breed}`
+                const breedAnimal = `${inputs.animal} - ${inputs.breed}`;
+                const pet = `?id=${id}&name=${inputs.name}&userOwner=${userMail}&age=${inputs.age}&breed=${breedAnimal}&notes${inputs.notes}&photo=${photo}`;
         
-                await updateDoc(petToUpdate, { userOwner: userMail, name: inputs.name, age: inputs.age, breed: breedAnimal, notes: inputs.notes, photo})
-                .then(async data => {
-                    if(user.memberships && user.memberships.length) {
-                        await updateDoc(userCr,  { type: "Usuario con membresías", memberships: [...user.memberships, { acquired, pet: inputs.name }] });
-                        petRegistering && localStorage.removeItem("petToRegister");
+                dispatch(modifyPet(pet))
+                .then(() => {
+                    petRegistering && localStorage.removeItem("petToRegister");
+                    setTimeout(() => {
                         navigate(`/pet/${id}`);
-                    } else {
-                        await updateDoc(userCr,  { type: "Usuario con membresías", memberships: [{ acquired, pet: inputs.name }] });
-                        petRegistering && localStorage.removeItem("petToRegister");
-                        navigate(`/pet/${id}`);
-                    }
+                    }, 1000);
                 })
             });
         } else {
-            const petToUpdate = doc(db, "pets", id);
-            const breedAnimal = `${inputs.animal} - ${inputs.breed}`
+            const breedAnimal = `${inputs.animal} - ${inputs.breed}`;
+            const photo = "https://www.educima.com/dibujo-para-colorear-perro-dl19661.jpg";
+            const pet = `?id=${id}&name=${inputs.name}&userOwner=${userMail}&age=${inputs.age}&breed=${breedAnimal}&notes${inputs.notes}&photo=${photo}`;
 
-            await updateDoc(petToUpdate, { userOwner: userMail, name: inputs.name, age: inputs.age, breed: breedAnimal, notes: inputs.notes, photo: "https://www.educima.com/dibujo-para-colorear-perro-dl19661.jpg"})
-            .then(async data => {
-                if(user.memberships && user.memberships.length) {
-                    await updateDoc(userCr,  { type: "Usuario con membresías", memberships: [...user.memberships, { acquired, pet: inputs.name }] });
-                    petRegistering && localStorage.removeItem("petToRegister");
+            dispatch(modifyPet(pet))
+            .then(() => {
+                petRegistering && localStorage.removeItem("petToRegister");
+                setTimeout(() => {
                     navigate(`/pet/${id}`);
-                } else {
-                    await updateDoc(userCr,  { type: "Usuario con membresías", memberships: [{ acquired, pet: inputs.name }] });
-                    petRegistering && localStorage.removeItem("petToRegister");
-                    navigate(`/pet/${id}`);
-                }
+                }, 1000);
             })
         }
     };
@@ -122,7 +102,7 @@ export const ExternalPets = () => {
                     <h1 class="pb-5 text-titles text-4xl font-bold">Registra una mascota</h1>
                     <h>¡Nos alegra que hayas decidido unirte a nuestra comunidad!</h>
                     
-                    {!userLogged && (
+                    {!userLogged.name && (
                         <div class="flex flex-col mt-10">
                             <h class="pb-5 text-third text-2xl font-bold">Pasos a seguir para activar correctamente el código QR:</h>
                             <ul class="list-decimal ml-5">
@@ -139,7 +119,7 @@ export const ExternalPets = () => {
                         </div>
                     )}
         
-                    {!!userLogged && (
+                    {!!userLogged.name && (
                         <div class="flex flex-col mb-5 mt-10 gap-y-5">
                             <h>Primero necesitamos conocer los datos principales de tu mascota. Una vez que la registres, podrás disfrutar de tu suscripción, teniendo todos sus datos disponibles en la parte de "Mis mascotas".</h>
         

@@ -11,7 +11,6 @@ import { Login } from "./pages/Login/Login.jsx";
 import { Register } from "./pages/Register/Register.jsx";
 import { Contact } from "./pages/Contact/Contact.jsx";
 import { Error } from "./pages/Error/Error.jsx";
-import { Mantainance } from "./pages/Mantainance/Mantainance.jsx";
 import { Profile } from "./pages/Profile/Profile.jsx";
 import { EditProfile } from "./pages/Profile/EditProfile.jsx";
 import { Pets } from "./pages/Pets/Pets.jsx";
@@ -23,21 +22,21 @@ import { OurStories } from "./pages/OurStories/OurStories.jsx";
 import { ForgotPassword } from "./pages/ForgotPassword/ForgotPassword.jsx";
 import { ResetPassword } from "./pages/ForgotPassword/ResetPassword.jsx";
 import { ExternalPets } from "./pages/ExternalPets/ExternalPets.jsx";
-import { DataBase } from "./pages/Admin/DataBase.jsx";
+// import { DataBase } from "./pages/Admin/DataBase.jsx";
 
 const AppRouter = () => {
   return (
     <>
-        {/* <NavBar /> */}
+        <NavBar />
         
         <Routes>
 
           <Route
           path="*"
-          element={<Mantainance/>}
+          element={<Error/>}
           />
 
-          {/* <Route 
+          <Route 
           path= "/home"
           element={<Home/>} 
           />
@@ -47,9 +46,24 @@ const AppRouter = () => {
           element={<About/>}
           />
 
+          <Route
+          path="/contact"
+          element={<Contact/>}
+          />
+
+          <Route
+          path="/ourStories"
+          element={<OurStories/>}
+          />
+
           <Route 
           path="/login"
           element={<Login/>}
+          />
+          
+          <Route
+          path="/profile"
+          element={<Profile/>}
           />
 
           <Route 
@@ -58,48 +72,8 @@ const AppRouter = () => {
           />
 
           <Route
-          path="/contact"
-          element={<Contact/>}
-          />
-          
-          <Route
-          path="/profile"
-          element={<Profile/>}
-          />
-
-          <Route
           path="/editProfile"
           element={<EditProfile/>}
-          />
-
-          <Route
-          path="/pets"
-          element={<Pets/>}
-          />
-
-          <Route
-          path='/pet/:id'
-          element={<PetDetails/>} 
-          />
-
-          <Route
-          path="/editPetInfo/:id"
-          element={<EditPetDetails/>}
-          />
-
-          <Route
-          path="/subscribe"
-          element={<Subscribe/>}
-          />
-
-          <Route
-          path="/admin"
-          element={<Admin/>}
-          />
-
-          <Route
-          path="/ourStories"
-          element={<OurStories/>}
           />
 
           <Route
@@ -113,18 +87,43 @@ const AppRouter = () => {
           />
 
           <Route
+          path="/subscribe"
+          element={<Subscribe/>}
+          />
+
+          <Route
+          path="/pets"
+          element={<Pets/>}
+          />
+
+          <Route
           path="/petRegistering/:id"
           element={<ExternalPets/>}
           />
 
+         <Route
+          path='/pet/:id'
+          element={<PetDetails/>} 
+          />
+
           <Route
+          path="/editPetInfo/:id"
+          element={<EditPetDetails/>}
+          />
+
+          <Route
+          path="/admin"
+          element={<Admin/>}
+          />
+
+          {/* <Route
           path="/dataBase"
           element={<DataBase/>}
           /> */}
 
         </Routes>
 
-        {/* <Footer /> */}
+        <Footer />
     </>
   );
 };

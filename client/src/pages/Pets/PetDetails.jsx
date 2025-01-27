@@ -1,128 +1,175 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
-import { db } from "../../firebase-config.js";
-import { collection, getDocs } from "firebase/firestore";
+import { useParams, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllUsers, getPets } from "../../redux/Actions/Actions";
 
 export const PetDetails = () => {
     const { id } = useParams();
-    const userMail = localStorage.getItem("email");
-    const usersCollectionRef = collection(db, "users");
-    const petsCollectionRef = collection(db, "pets");
-    const [user, setUser] = useState([]);
-    const [pet, setPet] = useState([]);
+    const dispatch = useDispatch();
     const navigate = useNavigate();
+    const userMail = localStorage.getItem("bgUserMail");
+    const userId = localStorage.getItem("bgUserId");
+    const users = useSelector((state) => state.users);
+    const pet = useSelector((state) => state.filteredPets);
+    const userLogged = useSelector((state) => state.userLogged);
 
+    const [owner, setOwner] = useState(null);
+    const [loading, setLoading] = useState(true); // Controla la carga inicial
+
+    // Cargar los datos necesarios al inicio
     useEffect(() => {
-        const getPets = async () => {
-            const allPets = await getDocs(petsCollectionRef);
-            const petsInfo = allPets && allPets.docs.map(user => ({...user.data(), id: user.id}));
-            const pet = petsInfo && petsInfo.find(pet => pet.id === id);
-            setPet(pet);
-            return pet;
-        };
-        
-        getPets()
-        .then(data => {
-            const getUser = async () => {
-                const users = await getDocs(usersCollectionRef);
-                const usersInfo = users && users.docs.map(user => ({...user.data(), id: user.id}));
-                const user = usersInfo && usersInfo.find(user => user.mail === data.userOwner);
-                setUser(user);
-            };
-    
-            getUser();
-        })
+        const fetchData = async () => {
+            if (!userLogged && userMail && userId) {
+                await dispatch(getAllUsers(`?userId=${userId}`));
+            }
 
-    }, []);
+            await dispatch(getPets(`?petId=${id}`));
+            if (!users.length) {
+                await dispatch(getAllUsers());
+            }
+
+            setLoading(false); // Finaliza la carga
+        };
+
+        fetchData();
+    }, [dispatch, id, userId, userMail, userLogged, users.length]);
+
+    // Actualizar el dueño cuando los datos estén disponibles
+    useEffect(() => {
+        if (pet.userOwner && users.length) {
+            const ownerData = users.find((user) => user.mail === pet.userOwner);
+            setOwner(ownerData || {});
+        }
+    }, [pet.userOwner, users]);
+
+    // Redirigir si la mascota no tiene datos válidos
+    useEffect(() => {
+        if (!loading && pet.id && !pet.name) {
+            navigate(`/petRegistering/${id}`);
+        }
+    }, [loading, pet, id, navigate]);
 
     const goBack = (e) => {
         e.preventDefault();
-
         navigate("/pets");
     };
 
     const editPet = (e, id) => {
         e.preventDefault();
-
         navigate(`/editPetInfo/${id}`);
     };
 
     const joinCellNumbers = (cellphone) => {
-        if(user && user.cellphone && isNaN(Number(cellphone))) {
-            let onlyNumbers = [];
-            
-            for(let i = 0; i < cellphone.length; i++) {
-                if(!isNaN(cellphone[i]) && cellphone[i] !== " ") onlyNumbers.push(cellphone[i]);
-            }
-            
-            return onlyNumbers.join("");
-        } else {
-            return cellphone;
+        if (cellphone && isNaN(Number(cellphone))) {
+            return cellphone.replace(/\D/g, ""); // Elimina todo lo que no sea un número
         }
+        return cellphone;
     };
+
+    if (loading) {
+        return <div>Cargando datos...</div>; // Muestra un mensaje mientras se cargan los datos
+    }
 
     return (
         <div>
-
-            { pet && !pet.name && navigate(`/petRegistering/${id}`) }
-
-            { pet && !!pet.name && (
-                <div class="flex flex-col text-white mt-10">
-
+            {!!pet && !!pet.name && !!owner && (
+                <div className="flex flex-col text-white mt-10">
                     {userMail === pet.userOwner && (
-                        <div class="flex flex-row gap-x-2 text-black m-5 mx-10 self-start">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 hover:stroke-amber-400 cursor-pointer" onClick={(e) => goBack(e)}>
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                        <div className="flex flex-row gap-x-2 text-black m-5 mx-10 self-start">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth="1.5"
+                                stroke="currentColor"
+                                className="w-6 h-6 hover:stroke-amber-400 cursor-pointer"
+                                onClick={(e) => goBack(e)}
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M15.75 19.5L8.25 12l7.5-7.5"
+                                />
                             </svg>
                             <h>Volver a mis mascotas</h>
                         </div>
                     )}
-
-                    <div class="flex self-center flex-col md:flex-row gap-x-16 p-6">
-                        <div class="flex flex-col">
-                            <div class="max-w-sm bg-gray-700 shadow-lg rounded-lg overflow-hidden my-4">
-                                <img class="w-full h-56 object-cover object-center" src={pet && pet.photo} alt={pet && pet.name}/>
-                                <div class="flex items-center px-6 py-3 bg-gray-800">
-                                    <h1 class="mx-3 text-white font-semibold text-lg">Mascota</h1>
+                    <div className="flex self-center flex-col md:flex-row gap-x-16 p-6">
+                        {/* Datos de la mascota */}
+                        <div className="flex flex-col">
+                            <div className="max-w-sm bg-gray-700 shadow-lg rounded-lg overflow-hidden my-4">
+                                <img
+                                    className="w-full h-56 object-cover object-center"
+                                    src={pet.photo}
+                                    alt={pet.name}
+                                />
+                                <div className="flex items-center px-6 py-3 bg-gray-800">
+                                    <h1 className="mx-3 text-white font-semibold text-lg">Mascota</h1>
                                 </div>
-                                <div class="py-4 px-6">
-                                    <div class="flex flex-row justify-between">
-                                        <h1 class="text-2xl font-semibold">{pet && pet.name}</h1>
+                                <div className="py-4 px-6">
+                                    <div className="flex flex-row justify-between">
+                                        <h1 className="text-2xl font-semibold">{pet.name}</h1>
                                         {userMail === pet.userOwner && (
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 cursor-pointer hover:stroke-amber-500" onClick={(e) => editPet(e, pet && pet.id)}>
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                strokeWidth="1.5"
+                                                stroke="currentColor"
+                                                className="w-6 h-6 cursor-pointer hover:stroke-amber-500"
+                                                onClick={(e) => editPet(e, pet.id)}
+                                            >
                                                 <title>Editar información de mascota</title>
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
+                                                />
                                             </svg>
                                         )}
                                     </div>
-                                    <div class="flex items-center mt-4">
-                                        <h1 class="px-2 text-sm"><h class="font-bold">Edad:</h> {pet && pet.age}</h1>
+                                    <div className="flex items-center mt-4">
+                                        <h1 className="px-2 text-sm">
+                                            <h className="font-bold">Edad:</h> {pet.age}
+                                        </h1>
                                     </div>
-                                    <div class="flex items-center mt-4">
-                                        <h1 class="px-2 text-sm"><h class="font-bold">Mascota:</h> {pet && pet.breed}</h1>
+                                    <div className="flex items-center mt-4">
+                                        <h1 className="px-2 text-sm">
+                                            <h className="font-bold">Mascota:</h> {pet.breed}
+                                        </h1>
                                     </div>
-                                    <div class="flex items-center mt-4">
-                                        <h1 class="px-2 text-sm"><h class="font-bold">Notas adicionales:</h> {pet && pet.notes || "-"}</h1>
+                                    <div className="flex items-center mt-4">
+                                        <h1 className="px-2 text-sm">
+                                            <h className="font-bold">Notas adicionales:</h> {pet.notes || "-"}
+                                        </h1>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="max-w-sm bg-gray-700 shadow-lg rounded-lg overflow-hidden my-4">
-                            <img class="w-full h-56 object-cover object-center" src={user && user.profilePic || ""} alt={user && user.name}/>
-                            <div class="flex items-center px-6 py-3 bg-gray-800">
-                                <h1 class="mx-3 text-white font-semibold text-lg">Dueño/a</h1>
+
+                        {/* Datos del dueño */}
+                        <div className="max-w-sm bg-gray-700 shadow-lg rounded-lg overflow-hidden my-4">
+                            <img
+                                className="w-full h-56 object-cover object-center"
+                                src={owner.profilePic || ""}
+                                alt={owner.name}
+                            />
+                            <div className="flex items-center px-6 py-3 bg-gray-800">
+                                <h1 className="mx-3 text-white font-semibold text-lg">Dueño/a</h1>
                             </div>
-                            <div class="py-4 px-6">
-                                <h1 class="text-2xl font-semibold">{user && user.name + " " + user.surname}</h1>
+                            <div className="py-4 px-6">
+                                <h1 className="text-2xl font-semibold">
+                                    {owner.name + " " + owner.surname}
+                                </h1>
                                 <div class="flex items-center mt-4">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-7 h-7 stroke-amber-400">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
                                     </svg>
-                                    <h1 class="px-2 text-sm">{user && user.direction}</h1>
+                                    <h1 class="px-2 text-sm">{owner.direction}</h1>
                                 </div>
                                 <div class="flex flex-col gap-y-2">
-                                    <a class="flex items-center mt-4" href={`mailto:${user && user.mail}`} target="_blank">
+                                    <a class="flex items-center mt-4" href={`mailto:${owner.mail}`} target="_blank">
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="52 42 88 66" class="w-6 h-6">
                                         <path fill="#4285f4" d="M58 108h14V74L52 59v43c0 3.32 2.69 6 6 6"/>
                                         <path fill="#34a853" d="M120 108h14c3.32 0 6-2.69 6-6V59l-20 15"/>
@@ -130,14 +177,14 @@ export const PetDetails = () => {
                                         <path fill="#ea4335" d="M72 74V48l24 18 24-18v26L96 92"/>
                                         <path fill="#c5221f" d="M52 51v8l20 15V48l-5.6-4.2c-5.94-4.45-14.4-.22-14.4 7.2"/>
                                         </svg>
-                                        <h1 class="px-2 text-sm">{user && user.mail}</h1>
+                                        <h1 class="px-2 text-sm">{owner.mail}</h1>
                                     {userMail !== pet.userOwner && (
                                         <h class="text-red-600 font-semibold text-xs hover:underline hover:underline-offset-4 cursor-pointer"> (¡Mandale un mail!)</h>
                                         )}
                                     </a>
                                 </div>
                                 <div class="flex flex-col gap-y-2">
-                                    <a class="flex items-center mt-4" href={`https://wa.me/${joinCellNumbers(user && user.cellphone)}`} target="_blank">
+                                    <a class="flex items-center mt-4" href={`https://wa.me/${joinCellNumbers(owner.cellphone)}`} target="_blank">
                                         <svg fill="#06d00a" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 308 308" stroke="#06d00a" class="h-6 w-6">
                                             <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
                                             <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> 
@@ -146,7 +193,7 @@ export const PetDetails = () => {
                                             </g> 
                                             </g>
                                         </svg>
-                                        <h class="px-2 text-sm">{user && user.cellphone}</h>
+                                        <h class="px-2 text-sm">{owner.cellphone}</h>
                                     {userMail !== pet.userOwner && (
                                         <h class="text-lime-600 font-semibold text-xs hover:underline hover:underline-offset-4 cursor-pointer"> (¡Mandale un mensaje!)</h>
                                         )}
@@ -158,5 +205,5 @@ export const PetDetails = () => {
                 </div>
             )}
         </div>
-    ) 
-}
+    );
+};

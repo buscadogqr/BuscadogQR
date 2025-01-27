@@ -1,32 +1,26 @@
 import React,  {useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllUsers, modifyUser } from "../../redux/Actions/Actions";
 import axios from "axios";
-import { db } from "../../firebase-config.js";
-import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
 
 export const EditProfile = () => {
-    const userLogged = localStorage.getItem("userId");
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const userLogged = localStorage.getItem("bgUserId");
     const [inputs, setInputs] = useState({
         name: "",
         surname: "",
         cellphone: "",
-        direction: "",
-        mail: ""
+        direction: ""
     });
-    const usersCollectionRef = collection(db, "users");
-    const [user, setUser] = useState([]);
+    const user = useSelector(state => state.userLogged);
     const [imageSelected, setImageSelected] = useState("");
-    const navigate = useNavigate();
 
     useEffect(() => {
-        const getUser = async () => {
-            const users = await getDocs(usersCollectionRef);
-            const usersInfo = users && users.docs.map(user => ({...user.data(), id: user.id}));
-            const user = usersInfo && usersInfo.find(user => user.id === userLogged);
-            setUser(user);
-        };
-
-        getUser();
+        if(!userLogged.name && userLogged) {
+            dispatch(getAllUsers(`?userId=${userLogged}`));
+        } 
     }, []);
 
     const handleInputChange = (e) => {
@@ -48,41 +42,36 @@ export const EditProfile = () => {
         
             await axios.post("https://api.cloudinary.com/v1_1/dtm9ibgrj/image/upload", formData)
             .then(async response => {
-                const profilePic = response.data.secure_url;
-                const user = doc(db, "users", userLogged);
+                let updatedUser = `id=${userLogged}&profilePic=${response.data.secure_url}&`;
         
-                let updatedUser1 = {}
-        
-                for(let i in inputs) {
-                    if(inputs[i] && inputs[i] !== "") {
-                        updatedUser1 = {...updatedUser1, [i]: inputs[i] }
+                for(let property in inputs) {
+                    if(inputs[property]) {
+                        updatedUser = updatedUser + `${property}=${inputs[property]}&`;
                     }
                 };
-        
-                await updateDoc(user, {...updatedUser1, profilePic})
-                .then(data => {
-                    inputs.mail && localStorage.setItem("email", inputs.mail);
-                    navigate('/profile');
+                
+                dispatch(modifyUser(updatedUser))
+                .then(() => {
+                    setTimeout( () => {
+                        navigate('/profile');
+                    }, 1500)
                 })
             });
         } else {
-            const user = doc(db, "users", userLogged);
-        
-            let updatedUser2 = {}
+            let updatedUser = `id=${userLogged}&`;
     
-            for(let i in inputs) {
-                if(inputs[i] && inputs[i] !== "") {
-                    updatedUser2 = {...updatedUser2, [i]: inputs[i] }
+            for(let property in inputs) {
+                if(inputs[property]) {
+                    updatedUser = updatedUser + `${property}=${inputs[property]}&`;
                 }
             };
-
-            updateDoc(user, updatedUser2)
-            .then(data => {
+            
+            dispatch(modifyUser(updatedUser))
+            .then(() => {
                 setTimeout( () => {
-                    inputs.mail && localStorage.setItem("email", inputs.mail)
                     navigate('/profile');
                 }, 1500)
-            });
+            })
         }
     };
 
@@ -141,17 +130,6 @@ export const EditProfile = () => {
                         id="surname"
                         class="bg-form border border-form text-white outline-none text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         placeholder={user && user.surname}
-                    />
-                </div>
-                <div class="mt-5">
-                    <label for="mail">Email</label>
-                    <input
-                        name="mail"
-                        onChange={(e) => handleInputChange(e)}
-                        type="text"
-                        id="mail"
-                        class="bg-form border border-form text-white outline-none text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        placeholder={user && user.mail}
                     />
                 </div>
                 <div class="mt-5">

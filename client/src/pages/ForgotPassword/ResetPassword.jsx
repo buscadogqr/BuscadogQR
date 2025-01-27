@@ -1,15 +1,16 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { db } from "../../firebase-config.js";
-import { collection, doc, getDoc, updateDoc  } from "firebase/firestore";
+import { useDispatch } from "react-redux";
+import { modifyUser } from "../../redux/Actions/Actions";
 
 export const ResetPassword = () => {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const [pass, SetPass] = useState("");
     const [confirmPass, setConfirmPass] = useState("");
     const userResetName = localStorage.getItem("userResetName");
     const userResetId = localStorage.getItem("userResetId");
-    const userLogged = localStorage.getItem("userId");
+    const userLogged = localStorage.getItem("bgUserId");
 
     const showPassword = (pass) => {
         if(pass === "password") {
@@ -32,13 +33,15 @@ export const ResetPassword = () => {
         document.getElementById("passwordsDontMatch").style.display = 'none';
 
         if(pass === confirmPass) {
-            const userDoc = doc(db, "users", userResetId);
-            await updateDoc(userDoc, { password: pass });
+            document.getElementById("success").style.display = "block";
+            dispatch(modifyUser(`id=${userResetId}&password=${pass}`));
             localStorage.removeItem("userResetName");
             localStorage.removeItem("userResetId");
 
-            if(userLogged) navigate("/profile");
-            else navigate("/login");
+            setTimeout(() => {
+                if(userLogged) navigate("/profile");
+                else navigate("/login");
+            }, 1000)
         } else {
             document.getElementById("passwordsDontMatch").style.display = 'block';
         }
@@ -87,6 +90,12 @@ export const ResetPassword = () => {
                     {(
                         <div id="passwordsDontMatch" class="mb-5 text-red-700 font-bold hidden">
                             <h>Las contraseñas no coinciden</h>
+                        </div>
+                    )}
+
+                    {(
+                        <div id="success" class="mb-5 text-green-700 font-bold hidden">
+                            <h>Cambio exitoso!</h>
                         </div>
                     )}
                 </div>

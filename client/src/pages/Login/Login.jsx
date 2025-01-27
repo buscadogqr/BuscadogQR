@@ -1,13 +1,31 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { db } from "../../firebase-config.js";
-import { collection, getDocs } from "firebase/firestore";
+import { useDispatch, useSelector } from 'react-redux';
+import { login } from "../../redux/Actions/Actions";
 
 export const Login = () => {
-    const [input, setInput] = useState({email: "", password: ""});
     const navigate = useNavigate();
-    const usersCollectionRef = collection(db, "users");
-    const registeringPet = localStorage.getItem("petToRegister");
+    const dispatch = useDispatch();
+    const [input, setInput] = useState({mail: "", password: ""});
+    const userLogged = useSelector(state => state.userLogged);
+    const petRegistering = localStorage.getItem("petToRegister");
+
+    useEffect(() => {
+        if (userLogged && userLogged.name) {
+            localStorage.setItem("bgUserMail", userLogged.mail);
+            localStorage.setItem("bgUserId", userLogged.id);
+            !petRegistering ? navigate("/profile") : navigate(`/petRegistering/${petRegistering}`);
+
+        } else if(userLogged && userLogged == "Mail incorrecto"){
+            document.getElementById("nombre").style.display = "block";
+            document.getElementById("contra").style.display = "none";
+
+        } else if(userLogged && userLogged == "Contraseña incorrecta"){
+            document.getElementById("nombre").style.display = "none";
+            document.getElementById("contra").style.display = "block";
+        }
+      }, [userLogged, navigate]);
+    
     
     const handleInputChange = (e) => {
         setInput({
@@ -23,31 +41,34 @@ export const Login = () => {
         else tipo.type = "password";     
     };
 
-    const goToProfile = async (e) => {
+    const goToProfile = (e) => {
         e.preventDefault();
+        dispatch(login(input.mail, input.password));
+    //   };
 
-        const users = await getDocs(usersCollectionRef);
-        const usersInfo = users && users.docs.map(user => ({...user.data(), id: user.id}));
-        const user = usersInfo && usersInfo.find(user => user.mail === input.email);
+        // const users = await getDocs(usersCollectionRef);
+        // const usersInfo = users && users.docs.map(user => ({...user.data(), id: user.id}));
+        // const user = usersInfo && usersInfo.find(user => user.mail === input.mail);
 
-        document.getElementById("nombre").style.display = "none";
-        document.getElementById("contra").style.display = "none";
+        // document.getElementById("nombre").style.display = "none";
+        // document.getElementById("contra").style.display = "none";
 
-        if(!user) {
-            document.getElementById("nombre").style.display = "block";
-        }
+        // if(!user) {
+        //     document.getElementById("nombre").style.display = "block";
+        // }
 
-        else if(user && user.password !== input.password) {
-            document.getElementById("contra").style.display = "block";
-        }
+        // else if(user && user.password !== input.password) {
+        //     document.getElementById("contra").style.display = "block";
+        // }
          
-        else {
-            setTimeout(() => {
-                localStorage.setItem("email", input.email);
-                localStorage.setItem("userId", user.id);
-                !registeringPet ? navigate("/profile") : navigate(`/petRegistering/${registeringPet}`);
-            })
-        }
+        // else {
+        //     setTimeout(() => {
+        //         localStorage.setItem("email", input.email);
+        //         localStorage.setItem("userId", user.id);
+        //         navigate("/profile");
+                // !registeringPet ? navigate("/profile") : navigate(`/petRegistering/${registeringPet}`);
+        //     })
+        // }
     };
 
     const goToRegister = (e) => {
@@ -77,7 +98,7 @@ export const Login = () => {
     return (
         <form class="p-10">
             <h1 class="pb-5 text-buscabrown text-2xl font-bold">Iniciar sesión</h1>
-            <label for="input-group-1" class="block mb-2 text-sm font-medium text-buscabrown">Email</label>
+            <label for="input-group-1" class="block mb-2 text-sm font-medium text-buscabrown">Mail</label>
             <div class="flex flex-col md:p-2 md:pr-10">
                 <div class="flex content-center">
                     <span class="inline-flex items-center px-3 text-sm outline-none text-gray-300 bg-form border border-r-0 border-gray-300 rounded-l-md dark:text-gray-300 dark:border-gray-600">
@@ -86,8 +107,8 @@ export const Login = () => {
                     <input
                     type="text"
                     id="input-group-1"
-                    name="email"
-                    value={input.email}
+                    name="mail"
+                    value={input.mail}
                     onChange={(e) => handleInputChange(e)}
                     class="rounded-none rounded-r-lg bg-form outline-none border text-white focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="nombre@gmail.com"
@@ -127,7 +148,7 @@ export const Login = () => {
             <button
                 class="mt-6 bg-third border-2 border-third outline-none text-white hover:bg-orange-700 hover:border-orange-700 rounded-3xl font-medium text-sm w-full sm:w-auto px-5 py-2.5 text-center cursor-pointer"
                 onClick={e => goToProfile(e)}
-                disabled={!input.email && !input.password}
+                disabled={!input.mail && !input.password}
                 >Inicia sesión</button>
         </form>
 

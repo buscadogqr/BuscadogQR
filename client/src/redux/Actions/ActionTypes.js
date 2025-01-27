@@ -1,0 +1,16 @@
+export const GET_USERS = "GET_USERS";
+export const CREATE_USER = "CREATE_USER";
+export const MODIFY_USER = "MODIFY_USER";
+export const DELETE_USER = "DELETE_USER";
+export const LOGIN = "LOGIN";
+export const LOGOUT = "LOGOUT";
+export const GET_MEMBERS = "GET_MEMBERS"; 
+export const GET_PETS = "GET_PETS";
+export const FILTERED_PETS = "FILTERED_PETS";
+export const CREATE_PET = "CREATE_PET";
+export const MODIFY_PET = "MODIFY_PET";
+export const DELETE_PET = "DELETE_PET";
+export const REGISTERED_PETS = "REGISTERED_PETS";
+export const GET_PRICE = "GET_PRICE";
+export const MODIFY_PRICE = "MODIFY_PRICE";
+export const GET_STATS = "GET_STATS";
