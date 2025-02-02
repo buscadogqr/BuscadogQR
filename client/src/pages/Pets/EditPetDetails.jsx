@@ -55,7 +55,7 @@ export const EditPetDetails = () => {
                     }
                 };
         
-                dispatch(modifyPet(petToUpdate))
+                dispatch(modifyPet(updatedPet))
                 .then(() => {
                     setTimeout(() => {
                         navigate(`/pet/${id}`);
