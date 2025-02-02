@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { getAllUsers, getPets, modifyPet } from "../../redux/Actions/Actions";
+import axios from "axios";
 
 export const EditPetDetails = () => {
     const { id } = useParams();
