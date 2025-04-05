@@ -25,7 +25,11 @@ export const ExternalPets = () => {
     useEffect(() => {
         if(!userLogged.name && userMail && userId) {
             dispatch(getAllUsers(`?userId=${userId}`));
-        } 
+        }
+        
+        if (pet && pet.name) {
+            navigate(`/pet/${id}`);
+        }
 
         dispatch(getPets(`?petId=${id}`));
     }, [])
@@ -66,8 +70,8 @@ export const ExternalPets = () => {
             await axios.post("https://api.cloudinary.com/v1_1/dtm9ibgrj/image/upload", formData)
             .then(async response => {
                 const photo = response.data.secure_url;
-                const breedAnimal = `${inputs.animal} - ${inputs.breed}`;
-                const pet = `?id=${id}&name=${inputs.name}&userOwner=${userMail}&age=${inputs.age}&breed=${breedAnimal}&notes${inputs.notes}&photo=${photo}`;
+                const breedAnimal = `${inputs.animal || "A Completar"} - ${inputs.breed || "A Completar"}`;
+                const pet = `?id=${id}&name=${inputs.name || "A Completar"}&userOwner=${userMail || "A Completar"}&age=${inputs.age || "A Completar"}&breed=${breedAnimal}&notes${inputs.notes || "A Completar"}&photo=${photo || "A Completar"}`;
         
                 dispatch(modifyPet(pet))
                 .then(() => {
@@ -78,9 +82,9 @@ export const ExternalPets = () => {
                 })
             });
         } else {
-            const breedAnimal = `${inputs.animal} - ${inputs.breed}`;
+            const breedAnimal = `${inputs.animal || "A Completar"} - ${inputs.breed || "A Completar"}`;
             const photo = "https://www.educima.com/dibujo-para-colorear-perro-dl19661.jpg";
-            const pet = `?id=${id}&name=${inputs.name}&userOwner=${userMail}&age=${inputs.age}&breed=${breedAnimal}&notes${inputs.notes}&photo=${photo}`;
+            const pet = `?id=${id}&name=${inputs.name || "A Completar"}&userOwner=${userMail || "A Completar"}&age=${inputs.age || "A Completar"}&breed=${breedAnimal}&notes${inputs.notes || "A Completar"}&photo=${photo || "A Completar"}`;
 
             dispatch(modifyPet(pet))
             .then(() => {
@@ -94,8 +98,6 @@ export const ExternalPets = () => {
 
     return (
         <div>
-
-            { pet && pet.name && navigate(`/pet/${id}`) }
 
             { pet && !pet.name && (
                 <div class="m-16 flex flex-col">
@@ -145,7 +147,6 @@ export const ExternalPets = () => {
                                                 id="first_name"
                                                 class="bg-form border border-form outline-none text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                                 placeholder="Zeus"
-                                                required
                                             />
                                         </div>
         
@@ -158,7 +159,6 @@ export const ExternalPets = () => {
                                                 id="age"
                                                 class="bg-form border border-form outline-none text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                                 placeholder="1 año"
-                                                required
                                                 />
                                         </div>
                                         <div>
@@ -170,7 +170,6 @@ export const ExternalPets = () => {
                                                 id="animal"
                                                 class="bg-form border border-form text-white outline-none text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                                 placeholder="Perro"
-                                                required
                                             />                          
                                         </div>
                                         <div>
@@ -182,7 +181,6 @@ export const ExternalPets = () => {
                                                 id="breed"
                                                 class="bg-form border border-form text-white outline-none text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                                 placeholder="Golden Retriever"
-                                                required
                                             />                          
                                         </div>
                                     </div>
