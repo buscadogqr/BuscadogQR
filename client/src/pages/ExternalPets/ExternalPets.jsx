@@ -15,7 +15,7 @@ export const ExternalPets = () => {
     const petRegistering = localStorage.getItem("petToRegister");
     const [imageSelected, setImageSelected] = useState("");
     const [inputs, setInputs] = useState({
-        name: "",
+        petName: "",
         animal: "",
         breed: "",
         age: "",
@@ -71,7 +71,7 @@ export const ExternalPets = () => {
             .then(async response => {
                 const photo = response.data.secure_url;
                 const breedAnimal = `${inputs.animal || "A Completar"} - ${inputs.breed || "A Completar"}`;
-                const pet = `?id=${id}&name=${inputs.name || "A Completar"}&userOwner=${userMail || "A Completar"}&age=${inputs.age || "A Completar"}&breed=${breedAnimal}&notes${inputs.notes || "A Completar"}&photo=${photo || "A Completar"}`;
+                const pet = `?id=${id}&name=${inputs.petName || "A Completar"}&userOwner=${userMail || "A Completar"}&age=${inputs.age || "A Completar"}&breed=${breedAnimal}&notes${inputs.notes || "A Completar"}&photo=${photo || "A Completar"}`;
         
                 dispatch(modifyPet(pet))
                 .then(() => {
@@ -84,7 +84,7 @@ export const ExternalPets = () => {
         } else {
             const breedAnimal = `${inputs.animal || "A Completar"} - ${inputs.breed || "A Completar"}`;
             const photo = "https://www.educima.com/dibujo-para-colorear-perro-dl19661.jpg";
-            const pet = `?id=${id}&name=${inputs.name || "A Completar"}&userOwner=${userMail || "A Completar"}&age=${inputs.age || "A Completar"}&breed=${breedAnimal}&notes${inputs.notes || "A Completar"}&photo=${photo || "A Completar"}`;
+            const pet = `?id=${id}&name=${inputs.petName || "A Completar"}&userOwner=${userMail || "A Completar"}&age=${inputs.age || "A Completar"}&breed=${breedAnimal}&notes${inputs.notes || "A Completar"}&photo=${photo || "A Completar"}`;
 
             dispatch(modifyPet(pet))
             .then(() => {
@@ -139,28 +139,28 @@ export const ExternalPets = () => {
         
                                     <div class="flex flex-row flex-wrap gap-4 mt-5">
                                         <div>
-                                            <label>Nombre: </label>
-                                            <input
-                                                name="name"
-                                                onChange={(e) => handleInputChange(e)}
-                                                type="text"
-                                                id="first_name"
-                                                class="bg-form border border-form outline-none text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                                placeholder="Zeus"
-                                            />
-                                        </div>
-        
-                                        <div>
-                                            <label>Edad: </label>
-                                            <input
-                                                name="age"
-                                                onChange={(e) => handleInputChange(e)}
-                                                type="text"
-                                                id="age"
-                                                class="bg-form border border-form outline-none text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                                placeholder="1 año"
+                                            <label>Nombre y edad:</label>
+                                            <div class="flex gap-x-2">
+                                                <input
+                                                    name="petName"
+                                                    onChange={(e) => handleInputChange(e)}
+                                                    type="text"
+                                                    id="first_name"
+                                                    class="bg-form border border-form outline-none text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                    placeholder="Zeus"
                                                 />
+
+                                                <input
+                                                    name="age"
+                                                    onChange={(e) => handleInputChange(e)}
+                                                    type="text"
+                                                    id="age"
+                                                    class="bg-form border border-form outline-none text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                    placeholder="1 año"
+                                                    />
+                                            </div>
                                         </div>
+                                        
                                         <div>
                                             <label for="animal" class="block mb-2 text-sm font-medium text-buscabrown">Animal</label>
                                             <input
@@ -198,7 +198,7 @@ export const ExternalPets = () => {
                                     </div>
         
                                     <button class="bg-third text-white border border-2 border-third outline-none rounded-3xl p-2 mt-10 hover:border-orange-700 hover:bg-orange-700 cursor-pointer" type="submit">Registrar mascota</button>
-                                    <h class="p-3 mt-2 text-green-700 hidden" id="confirmMsg">Registrando a {inputs.name}...</h>
+                                    <h class="p-3 mt-2 text-green-700 hidden" id="confirmMsg">Registrando a {inputs.petName}...</h>
                                 </form>
                             </div>
                         </div>
