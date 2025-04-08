@@ -115,7 +115,7 @@ export const ExternalPets = () => {
             { pet && !pet.name && (
                 <div class="m-16 flex flex-col">
                     <h1 class="pb-5 text-titles text-4xl font-bold">Registra una mascota</h1>
-                    <h>¡Nos alegra que hayas decidido unirte a nuestra comunidad!</h> **\\
+                    <h>¡Nos alegra que hayas decidido unirte a nuestra comunidad!</h>
                     
                     {!userLogged.name && (
                         <div class="flex flex-col mt-10">
