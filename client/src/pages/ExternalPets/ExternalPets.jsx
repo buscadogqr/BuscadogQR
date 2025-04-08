@@ -48,10 +48,23 @@ export const ExternalPets = () => {
         navigate("/register");
     };
 
-    const handleInputChange = (e) => {
+    const handleCombinedInput = (e) => {
+        const value = e.target.value;
+        const [name, age] = value.split("/");
+
         setInputs({
             ...inputs,
-            [e.target.name]: e.target.value
+            petName: name?.trim() || "",
+            age: age?.trim() || "",
+        })
+    }
+
+    const handleInputChange = (e) => {
+        const value = e.target.value;
+
+        setInputs({
+            ...inputs,
+            [e.target.name]: value
         })
     };
 
@@ -102,7 +115,7 @@ export const ExternalPets = () => {
             { pet && !pet.name && (
                 <div class="m-16 flex flex-col">
                     <h1 class="pb-5 text-titles text-4xl font-bold">Registra una mascota</h1>
-                    <h>¡Nos alegra que hayas decidido unirte a nuestra comunidad!</h>
+                    <h>¡Nos alegra que hayas decidido unirte a nuestra comunidad!</h> **\\
                     
                     {!userLogged.name && (
                         <div class="flex flex-col mt-10">
@@ -139,25 +152,26 @@ export const ExternalPets = () => {
         
                                     <div class="flex flex-row flex-wrap gap-4 mt-5">
                                         <div>
-                                            <label>Nombre y edad:</label>
+                                            <label>Nombre / edad:</label>
                                             <div class="flex gap-x-2">
                                                 <input
                                                     name="petName"
                                                     onChange={(e) => handleInputChange(e)}
                                                     type="text"
                                                     id="first_name"
-                                                    class="bg-form border border-form outline-none text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                                    placeholder="Zeus"
+                                                    class="bg-none border-none"
+                                                    disabled
+                                                    placeholder={`Familia: ${userLogged && userLogged.surname} --->`}
                                                 />
 
                                                 <input
-                                                    name="age"
-                                                    onChange={(e) => handleInputChange(e)}
-                                                    type="text"
-                                                    id="age"
-                                                    class="bg-form border border-form outline-none text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                                    placeholder="1 año"
-                                                    />
+                                                name="combined"
+                                                onChange={(e) => handleCombinedInput(e)}
+                                                type="text"
+                                                id="combined"
+                                                className="bg-form border border-form outline-none text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                placeholder="Ej: Zeus/3"
+                                                />
                                             </div>
                                         </div>
                                         
