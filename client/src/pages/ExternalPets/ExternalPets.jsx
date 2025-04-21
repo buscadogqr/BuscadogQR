@@ -163,7 +163,7 @@ export const ExternalPets = () => {
                                     <div class="flex flex-row flex-wrap gap-4 mt-5">
                                         <div>
                                             <label>Nombre / edad:</label>
-                                            <div class="flex gap-x-2">
+                                            <div class="flex flex-col md:flex-row gap-x-2">
                                                 <input
                                                     name="petName"
                                                     onChange={(e) => handleInputChange(e)}
