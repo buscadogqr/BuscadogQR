@@ -2,7 +2,7 @@ import React,  {useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllUsers, modifyUser } from "../../redux/Actions/Actions";
-import axios from "axios";
+import { supabase } from "../../supabaseclient";
 
 export const EditProfile = () => {
     const navigate = useNavigate();
@@ -31,48 +31,55 @@ export const EditProfile = () => {
     };
 
     const submitChanges = async (e) => {
+        e.preventDefault();
         document.getElementById("confirmMsg").style.display = "block";
-
-        if(imageSelected) {
-            e.preventDefault();
-        
-            const formData = new FormData();
-            formData.append("file", imageSelected);
-            formData.append("upload_preset", "yhp17atl");
-        
-            await axios.post("https://api.cloudinary.com/v1_1/dtm9ibgrj/image/upload", formData)
-            .then(async response => {
-                let updatedUser = `id=${userLogged}&profilePic=${response.data.secure_url}&`;
-        
-                for(let property in inputs) {
-                    if(inputs[property]) {
-                        updatedUser = updatedUser + `${property}=${inputs[property]}&`;
-                    }
-                };
-                
-                dispatch(modifyUser(updatedUser))
-                .then(() => {
-                    setTimeout( () => {
-                        navigate('/profile');
-                    }, 1500)
-                })
-            });
-        } else {
-            let updatedUser = `id=${userLogged}&`;
     
-            for(let property in inputs) {
-                if(inputs[property]) {
-                    updatedUser = updatedUser + `${property}=${inputs[property]}&`;
-                }
-            };
-            
-            dispatch(modifyUser(updatedUser))
-            .then(() => {
-                setTimeout( () => {
-                    navigate('/profile');
-                }, 1500)
-            })
+        let updatedUser = `id=${userLogged}&`;
+    
+        // Paso 1: si hay imagen seleccionada
+        if (imageSelected) {
+            // 🗑️ Eliminar la imagen anterior (si hay)
+            const oldImagePath = user.profilePic?.split("/").pop(); // si guardás solo la URL pública
+            if (oldImagePath) {
+                await supabase.storage.from('images').remove([oldImagePath]);
+            }
+    
+            // 📤 Subir la nueva imagen
+            const fileExt = imageSelected.name.split('.').pop();
+            const fileName = `${Date.now()}.${fileExt}`;
+    
+            const { data, error } = await supabase.storage
+                .from('images')
+                .upload(fileName, imageSelected, {
+                    cacheControl: '3600',
+                    upsert: false
+                });
+    
+            if (error) {
+                console.error('Error uploading image:', error.message);
+            } else {
+                const { data: publicUrlData } = supabase.storage
+                    .from('images')
+                    .getPublicUrl(data.path);
+    
+                const photo = publicUrlData.publicUrl;
+                updatedUser += `profilePic=${photo}&`;
+            }
         }
+    
+        // Paso 2: agregar el resto de los inputs que fueron modificados
+        for (let property in inputs) {
+            if (inputs[property]) {
+                updatedUser += `${property}=${inputs[property]}&`;
+            }
+        }
+    
+        dispatch(modifyUser(updatedUser))
+            .then(() => {
+                setTimeout(() => {
+                    navigate('/profile');
+                }, 1500);
+            });
     };
 
     const goToLogin = () => {

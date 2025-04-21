@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getPets, getAllUsers, modifyPet } from "../../redux/Actions/Actions";
+import { supabase } from "../../supabaseclient";
 import axios from "axios";
 
 export const ExternalPets = () => {
@@ -73,16 +74,25 @@ export const ExternalPets = () => {
 
         document.getElementById("confirmMsg").style.display = "block";
 
-        if(imageSelected) {
-            e.preventDefault();
-        
-            const formData = new FormData();
-            formData.append("file", imageSelected);
-            formData.append("upload_preset", "yhp17atl");
-        
-            await axios.post("https://api.cloudinary.com/v1_1/dtm9ibgrj/image/upload", formData)
-            .then(async response => {
-                const photo = response.data.secure_url;
+        if (imageSelected) {
+            const fileExt = imageSelected.name.split('.').pop();
+            const fileName = `${Date.now()}.${fileExt}`;
+
+            const { data, error } = await supabase.storage
+                .from('images')
+                .upload(fileName, imageSelected, {
+                    cacheControl: '3600',
+                    upsert: false
+                });
+
+            if (error) {
+                console.error('Error uploading image:', error.message);
+            } else {
+                const { data: publicUrlData } = supabase.storage
+                    .from('images')
+                    .getPublicUrl(data.path);
+
+                const photo = publicUrlData.publicUrl;
                 const breedAnimal = `${inputs.animal || "A Completar"} - ${inputs.breed || "A Completar"}`;
                 const pet = `?id=${id}&name=${inputs.petName || "A Completar"}&userOwner=${userMail || "A Completar"}&age=${inputs.age || "A Completar"}&breed=${breedAnimal}&notes${inputs.notes || "A Completar"}&photo=${photo || "A Completar"}`;
         
@@ -93,7 +103,7 @@ export const ExternalPets = () => {
                         navigate(`/pet/${id}`);
                     }, 1000);
                 })
-            });
+            }
         } else {
             const breedAnimal = `${inputs.animal || "A Completar"} - ${inputs.breed || "A Completar"}`;
             const photo = "https://www.educima.com/dibujo-para-colorear-perro-dl19661.jpg";

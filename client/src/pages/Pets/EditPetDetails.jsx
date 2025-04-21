@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { getAllUsers, getPets, modifyPet } from "../../redux/Actions/Actions";
-import axios from "axios";
+import { supabase } from "../../supabaseclient";
 
 export const EditPetDetails = () => {
     const { id } = useParams();
@@ -36,49 +36,57 @@ export const EditPetDetails = () => {
     };
 
     const submitChanges = async (e) => {
+        e.preventDefault();
         document.getElementById("confirmMsg").style.display = "block";
-
-        if(imageSelected) {
-            e.preventDefault();
-        
-            const formData = new FormData();
-            formData.append("file", imageSelected);
-            formData.append("upload_preset", "yhp17atl");
-        
-            await axios.post("https://api.cloudinary.com/v1_1/dtm9ibgrj/image/upload", formData)
-            .then(async response => {
-                let updatedPet = `?id=${id}&photo=${response.data.secure_url}&`;
-        
-                for(let property in inputs) {
-                    if(inputs[property]) {
-                        updatedPet = updatedPet + `${property}=${inputs[property]}&`;
-                    }
-                };
-        
-                dispatch(modifyPet(updatedPet))
-                .then(() => {
-                    setTimeout(() => {
-                        navigate(`/pet/${id}`);
-                    }, 1000);s
+    
+        let updatedPet = `?id=${id}&`;
+    
+        // Subir nueva imagen si hay una seleccionada
+        if (imageSelected) {
+            // 🗑️ Eliminar la imagen anterior si existe
+            const oldImagePath = pet.photo?.split("/").pop(); // Asegurate que pet.photo sea la URL pública
+            if (oldImagePath) {
+                await supabase.storage.from('images').remove([oldImagePath]);
+            }
+    
+            // 📤 Subir la nueva imagen
+            const fileExt = imageSelected.name.split('.').pop();
+            const fileName = `${Date.now()}.${fileExt}`;
+    
+            const { data, error } = await supabase.storage
+                .from('images')
+                .upload(fileName, imageSelected, {
+                    cacheControl: '3600',
+                    upsert: false
                 });
-            });
-        } else {
-            let updatedPet = `?id=${id}&`;
     
-            for(let property in inputs) {
-                if(inputs[property]) {
-                    updatedPet = updatedPet + `${property}=${inputs[property]}&`;
-                }
-            };
+            if (error) {
+                console.error('Error uploading image:', error.message);
+            } else {
+                const { data: publicUrlData } = supabase.storage
+                    .from('images')
+                    .getPublicUrl(data.path);
     
-            dispatch(modifyPet(updatedPet))
+                const photo = publicUrlData.publicUrl;
+                updatedPet += `photo=${photo}&`;
+            }
+        }
+    
+        // Agregar otros datos editados
+        for (let property in inputs) {
+            if (inputs[property]) {
+                updatedPet += `${property}=${inputs[property]}&`;
+            }
+        }
+    
+        dispatch(modifyPet(updatedPet))
             .then(() => {
                 setTimeout(() => {
                     navigate(`/pet/${id}`);
                 }, 1000);
             });
-        }
     };
+    
 
     const goToLogin = () => {
         navigate("/login");

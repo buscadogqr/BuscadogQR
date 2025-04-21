@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { createUser } from "../../redux/Actions/Actions";
-import axios from "axios";
+import { supabase } from '../../supabaseclient';
 import "./Register.css";
 
 export const Register = () => {
@@ -49,21 +49,34 @@ export const Register = () => {
         e.preventDefault();
 
         if(checkPasswordsMatch() == "Passwords match!") {
+            document.getElementById("confirmMsg").style.display = "block";
+            
             const defaultUserImage = "https://img.freepik.com/vector-premium/icono-avatar-masculino-persona-desconocida-o-anonima-icono-perfil-avatar-predeterminado-usuario-redes-sociales-hombre-negocios-silueta-perfil-hombre-aislado-sobre-fondo-blanco-ilustracion-vectorial_735449-120.jpg";
             let photo = defaultUserImage;
 
-            if(imageSelected) {
-                const formData = new FormData();
-                formData.append("file", imageSelected);
-                formData.append("upload_preset", "yhp17atl");
-                
-                await axios.post("https://api.cloudinary.com/v1_1/dtm9ibgrj/image/upload", formData)
-                .then(response => {
-                    photo = response.data.secure_url;
-                })
+            if (imageSelected) {
+                const fileExt = imageSelected.name.split('.').pop();
+                const fileName = `${Date.now()}.${fileExt}`;
+    
+                const { data, error } = await supabase.storage
+                    .from('images')
+                    .upload(fileName, imageSelected, {
+                        cacheControl: '3600',
+                        upsert: false
+                    });
+    
+                if (error) {
+                    console.error('Error uploading image:', error.message);
+                } else {
+                    const { data: publicUrlData } = supabase.storage
+                        .from('images')
+                        .getPublicUrl(data.path);
+
+                    photo = publicUrlData.publicUrl;
+                }
             }
 
-            dispatch(createUser(`name=${input.name}&surname=${input.surname}&direction=${input.direction}&cellphone=${input.cellphone}&mail=${input.mail}&password=${input.password}&profilePic${ photo || defaultUserImage }&type=Usuario sin membresías`));
+            dispatch(createUser(`name=${input.name}&surname=${input.surname}&direction=${input.direction}&cellphone=${input.cellphone}&mail=${input.mail}&password=${input.password}&profilePic=${photo}&type=Usuario sin membresías`));
 
         } else {
             document.getElementById("emailAlreadyRegistered").style.display = "none";
@@ -235,6 +248,7 @@ export const Register = () => {
                 type="submit"
                 class="bg-third border-2 border-third text-white outline-none hover:bg-orange-700 hover:border-orange-700 rounded-3xl font-medium text-sm w-full sm:w-auto px-5 py-2.5 text-center" 
                 >Registrarse</button>
+                <h class="p-3 mt-2 text-green-700 hidden" id="confirmMsg">Confirmando cambios...</h>
             </form>
 
             <div id="registerModal" className="modal" class="mt-auto text-green-700 font-bold hidden">

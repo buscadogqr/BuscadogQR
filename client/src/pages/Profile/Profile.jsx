@@ -2,6 +2,7 @@ import React,  { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { getAllUsers, logout, deleteUser } from "../../redux/Actions/Actions";
+import { supabase } from "../../supabaseclient";
 
 export const Profile = () => {
     const navigate = useNavigate();
@@ -44,6 +45,11 @@ export const Profile = () => {
     };
 
     const handleDeleteAcc = async (e) => {
+        const oldImagePath = userLogged.profilePic?.split("/").pop(); // si guardás solo la URL pública
+        if (oldImagePath) {
+            await supabase.storage.from('images').remove([oldImagePath]);
+        }
+
         await dispatch(deleteUser(userLogged.id))
         .then(data => {
             localStorage.removeItem("bgUserMail");

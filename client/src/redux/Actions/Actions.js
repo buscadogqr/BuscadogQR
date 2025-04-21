@@ -2,6 +2,7 @@ import { GET_USERS, CREATE_USER, MODIFY_USER, DELETE_USER, LOGIN, LOGOUT, GET_ME
 import axios from "axios";
 
 const url = "https://buscadogqr-api.onrender.com";
+// const url = "http://localhost:3001"
 
 export const getAllUsers = (query) => {
     return async (dispatch) => {
@@ -53,13 +54,12 @@ export const deleteUser = (userId) => {
     return async (dispatch) => {
         await axios.delete(`${url}/users?userId=${userId}`)
         .then(response => {
-            console.log("Registro exitoso:", response.data);
             dispatch({
                 type: DELETE_USER
             });
           })
           .catch(error => {
-            console.error("Error al registrarse:", error);
+            console.error("Error al eliminar el usuario:", error);
           });
     };
 };
